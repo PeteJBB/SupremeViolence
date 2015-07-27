@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a82fe7cba4d57044e904d6d6bd7ed829
+timeCreated: 1437989582
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - BackgroundSprite: {fileID: 21300000, guid: 6132edb3de2c5c842b561806d2e3b8ab, type: 3}
+  - IconSprite: {fileID: 21300000, guid: 747a6d00de638284bbf874a3cfb77d1f, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
