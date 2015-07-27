@@ -4,9 +4,12 @@ using System.Collections.Generic;
 
 public class PlayerControl : MonoBehaviour {
 
-	private float MoveSpeed = 1f; // 0.01 = 1px per second
-    public int PlayerNumber;
+    private float baseLegStrength = 4f;
+    private float baseMass = 1;
 
+    public int PlayerNumber = 1;
+
+    public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
 
     private Animator animator;
@@ -19,37 +22,48 @@ public class PlayerControl : MonoBehaviour {
     public float AimingAngle = 0;
     private bool triggerDown = false;
 
+    private Rigidbody2D rigidbody;
+
 	// Use this for initialization
 	void Start () 
     {
         animator = this.GetComponent<Animator>();
+        rigidbody = this.GetComponent<Rigidbody2D>();
+
+        // turn startingpickups into actual pickup instances
+        foreach(var p in StartingPickups)
+        {
+            var instance = Instantiate(p);
+            var pickup = instance.GetComponent<Pickup>();
+            pickup.BaseStart();
+            pickup.CollectPickup(this);
+        }
+
+        // make sure mass is right
+        rigidbody.mass = baseMass;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        var inputX = Input.GetAxis("XboxAxisXJoy" + PlayerNumber);
-        var inputY = Input.GetAxis("XboxAxisYJoy" + PlayerNumber);
+        //var inputX = Input.GetAxis("XboxAxisXJoy" + PlayerNumber);
+        //var inputY = Input.GetAxis("XboxAxisYJoy" + PlayerNumber);
 
 		// move
-		var pos = transform.position;
-        var multiplier = GetTotalMoveMultiplier();
-        pos.x += inputX * multiplier * MoveSpeed * Time.deltaTime;
-        pos.y += inputY * multiplier * MoveSpeed * Time.deltaTime;
+//	    var pos = transform.position;
+//      var multiplier = GetTotalMoveMultiplier();
+//      pos.x += inputX * multiplier * MoveSpeed * Time.deltaTime;
+//      pos.y += inputY * multiplier * MoveSpeed * Time.deltaTime;
+//      var speed = new Vector2(inputX, inputY).magnitude;
 
-        var speed = new Vector2(inputX, inputY).magnitude;
-        animator.SetFloat("Speed", speed);
+        var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
+        rigidbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
+        animator.SetFloat("Speed", rigidbody.velocity.magnitude);
 
-		if(pos != transform.position)
-		{
-			transform.position = pos;
-
-			// rotate to face movement dir
-//			float angle = Mathf.Atan2(-inputX, inputY);
-//			var rot = Quaternion.AngleAxis(Mathf.Rad2Deg * angle, Vector3.forward);
-//			transform.rotation = rot;
-
-            float angle = Mathf.Rad2Deg * Mathf.Atan2(-inputX, inputY);
+        if(input.magnitude > 0)
+        {
+    		// rotate to face input dir
+            float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
             if(angle >= -45 && angle < 45 && currentAnimHash != walkUpHash)
             {
                 animator.SetTrigger(walkUpHash);
@@ -71,9 +85,9 @@ public class PlayerControl : MonoBehaviour {
                 currentAnimHash = walkDownHash;
             }
 
+            // update aim angle for pickups to use
             AimingAngle = angle;
-		}
-
+        }
 		// shoot?
         //if (Input.GetKeyDown("joystick " + (playerNumber)+ " button 0"))
         if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
@@ -97,14 +111,36 @@ public class PlayerControl : MonoBehaviour {
         }
 	}
 
-    float GetTotalMoveMultiplier()
+    float GetLegStrengthMultiplier()
     {
-        var speed = MoveSpeed;
+        var strength = baseLegStrength;
         foreach(var pickup in Pickups)
         {
-            speed *= pickup.GetMoveMultiplier();
+            strength *= pickup.GetLegStrengthMultiplier();
         }
+        
+        return strength;
+    }
 
-        return speed;
+    public void AddPickup(Pickup pickup)
+    {
+        Pickups.Add(pickup);
+        RecalculateMass();
+    }
+
+    public void RemovePickup(Pickup pickup)
+    {
+        Pickups.Remove(pickup);
+        RecalculateMass();
+    }
+
+    public void RecalculateMass()
+    {
+        var mass = baseMass;
+        foreach(var pu in Pickups)
+        {
+            mass += pu.GetMass();
+        }
+        rigidbody.mass = mass;
     }
 }

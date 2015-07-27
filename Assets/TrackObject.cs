@@ -4,6 +4,7 @@ using System.Collections;
 public class TrackObject : MonoBehaviour {
 
     public GameObject target;
+    private float maxSpeed = 6f; // world units per second
 
 	// Use this for initialization
 	void Start () 
@@ -16,10 +17,20 @@ public class TrackObject : MonoBehaviour {
     {
         if(target != null)
         {
-            var pos = this.transform.position;
-            pos.x = target.transform.position.x;
-            pos.y = target.transform.position.y;
-            this.transform.position = pos;
+            var path = target.transform.position - transform.position;
+            path.z = 0;
+
+//            if(path.magnitude < maxSpeed * Time.deltaTime)
+//            {
+//                transform.position = new Vector3(target.transform.position.x, target.transform.position.y, transform.position.z);
+//            }
+//            else 
+            if(path.magnitude > maxSpeed * Time.deltaTime)
+            {
+                path = path.normalized * maxSpeed * Time.deltaTime;
+            }
+
+            transform.position += path;
         }
 	}
 }

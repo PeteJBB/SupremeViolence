@@ -18,16 +18,11 @@ public class MachineGun : Pickup
 	// Update is called once per frame
 	void Update() 
     {
-        if (isTriggerDown)
+        if (isTriggerDown && Time.time - lastFireTime > fireDelay)
         {
-            Debug.Log("MG Update");
-            if(Time.time - lastFireTime > fireDelay)
-            {
-                FireBullet();
-                lastFireTime = Time.time;
-            }
+            FireBullet();
+            lastFireTime = Time.time;
         }
-
 	}
 
     public override bool CanPlayerPickup(PlayerControl player)
@@ -39,6 +34,7 @@ public class MachineGun : Pickup
             if(p.IsWeapon())
             {
                 player.Pickups.Remove(p);
+                Destroy(p.gameObject);
                 i--;
             }
         }
@@ -51,25 +47,27 @@ public class MachineGun : Pickup
         return true;
     }
 
+    public override float GetMass()
+    {
+        return 0.1f;
+    }
+
     public override void OnFireDown(PlayerControl player)
     {
-        Debug.Log("Trigger Down");
         isTriggerDown = true;
         this.player = player;
     }
 
     public void FireBullet()
     {
-        Debug.Log("Fire!");
         var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
         var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
         Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
         bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 250)); 
     }
 
-   public override void OnFireUp(PlayerControl player)
+    public override void OnFireUp(PlayerControl player)
     {
-        Debug.Log("Trigger Up");
         isTriggerDown = false;
     }
 }

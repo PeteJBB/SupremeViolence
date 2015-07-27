@@ -15,9 +15,14 @@ public class SpeedyBoots : Pickup
 	
 	}
 
-    public override float GetMoveMultiplier()
+    public override float GetLegStrengthMultiplier()
     {
-        return 2;
+        return 1.5f;
+    }
+
+    public override float GetMass()
+    {
+        return 0.1f;
     }
 
     public override bool CanPlayerPickup(PlayerControl player)

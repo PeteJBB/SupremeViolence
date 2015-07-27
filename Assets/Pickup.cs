@@ -7,6 +7,11 @@ public class Pickup : MonoBehaviour
     private Transform background;
     private Transform icon;
 
+    void Start()
+    {
+        BaseStart();
+    }
+
     public void BaseStart()
     {
         background = transform.FindChild("Background");
@@ -18,17 +23,23 @@ public class Pickup : MonoBehaviour
         if(other.tag == "Player")
         {
             var player = other.GetComponent<PlayerControl>();
+            CollectPickup(player);
+        }
+    }
 
-            if(CanPlayerPickup(player))
-            {
-				Debug.Log("Picked up "+this.Name);
-                player.Pickups.Add(this);
-                Destroy(icon.gameObject);
-                Destroy(background.gameObject);
-                Destroy(this.GetComponent<CircleCollider2D>());
-                transform.parent = player.transform;
+    public void CollectPickup(PlayerControl player)
+    {
+        if(CanPlayerPickup(player))
+        {
+            Debug.Log("Picked up "+this.Name);
+            player.AddPickup(this);
 
-            }
+            icon.gameObject.SetActive(false);
+            background.gameObject.SetActive(false);
+            this.GetComponent<CircleCollider2D>().enabled = false;
+            
+            transform.parent = player.transform;
+            
         }
     }
 
@@ -40,6 +51,16 @@ public class Pickup : MonoBehaviour
     public virtual float GetMoveMultiplier()
     {
         return 1;
+    }
+
+    public virtual float GetLegStrengthMultiplier()
+    {
+        return 1;
+    }
+
+    public virtual float GetMass()
+    {
+        return 0;
     }
 
     public virtual bool CanPlayerPickup(PlayerControl player)

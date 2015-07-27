@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PickupSpawner : MonoBehaviour 
 {
-    public Pickup[] PickupPool;
+    public GameObject[] PickupPool;
 
 	// Use this for initialization
 	void Start () 

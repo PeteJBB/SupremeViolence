@@ -26,7 +26,8 @@ public class Pistol : Pickup
             var p = player.Pickups[i];
             if(p.IsWeapon())
             {
-                player.Pickups.Remove(p);
+                player.RemovePickup(p);
+                Destroy(p.gameObject);
                 i--;
             }
         }
@@ -41,7 +42,6 @@ public class Pistol : Pickup
 
     public override void OnFireDown(PlayerControl player)
     {
-        Debug.Log("Fire!");
         var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
         var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
         Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
