@@ -21,6 +21,7 @@ public class Pickup : MonoBehaviour
 
             if(CanPlayerPickup(player))
             {
+				Debug.Log("Picked up "+this.Name);
                 player.Pickups.Add(this);
                 Destroy(icon.gameObject);
                 Destroy(background.gameObject);
@@ -54,4 +55,5 @@ public class Pickup : MonoBehaviour
     {
         
     }
+
 }

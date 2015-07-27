@@ -78,10 +78,8 @@ public class PlayerControl : MonoBehaviour {
         //if (Input.GetKeyDown("joystick " + (playerNumber)+ " button 0"))
         if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
 		{
-            Debug.Log("Firedown...");
             if(!triggerDown)
             {
-                Debug.Log("yep");
                 triggerDown = true;
                 foreach(var p in Pickups)
                 {
@@ -96,6 +94,10 @@ public class PlayerControl : MonoBehaviour {
             {
                 p.OnFireUp(this);
             }
+        }
+        foreach (var p in Pickups)
+        {
+            p.Update();
         }
 	}
 
