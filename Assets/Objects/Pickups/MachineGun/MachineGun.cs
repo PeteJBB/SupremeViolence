@@ -4,7 +4,7 @@ using System.Collections;
 public class MachineGun : Pickup
 {
     public GameObject BulletPrefab;
-    private float fireDelay = 0.3f;
+    private float fireDelay = 0.1f;
     private bool isTriggerDown= false;
     private float lastFireTime = 0;
     private PlayerControl player;

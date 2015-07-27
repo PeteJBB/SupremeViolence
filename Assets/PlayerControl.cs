@@ -95,10 +95,6 @@ public class PlayerControl : MonoBehaviour {
                 p.OnFireUp(this);
             }
         }
-        foreach (var p in Pickups)
-        {
-            p.Update();
-        }
 	}
 
     float GetTotalMoveMultiplier()

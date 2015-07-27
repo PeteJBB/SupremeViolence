@@ -25,6 +25,7 @@ public class Pickup : MonoBehaviour
                 player.Pickups.Add(this);
                 Destroy(icon.gameObject);
                 Destroy(background.gameObject);
+                Destroy(this.GetComponent<CircleCollider2D>());
                 transform.parent = player.transform;
 
             }
