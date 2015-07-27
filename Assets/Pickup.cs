@@ -22,7 +22,10 @@ public class Pickup : MonoBehaviour
             if(CanPlayerPickup(player))
             {
                 player.Pickups.Add(this);
-                Destroy(gameObject);
+                Destroy(icon.gameObject);
+                Destroy(background.gameObject);
+                transform.parent = player.transform;
+
             }
         }
     }
