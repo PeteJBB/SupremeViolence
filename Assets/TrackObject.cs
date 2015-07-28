@@ -9,7 +9,9 @@ public class TrackObject : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-	
+        var pos = target.transform.position;
+        pos.z = transform.position.z;
+        transform.position = pos;
 	}
 	
 	// Update is called once per frame

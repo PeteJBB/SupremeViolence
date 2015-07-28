@@ -41,6 +41,14 @@ public class PlayerControl : MonoBehaviour {
 
         // make sure mass is right
         rigidbody.mass = baseMass;
+
+        // set initial location
+        var arena = Transform.FindObjectOfType<Arena>();
+        var emptySpots = arena.GetEmptyGridSpots();
+        
+        // choose a random spot
+        var spot = emptySpots[Random.Range(0,emptySpots.Count)];
+        transform.position = arena.GridToWorldPosition(spot);
 	}
 	
 	// Update is called once per frame
