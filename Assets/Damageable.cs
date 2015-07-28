@@ -44,9 +44,15 @@ public class Damageable : MonoBehaviour
 
     public void Respawn() 
     {
+        var arena = Transform.FindObjectOfType<Arena>();
+        var emptySpots = arena.GetEmptyGridSpots();
+
+        // choose a random spot
+        var spot = emptySpots[Random.Range(0,emptySpots.Count)];
+        transform.position = arena.GridToWorldPosition(spot);
+
         isDead = false;
         health = startingHealth;
-        transform.position = new Vector2(Random.Range(-4f,4f),Random.Range(-4f,4f));
         gameObject.SetActive(true);
     }
 

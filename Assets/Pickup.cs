@@ -39,7 +39,10 @@ public class Pickup : MonoBehaviour
             this.GetComponent<CircleCollider2D>().enabled = false;
             
             transform.parent = player.transform;
-            
+
+            // free up grid point in arena
+            var arena = Transform.FindObjectOfType<Arena>();
+            arena.RemoveGridObject(gameObject);
         }
     }
 
