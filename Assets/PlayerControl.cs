@@ -54,67 +54,60 @@ public class PlayerControl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        //var inputX = Input.GetAxis("XboxAxisXJoy" + PlayerNumber);
-        //var inputY = Input.GetAxis("XboxAxisYJoy" + PlayerNumber);
-
-		// move
-//	    var pos = transform.position;
-//      var multiplier = GetTotalMoveMultiplier();
-//      pos.x += inputX * multiplier * MoveSpeed * Time.deltaTime;
-//      pos.y += inputY * multiplier * MoveSpeed * Time.deltaTime;
-//      var speed = new Vector2(inputX, inputY).magnitude;
-
-        var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
-        rigidbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
-        animator.SetFloat("Speed", rigidbody.velocity.magnitude);
-
-        if(input.magnitude > 0)
+        if(GameBrain.Instance.State == GameState.GameOn)
         {
-    		// rotate to face input dir
-            float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
-            if(angle >= -45 && angle < 45 && currentAnimHash != walkUpHash)
-            {
-                animator.SetTrigger(walkUpHash);
-                currentAnimHash = walkUpHash;
-            }
-            else if(angle >= 45 && angle < 135 && currentAnimHash != walkLeftHash)
-            {
-                animator.SetTrigger(walkLeftHash);
-                currentAnimHash = walkLeftHash;
-            }
-            else if(angle >= -135 && angle < -45 && currentAnimHash != walkRightHash)
-            {
-                animator.SetTrigger(walkRightHash);
-                currentAnimHash = walkRightHash;
-            }
-            else if((angle >= 135 || angle < -135) && currentAnimHash != walkDownHash)
-            {
-                animator.SetTrigger(walkDownHash);
-                currentAnimHash = walkDownHash;
-            }
+            var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
+            rigidbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
+            animator.SetFloat("Speed", rigidbody.velocity.magnitude);
 
-            // update aim angle for pickups to use
-            AimingAngle = angle;
-        }
-		// shoot?
-        //if (Input.GetKeyDown("joystick " + (playerNumber)+ " button 0"))
-        if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
-		{
-            if(!triggerDown)
+            if(input.magnitude > 0)
             {
-                triggerDown = true;
+        		// rotate to face input dir
+                float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
+                if(angle >= -45 && angle < 45 && currentAnimHash != walkUpHash)
+                {
+                    animator.SetTrigger(walkUpHash);
+                    currentAnimHash = walkUpHash;
+                }
+                else if(angle >= 45 && angle < 135 && currentAnimHash != walkLeftHash)
+                {
+                    animator.SetTrigger(walkLeftHash);
+                    currentAnimHash = walkLeftHash;
+                }
+                else if(angle >= -135 && angle < -45 && currentAnimHash != walkRightHash)
+                {
+                    animator.SetTrigger(walkRightHash);
+                    currentAnimHash = walkRightHash;
+                }
+                else if((angle >= 135 || angle < -135) && currentAnimHash != walkDownHash)
+                {
+                    animator.SetTrigger(walkDownHash);
+                    currentAnimHash = walkDownHash;
+                }
+
+                // update aim angle for pickups to use
+                AimingAngle = angle;
+            }
+    		// shoot?
+            //if (Input.GetKeyDown("joystick " + (playerNumber)+ " button 0"))
+            if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
+    		{
+                if(!triggerDown)
+                {
+                    triggerDown = true;
+                    foreach(var p in Pickups)
+                    {
+                        p.OnFireDown(this);
+                    }
+                }
+    		}
+            else if(triggerDown)
+            {
+                triggerDown = false;
                 foreach(var p in Pickups)
                 {
-                    p.OnFireDown(this);
+                    p.OnFireUp(this);
                 }
-            }
-		}
-        else if(triggerDown)
-        {
-            triggerDown = false;
-            foreach(var p in Pickups)
-            {
-                p.OnFireUp(this);
             }
         }
 	}

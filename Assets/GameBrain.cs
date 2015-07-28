@@ -7,22 +7,30 @@ public class GameBrain : MonoBehaviour
     public static GameBrain Instance;
     public GameState State = GameState.Startup;
 
-    public Camera Camera1;
-    public Camera Camera2;
+    private Camera camera1;
+    private Camera camera2;
+
+    private PlayerControl player1;
+    private PlayerControl player2;
 
 	void Awake () 
     {
         GameBrain.Instance = this;  
+
+        // get players
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        player1 = players[0].GetComponent<PlayerControl>();
+        player2 = players[1].GetComponent<PlayerControl>();
 
         // set each camera to cover half the play area then pan to each player
         var cameras = GameObject.FindGameObjectsWithTag("MainCamera");
         var arena = Transform.FindObjectOfType<Arena>();
 
         // disable camera tracking while intro pan is running
-        Camera1 = cameras[0].GetComponent<Camera>();
-        Camera1.GetComponent<TrackObject>().enabled = false;
-        Camera2 = cameras[1].GetComponent<Camera>();
-        Camera2.GetComponent<TrackObject>().enabled = false;
+        camera1 = cameras[0].GetComponent<Camera>();
+        camera1.GetComponent<TrackObject>().enabled = false;
+        camera2 = cameras[1].GetComponent<Camera>();
+        camera2.GetComponent<TrackObject>().enabled = false;
 
 
         var aspect = (float)Screen.width / Screen.height;
@@ -32,23 +40,23 @@ public class GameBrain : MonoBehaviour
         {
             Debug.Log("Higher than wide");
             var orth = (arena.ArenaSize.x + 2) / 2;
-            Camera1.orthographicSize = orth / aspect;
-            Camera2.orthographicSize = orth / aspect;
+            camera1.orthographicSize = orth / aspect;
+            camera2.orthographicSize = orth / aspect;
 
             aspectAdjustX = 0;
         }
         else
         {
             Debug.Log("Wider than high");
-            Camera1.orthographicSize = (arena.ArenaSize.y + 2) / 2;
-            Camera2.orthographicSize = (arena.ArenaSize.y + 2) / 2;
+            camera1.orthographicSize = (arena.ArenaSize.y + 2) / 2;
+            camera2.orthographicSize = (arena.ArenaSize.y + 2) / 2;
 
             // orth size is for y axis so what is it on x?
-            var orthX = Camera1.orthographicSize * aspect;
-            aspectAdjustX = (orthX - Camera1.orthographicSize) / 2; // adjusted for aspect ratio
+            var orthX = camera1.orthographicSize * aspect;
+            aspectAdjustX = (orthX - camera1.orthographicSize) / 2; // adjusted for aspect ratio
         }
-        Camera1.transform.position = new Vector3(-baseX - aspectAdjustX, 0, Camera1.transform.position.z);
-        Camera2.transform.position = new Vector3(baseX + aspectAdjustX, 0, Camera2.transform.position.z);
+        camera1.transform.position = new Vector3(-baseX - aspectAdjustX, 0, camera1.transform.position.z);
+        camera2.transform.position = new Vector3(baseX + aspectAdjustX, 0, camera2.transform.position.z);
 
         WaitAndThenCall(() => PanCameraIntro(), 2);
 	}
@@ -61,23 +69,19 @@ public class GameBrain : MonoBehaviour
 
     private void PanCameraIntro()
     {
-        var ht = new Hashtable();
-        ht.Add("from", Camera1.orthographicSize);
-        ht.Add("to", 4);
-        ht.Add("time", 4);
-        ht.Add("onupdate", "CamPerspectiveTween");
-        ht.Add("easetype", iTween.EaseType.linear);
-        iTween.ValueTo(gameObject, ht);
+        // adjust zoom
+        iTween.ValueTo(gameObject, iTween.Hash("from", camera1.orthographicSize, "to", 4, "time", 3, "onupdate", "CamPerspectiveTween", "easetype", iTween.EaseType.easeOutExpo));
 
-        var guy1 = Camera1.gameObject.GetComponent<TrackObject>().target;
-        iTween.MoveTo(Camera1.gameObject, iTween.Hash("x", guy1.transform.position.x, "y", guy1.transform.position.y, "time", 4));
-        var guy2 = Camera2.gameObject.GetComponent<TrackObject>().target;
-        iTween.MoveTo(Camera2.gameObject, iTween.Hash("x", guy2.transform.position.x, "y", guy2.transform.position.y, "time", 4));
+        // pan
+        var guy1 = camera1.gameObject.GetComponent<TrackObject>().target;
+        iTween.MoveTo(camera1.gameObject, iTween.Hash("x", guy1.transform.position.x, "y", guy1.transform.position.y, "time", 3, "easetype", iTween.EaseType.easeOutExpo));
+        var guy2 = camera2.gameObject.GetComponent<TrackObject>().target;
+        iTween.MoveTo(camera2.gameObject, iTween.Hash("x", guy2.transform.position.x, "y", guy2.transform.position.y, "time", 3, "easetype", iTween.EaseType.easeOutExpo, "oncomplete", "GameOn", "oncompletetarget", gameObject));
     }
 
     void CamPerspectiveTween(float val){
-        Camera1.orthographicSize = val;
-        Camera2.orthographicSize = val;
+        camera1.orthographicSize = val;
+        camera2.orthographicSize = val;
     }
 
     public void WaitAndThenCall(Action funcToRun, float waitSeconds)
@@ -91,6 +95,12 @@ public class GameBrain : MonoBehaviour
         funcToRun();
     }
 
+    private void GameOn()
+    {
+        State = GameState.GameOn;
+        camera1.GetComponent<TrackObject>().enabled = true;
+        camera2.GetComponent<TrackObject>().enabled = true;
+    }
 
 }
 
