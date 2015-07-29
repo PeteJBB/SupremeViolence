@@ -6,6 +6,7 @@ public class Pickup : MonoBehaviour
     public string Name;
     private Transform background;
     private Transform icon;
+    private bool isPickedUp = false;
 
     public AudioClip PickupSound;
 
@@ -41,9 +42,12 @@ public class Pickup : MonoBehaviour
             if(background != null)
                 background.gameObject.SetActive(false);
 
+            isPickedUp = true;
+
             this.GetComponent<CircleCollider2D>().enabled = false;
             
             transform.parent = player.transform;
+            transform.localPosition = Vector3.zero;
 
             // free up grid point in arena
             var arena = Transform.FindObjectOfType<Arena>();
