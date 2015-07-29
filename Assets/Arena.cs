@@ -10,8 +10,12 @@ public class Arena : MonoBehaviour
 
     private GameObject[,] GridMap;
 
+    public static Arena Instance;
+
 	void Awake () 
     {
+        Instance = this;
+
         //floor = transform.FindChild("Floor");
         //floor.localScale = new Vector3(ArenaSize.x, 1, ArenaSize.y) / 10f;
 
