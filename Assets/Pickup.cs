@@ -7,6 +7,8 @@ public class Pickup : MonoBehaviour
     private Transform background;
     private Transform icon;
 
+    public AudioClip PickupSound;
+
     void Start()
     {
         BaseStart();
@@ -27,15 +29,18 @@ public class Pickup : MonoBehaviour
         }
     }
 
-    public void CollectPickup(PlayerControl player)
+    public virtual void CollectPickup(PlayerControl player)
     {
         if(CanPlayerPickup(player))
         {
             Debug.Log("Picked up "+this.Name);
             player.AddPickup(this);
 
-            icon.gameObject.SetActive(false);
-            background.gameObject.SetActive(false);
+            if(icon != null)
+                icon.gameObject.SetActive(false);
+            if(background != null)
+                background.gameObject.SetActive(false);
+
             this.GetComponent<CircleCollider2D>().enabled = false;
             
             transform.parent = player.transform;
@@ -43,6 +48,9 @@ public class Pickup : MonoBehaviour
             // free up grid point in arena
             var arena = Transform.FindObjectOfType<Arena>();
             arena.RemoveGridObject(gameObject);
+
+            if(PickupSound != null)
+                AudioSource.PlayClipAtPoint(PickupSound, transform.position);
         }
     }
 

@@ -9,6 +9,8 @@ public class Damageable : MonoBehaviour
     public bool RespawnOnDeath = false;
     public float RespawnDelaySeconds = 1;
 
+    public AudioClip DeathSound;
+
     private bool isDead = false;
 
 	// Use this for initialization
@@ -29,6 +31,10 @@ public class Damageable : MonoBehaviour
             {
                 Instantiate(explosionPrefab, transform.position, transform.rotation);
             }
+
+            // play sound
+            if(DeathSound != null)
+                AudioSource.PlayClipAtPoint(DeathSound, transform.position);
 
             if(RespawnOnDeath)
             {

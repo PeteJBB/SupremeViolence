@@ -12,6 +12,8 @@ public class PlayerControl : MonoBehaviour {
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
 
+    public AudioClip[] CollectPickupSounds;
+
     private Animator animator;
     private int walkUpHash = Animator.StringToHash("WalkUp");
     private int walkLeftHash = Animator.StringToHash("WalkLeft");
@@ -23,6 +25,8 @@ public class PlayerControl : MonoBehaviour {
     private bool triggerDown = false;
 
     private Rigidbody2D rigidbody;
+
+    private bool muteSounds = true;
 
 	// Use this for initialization
 	void Start () 
@@ -36,6 +40,7 @@ public class PlayerControl : MonoBehaviour {
             var instance = Instantiate(p);
             var pickup = instance.GetComponent<Pickup>();
             pickup.BaseStart();
+            pickup.PickupSound = null;
             pickup.CollectPickup(this);
         }
 
@@ -49,6 +54,8 @@ public class PlayerControl : MonoBehaviour {
         // choose a random spot
         var spot = emptySpots[Random.Range(0,emptySpots.Count)];
         transform.position = arena.GridToWorldPosition(spot);
+
+        muteSounds = false;
 	}
 	
 	// Update is called once per frame
@@ -127,6 +134,12 @@ public class PlayerControl : MonoBehaviour {
     {
         Pickups.Add(pickup);
         RecalculateMass();
+
+        if (!muteSounds && CollectPickupSounds.Length > 0)
+        {
+            var sound = CollectPickupSounds [Random.Range(0, CollectPickupSounds.Length)];
+            AudioSource.PlayClipAtPoint(sound, transform.position);
+        }
     }
 
     public void RemovePickup(Pickup pickup)

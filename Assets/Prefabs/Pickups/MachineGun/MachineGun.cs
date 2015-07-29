@@ -9,6 +9,8 @@ public class MachineGun : Pickup
     private float lastFireTime = 0;
     private PlayerControl player;
 
+    public AudioClip FireSound;
+
 	// Use this for initialization
 	void Start()
     {
@@ -64,6 +66,8 @@ public class MachineGun : Pickup
         var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
         Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
         bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 250)); 
+
+        AudioSource.PlayClipAtPoint(FireSound, transform.position);
     }
 
     public override void OnFireUp(PlayerControl player)

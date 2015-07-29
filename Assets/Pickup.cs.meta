@@ -1,12 +1,11 @@
 fileFormatVersion: 2
 guid: a845eefbdd0847145af09bcc74ddba0b
-timeCreated: 1437989203
+timeCreated: 1438141356
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
-  - BackgroundSprite: {fileID: 21300000, guid: 6132edb3de2c5c842b561806d2e3b8ab, type: 3}
-  - IconSprite: {instanceID: 0}
+  - PickupSound: {fileID: 8300000, guid: dbe07c893591c384aa2880ce59523fe4, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
