@@ -54,6 +54,12 @@ public class MachineGun : Pickup
         return 0.1f;
     }
 
+    private int ammo = 30;
+    public override int GetAmmoCount()
+    {
+        return ammo;
+    }
+
     public override void OnFireDown(PlayerControl player)
     {
         isTriggerDown = true;
@@ -62,12 +68,15 @@ public class MachineGun : Pickup
 
     public void FireBullet()
     {
-        var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
-        var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
-        Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
-        bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 250)); 
-
-        AudioSource.PlayClipAtPoint(FireSound, transform.position);
+        if(ammo > 0)
+        {
+            var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
+            var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
+            Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
+            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 250)); 
+            AudioSource.PlayClipAtPoint(FireSound, transform.position);
+            ammo--;
+        }
     }
 
     public override void OnFireUp(PlayerControl player)

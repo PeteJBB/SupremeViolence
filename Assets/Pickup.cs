@@ -78,6 +78,11 @@ public class Pickup : MonoBehaviour
         return 0;
     }
 
+    public virtual int GetAmmoCount()
+    {
+        return -1;
+    }
+
     public virtual bool CanPlayerPickup(PlayerControl player)
     {
         return true;
