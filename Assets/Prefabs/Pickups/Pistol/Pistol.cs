@@ -19,21 +19,19 @@ public class Pistol : Pickup
 	}
 
 
-    public override bool CanPlayerPickup(PlayerControl player)
+    public override void OnPlayerPickup(PlayerControl player)
     {
         // look for other weapons and remove them
-        for(var i=0; i < player.Pickups.Count; i++)
-        {
-            var p = player.Pickups[i];
-            if(p.IsWeapon())
-            {
-                player.RemovePickup(p);
-                Destroy(p.gameObject);
-                i--;
-            }
-        }
-
-        return true;
+//        for(var i=0; i < player.Pickups.Count; i++)
+//        {
+//            var p = player.Pickups[i];
+//            if(p.IsWeapon())
+//            {
+//                player.RemovePickup(p);
+//                Destroy(p.gameObject);
+//                i--;
+//            }
+//        }
     }
 
     public override bool IsWeapon()

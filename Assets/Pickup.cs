@@ -32,30 +32,30 @@ public class Pickup : MonoBehaviour
 
     public virtual void CollectPickup(PlayerControl player)
     {
-        if(CanPlayerPickup(player))
-        {
-            Debug.Log("Picked up "+this.Name);
-            player.AddPickup(this);
+        Debug.Log("Picked up "+this.Name);
+        OnPlayerPickup(player);
+        player.AddPickup(this);
 
-            if(icon != null)
-                icon.gameObject.SetActive(false);
-            if(background != null)
-                background.gameObject.SetActive(false);
+        if(icon != null)
+            icon.gameObject.SetActive(false);
+        if(background != null)
+            background.gameObject.SetActive(false);
 
-            isPickedUp = true;
+        isPickedUp = true;
 
-            this.GetComponent<CircleCollider2D>().enabled = false;
-            
-            transform.parent = player.transform;
-            transform.localPosition = Vector3.zero;
+        this.GetComponent<CircleCollider2D>().enabled = false;
+        
+        transform.parent = player.transform;
+        transform.localPosition = Vector3.zero;
 
-            // free up grid point in arena
-            var arena = Transform.FindObjectOfType<Arena>();
-            arena.RemoveGridObject(gameObject);
+        // free up grid point in arena
+        var arena = Transform.FindObjectOfType<Arena>();
+        arena.RemoveGridObject(gameObject);
 
-            if(PickupSound != null)
-                AudioSource.PlayClipAtPoint(PickupSound, transform.position);
-        }
+        if(PickupSound != null)
+            AudioSource.PlayClipAtPoint(PickupSound, transform.position);
+
+
     }
 
     public virtual bool IsWeapon()
@@ -83,9 +83,9 @@ public class Pickup : MonoBehaviour
         return -1;
     }
 
-    public virtual bool CanPlayerPickup(PlayerControl player)
+    public virtual void OnPlayerPickup(PlayerControl player)
     {
-        return true;
+
     }
 
     public virtual void OnFireDown(PlayerControl player)
