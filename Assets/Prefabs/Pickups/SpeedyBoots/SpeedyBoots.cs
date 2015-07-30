@@ -31,13 +31,6 @@ public class SpeedyBoots : Pickup
 
     public override void OnPlayerPickup(PlayerControl player)
     {
-        // look for another speedy boots
-//        foreach(var p in player.Pickups)
-//        {
-//            if(p is SpeedyBoots)
-//                return false;
-//        }
-
         ownerPlayerBody = player.GetComponent<Rigidbody2D>();
         particles.enableEmission = true;
     }

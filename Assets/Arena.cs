@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Arena : MonoBehaviour 
 {
@@ -8,7 +9,7 @@ public class Arena : MonoBehaviour
     public GameObject WallPrefab;
     public float WallDensity = 0.25f;
 
-    private GameObject[,] GridMap;
+    private List<GameObject>[,] GridMap;
 
     public static Arena Instance;
 
@@ -16,10 +17,15 @@ public class Arena : MonoBehaviour
     {
         Instance = this;
 
-        //floor = transform.FindChild("Floor");
-        //floor.localScale = new Vector3(ArenaSize.x, 1, ArenaSize.y) / 10f;
-
-        GridMap = new GameObject[(int)ArenaSize.x, (int)ArenaSize.y];
+        // init gridmap
+        GridMap = new List<GameObject>[(int)ArenaSize.x, (int)ArenaSize.y];
+        for(var i=0; i<GridMap.GetLength(0); i++)
+        {
+            for(var j=0; j<GridMap.GetLength(1); j++)
+            {
+                GridMap[i,j] = new List<GameObject>();
+            }
+        }
 
 	    // create walls
         //top
@@ -49,7 +55,7 @@ public class Arena : MonoBehaviour
                 {
                     var wall = (GameObject)Instantiate(WallPrefab, GridToWorldPosition(gridx, gridy), Quaternion.identity);
                     wall.transform.parent = transform;
-                    GridMap[gridx, gridy] = wall;
+                    GridMap[gridx, gridy].Add(wall);
                 }
                 else
                 {
@@ -67,13 +73,21 @@ public class Arena : MonoBehaviour
 
     public Vector3 GridToWorldPosition(int gridx, int gridy)
     {
-        return new Vector3((-ArenaSize.x / 2)+ gridx + 0.5f, (-ArenaSize.y / 2) + gridy + 0.5f, 0);
+        return new Vector3((-ArenaSize.x / 2) + gridx + 0.5f, (-ArenaSize.y / 2) + gridy + 0.5f, 0);
     }
 
     public Vector3 GridToWorldPosition(Vector2 gridPoint)
     {
         return GridToWorldPosition((int)gridPoint.x, (int)gridPoint.y);
     }
+
+    public Vector2 WorldToGridPosition(Vector3 worldPos)
+    {
+        var gridX = Mathf.Floor(worldPos.x + ArenaSize.x / 2);
+        var gridY = Mathf.Floor(worldPos.y + ArenaSize.y / 2);
+        return new Vector2(gridX, gridY);
+    }
+
 
     public List<Vector2> GetEmptyGridSpots()
     {
@@ -82,7 +96,7 @@ public class Arena : MonoBehaviour
         {
             for (int y = 0; y < GridMap.GetLength(1); y += 1) 
             {
-                if(GridMap[x,y] == null)
+                if(GridMap[x,y].Count == 0)
                 {
                     list.Add(new Vector2(x,y));
                 }
@@ -94,7 +108,10 @@ public class Arena : MonoBehaviour
 
     public void SetGridObject(int x, int y, GameObject obj)
     {
-        GridMap[x,y] = obj;
+        RemoveGridObject(obj);
+        GridMap[x,y].Add(obj);
+
+        Debug.LogFormat("Grid {0},{1} contains {2} items", x, y, GridMap[x,y].Count);
     }
 
     public void SetGridObject(Vector2 gridPosition, GameObject obj)
@@ -104,15 +121,12 @@ public class Arena : MonoBehaviour
 
     public void RemoveGridObject(GameObject obj)
     {
-        for (int x = 0; x < GridMap.GetLength(0); x += 1) 
+        foreach(var list in GridMap)
         {
-            for (int y = 0; y < GridMap.GetLength(1); y += 1) 
+            if(list.Contains(obj))
             {
-                if(GridMap[x,y] == obj)
-                {
-                    GridMap[x,y] = null;
-                    return;
-                }
+                list.Remove(obj);
+                return;
             }
         }
     }

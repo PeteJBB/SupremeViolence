@@ -108,6 +108,16 @@ public class Pickup : MonoBehaviour
         }
     }
 
+    public virtual void OnSelectWeapon()
+    {
+        
+    }
+
+    public virtual void OnDeselectWeapon()
+    {
+        
+    }
+
     public virtual void AddAmmo(int amount)
     {
 

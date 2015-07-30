@@ -30,6 +30,8 @@ public class PlayerControl : MonoBehaviour {
 
     private bool muteSounds = true;
 
+    private Vector2 currentGridPos;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -58,7 +60,7 @@ public class PlayerControl : MonoBehaviour {
         // choose a random spot
         var spot = emptySpots[Random.Range(0,emptySpots.Count)];
         transform.position = arena.GridToWorldPosition(spot);
-
+        currentGridPos = spot;
         muteSounds = false;
 	}
 	
@@ -98,6 +100,14 @@ public class PlayerControl : MonoBehaviour {
 
                 // update aim angle for pickups to use
                 AimingAngle = angle;
+            }
+
+            // update grid pos
+            var gridpos = Arena.Instance.WorldToGridPosition(transform.position);
+            if(gridpos != currentGridPos)
+            {
+                currentGridPos = gridpos;
+                Arena.Instance.SetGridObject(currentGridPos, gameObject);
             }
 
             // change weapon
@@ -158,7 +168,7 @@ public class PlayerControl : MonoBehaviour {
         RecalculateMass();
     }
 
-    private void SelectNextWeapon(int dir = 1) // dir = 1 for next weapon, dir = -1 for prev
+    public void SelectNextWeapon(int dir = 1) // dir = 1 for next weapon, dir = -1 for prev
     {
         if(triggerDown)
         {
@@ -174,6 +184,8 @@ public class PlayerControl : MonoBehaviour {
         }
         else
         {
+            CurrentWeapon.OnDeselectWeapon();
+
             // find the current weapon index and move to the next one
             var index = weapons.IndexOf(CurrentWeapon);
             if(index < 0)
@@ -184,6 +196,9 @@ public class PlayerControl : MonoBehaviour {
                 CurrentWeapon = weapons[index];
             }
         }
+
+        if(CurrentWeapon != null)
+            CurrentWeapon.OnSelectWeapon();
     }
 
     public void RecalculateMass()
