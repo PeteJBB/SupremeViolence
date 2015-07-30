@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PlayerControl : MonoBehaviour {
 
@@ -11,8 +12,9 @@ public class PlayerControl : MonoBehaviour {
 
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
+    public Pickup CurrentWeapon;
 
-    public AudioClip[] CollectPickupSounds;
+    public AudioClip[] CollectPickupSounds; // one sound is chosen at random when collecting a pickup
 
     private Animator animator;
     private int walkUpHash = Animator.StringToHash("WalkUp");
@@ -43,6 +45,8 @@ public class PlayerControl : MonoBehaviour {
             pickup.PickupSound = null;
             pickup.CollectPickup(this);
         }
+
+        SelectNextWeapon();
 
         // make sure mass is right
         rigidbody.mass = baseMass;
@@ -95,26 +99,32 @@ public class PlayerControl : MonoBehaviour {
                 // update aim angle for pickups to use
                 AimingAngle = angle;
             }
+
+            // change weapon
+            if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 4"))
+            {
+                Debug.Log("Prev Weapon");
+                SelectNextWeapon(-1);
+            }
+            if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 5"))
+            {
+                Debug.Log("Next Weapon");
+                SelectNextWeapon();
+            }
+
     		// shoot?
-            //if (Input.GetKeyDown("joystick " + (playerNumber)+ " button 0"))
             if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
     		{
                 if(!triggerDown)
                 {
                     triggerDown = true;
-                    foreach(var p in Pickups)
-                    {
-                        p.OnFireDown(this);
-                    }
+                    CurrentWeapon.OnFireDown(this);
                 }
     		}
             else if(triggerDown)
             {
                 triggerDown = false;
-                foreach(var p in Pickups)
-                {
-                    p.OnFireUp(this);
-                }
+                CurrentWeapon.OnFireUp(this);
             }
         }
 	}
@@ -146,6 +156,34 @@ public class PlayerControl : MonoBehaviour {
     {
         Pickups.Remove(pickup);
         RecalculateMass();
+    }
+
+    private void SelectNextWeapon(int dir = 1) // dir = 1 for next weapon, dir = -1 for prev
+    {
+        if(triggerDown)
+        {
+            triggerDown = false;
+            CurrentWeapon.OnFireUp(this);
+        }
+
+        var weapons = Pickups.Where(x => x.IsWeapon()).ToList();
+        if(CurrentWeapon == null)
+        {
+            // just pick the first available weapon
+            CurrentWeapon = weapons.FirstOrDefault();
+        }
+        else
+        {
+            // find the current weapon index and move to the next one
+            var index = weapons.IndexOf(CurrentWeapon);
+            if(index < 0)
+                CurrentWeapon = weapons.FirstOrDefault();
+            else
+            {
+                index = (index + dir) % weapons.Count;
+                CurrentWeapon = weapons[index];
+            }
+        }
     }
 
     public void RecalculateMass()

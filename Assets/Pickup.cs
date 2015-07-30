@@ -34,28 +34,39 @@ public class Pickup : MonoBehaviour
     {
         Debug.Log("Picked up "+this.Name);
         OnPlayerPickup(player);
-        player.AddPickup(this);
 
-        if(icon != null)
-            icon.gameObject.SetActive(false);
-        if(background != null)
-            background.gameObject.SetActive(false);
+        // check if player already has one of these
+        var duplicate = player.Pickups.Find(x => x.Name == this.Name);
+        if(duplicate != null)
+        {
+            // already got one, take ammo etc and destroy
+            OnPickupDuplicate(player, duplicate);
+            Destroy(gameObject);
+        }
+        else
+        {
+            // pick it up
+            player.AddPickup(this);
 
-        isPickedUp = true;
-
-        this.GetComponent<CircleCollider2D>().enabled = false;
-        
-        transform.parent = player.transform;
-        transform.localPosition = Vector3.zero;
+            if(icon != null)
+                icon.gameObject.SetActive(false);
+            if(background != null)
+                background.gameObject.SetActive(false);
+            
+            isPickedUp = true;
+            
+            this.GetComponent<CircleCollider2D>().enabled = false;
+            
+            transform.parent = player.transform;
+            transform.localPosition = Vector3.zero;
+        }
 
         // free up grid point in arena
-        var arena = Transform.FindObjectOfType<Arena>();
-        arena.RemoveGridObject(gameObject);
+        Arena.Instance.RemoveGridObject(gameObject);
 
+        // play pickup sound
         if(PickupSound != null)
             AudioSource.PlayClipAtPoint(PickupSound, transform.position);
-
-
     }
 
     public virtual bool IsWeapon()
@@ -84,6 +95,20 @@ public class Pickup : MonoBehaviour
     }
 
     public virtual void OnPlayerPickup(PlayerControl player)
+    {
+
+    }
+
+    public virtual void OnPickupDuplicate(PlayerControl player, Pickup duplicate)
+    {
+        var ammo = GetAmmoCount();
+        if(ammo > 0)
+        {
+            duplicate.AddAmmo(ammo);
+        }
+    }
+
+    public virtual void AddAmmo(int amount)
     {
 
     }

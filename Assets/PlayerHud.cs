@@ -27,13 +27,12 @@ public class PlayerHud : MonoBehaviour
         var health = damageable.health / damageable.startingHealth;
         healthBar.localScale = new Vector3(health, 1, 1);
 
-        var currentWeapon = Player.Pickups.FirstOrDefault(x => x.IsWeapon());
-        if(currentWeapon == null)
+        if(Player.CurrentWeapon == null)
             weaponLabel.text = "";
         else
         {
-            weaponLabel.text = currentWeapon.Name;
-            var ammo = currentWeapon.GetAmmoCount();
+            weaponLabel.text = Player.CurrentWeapon.Name;
+            var ammo = Player.CurrentWeapon.GetAmmoCount();
             if(ammo >= 0)
                 weaponLabel.text += " " + ammo;
         }

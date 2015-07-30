@@ -29,17 +29,17 @@ public class MachineGun : Pickup
 
     public override void OnPlayerPickup(PlayerControl player)
     {
-        // look for other weapons and remove them
-        for(var i=0; i < player.Pickups.Count; i++)
-        {
-            var p = player.Pickups[i];
-            if(p.IsWeapon())
-            {
-                player.Pickups.Remove(p);
-                Destroy(p.gameObject);
-                i--;
-            }
-        }
+//        // look for other weapons and remove them
+//        for(var i=0; i < player.Pickups.Count; i++)
+//        {
+//            var p = player.Pickups[i];
+//            if(p.IsWeapon())
+//            {
+//                player.Pickups.Remove(p);
+//                Destroy(p.gameObject);
+//                i--;
+//            }
+//        }
     }
 
     public override bool IsWeapon()
@@ -56,6 +56,13 @@ public class MachineGun : Pickup
     public override int GetAmmoCount()
     {
         return ammo;
+    }
+
+    public override void AddAmmo(int amount)
+    {
+        ammo += amount;
+        if(ammo > 30)
+            ammo = 30;
     }
 
     public override void OnFireDown(PlayerControl player)
