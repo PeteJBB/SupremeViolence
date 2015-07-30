@@ -28,7 +28,7 @@ public class Pistol : Pickup
         var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
         var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
         Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
-        bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 250));
+        bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
 
         AudioSource.PlayClipAtPoint(FireSound, transform.position);
     }

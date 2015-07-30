@@ -110,8 +110,6 @@ public class Arena : MonoBehaviour
     {
         RemoveGridObject(obj);
         GridMap[x,y].Add(obj);
-
-        Debug.LogFormat("Grid {0},{1} contains {2} items", x, y, GridMap[x,y].Count);
     }
 
     public void SetGridObject(Vector2 gridPosition, GameObject obj)

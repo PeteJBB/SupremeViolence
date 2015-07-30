@@ -4,11 +4,13 @@ using System.Collections;
 public class Pickup : MonoBehaviour
 {
     public string Name;
+    public PlayerControl Player;
+    public AudioClip PickupSound;
+
     private Transform background;
     private Transform icon;
     private bool isPickedUp = false;
-
-    public AudioClip PickupSound;
+    
 
     void Start()
     {
@@ -47,6 +49,7 @@ public class Pickup : MonoBehaviour
         {
             // pick it up
             player.AddPickup(this);
+            this.Player = player;
 
             if(icon != null)
                 icon.gameObject.SetActive(false);
