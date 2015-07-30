@@ -30,10 +30,10 @@ public class PlayerControl : MonoBehaviour {
 
     private bool muteSounds = true;
 
-    private Vector2 currentGridPos;
+    public Vector2 CurrentGridPos;
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
         animator = this.GetComponent<Animator>();
         rigidbody = this.GetComponent<Rigidbody2D>();
@@ -53,14 +53,6 @@ public class PlayerControl : MonoBehaviour {
         // make sure mass is right
         rigidbody.mass = baseMass;
 
-        // set initial location
-        var arena = Transform.FindObjectOfType<Arena>();
-        var emptySpots = arena.GetEmptyGridSpots();
-        
-        // choose a random spot
-        var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-        transform.position = arena.GridToWorldPosition(spot);
-        currentGridPos = spot;
         muteSounds = false;
 	}
 	
@@ -104,10 +96,10 @@ public class PlayerControl : MonoBehaviour {
 
             // update grid pos
             var gridpos = Arena.Instance.WorldToGridPosition(transform.position);
-            if(gridpos != currentGridPos)
+            if(gridpos != CurrentGridPos)
             {
-                currentGridPos = gridpos;
-                Arena.Instance.SetGridObject(currentGridPos, gameObject);
+                CurrentGridPos = gridpos;
+                Arena.Instance.SetGridObject(CurrentGridPos, gameObject);
             }
 
             // change weapon

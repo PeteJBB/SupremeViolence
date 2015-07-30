@@ -13,8 +13,13 @@ public class Arena : MonoBehaviour
 
     public static Arena Instance;
 
+    public delegate void GridContentsChangedHandler(int x, int y, List<GameObject> list);
+    public event GridContentsChangedHandler OnGridContentsChanged;
+
 	void Awake () 
     {
+
+
         Instance = this;
 
         // init gridmap
@@ -55,7 +60,7 @@ public class Arena : MonoBehaviour
                 {
                     var wall = (GameObject)Instantiate(WallPrefab, GridToWorldPosition(gridx, gridy), Quaternion.identity);
                     wall.transform.parent = transform;
-                    GridMap[gridx, gridy].Add(wall);
+                    SetGridObject(gridx, gridy, wall);
                 }
                 else
                 {
@@ -64,7 +69,31 @@ public class Arena : MonoBehaviour
                 }
             }
         }
+
+        // set player positions
+        foreach(var player in GameObject.FindObjectsOfType<PlayerControl>())
+        {
+            var emptySpots = GetEmptyGridSpots();
+            
+            // choose a random spot
+            var spot = emptySpots[Random.Range(0,emptySpots.Count)];
+            player.transform.position = GridToWorldPosition(spot);
+            player.CurrentGridPos = spot;
+            SetGridObject(spot, player.gameObject);
+        }
 	}
+
+    void Start () 
+    {
+        for(var x = 0; x < ArenaSize.x; x++)
+        {
+            for(var y = 0; y < ArenaSize.y; y++)
+            {
+                if(OnGridContentsChanged != null)
+                    OnGridContentsChanged(x, y, GridMap[x,y]);
+            }
+        }
+    }
 	
 	void Update () 
     {
@@ -88,7 +117,6 @@ public class Arena : MonoBehaviour
         return new Vector2(gridX, gridY);
     }
 
-
     public List<Vector2> GetEmptyGridSpots()
     {
         var list = new List<Vector2>();
@@ -110,6 +138,11 @@ public class Arena : MonoBehaviour
     {
         RemoveGridObject(obj);
         GridMap[x,y].Add(obj);
+
+        var minimap = GameObject.FindObjectOfType<MiniMap>();
+
+        if(OnGridContentsChanged != null)
+            OnGridContentsChanged(x, y, GridMap[x,y]);
     }
 
     public void SetGridObject(Vector2 gridPosition, GameObject obj)
@@ -119,12 +152,20 @@ public class Arena : MonoBehaviour
 
     public void RemoveGridObject(GameObject obj)
     {
-        foreach(var list in GridMap)
+        for (int x = 0; x < GridMap.GetLength(0); x += 1) 
         {
-            if(list.Contains(obj))
+            for (int y = 0; y < GridMap.GetLength(1); y += 1) 
             {
-                list.Remove(obj);
-                return;
+                var list = GridMap[x,y];
+                if(list.Contains(obj))
+                {
+                    list.Remove(obj);
+
+                    if(OnGridContentsChanged != null)
+                        OnGridContentsChanged(x, y, list);
+
+                    return;
+                }
             }
         }
     }
