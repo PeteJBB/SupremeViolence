@@ -3,12 +3,16 @@ using System.Collections;
 
 public class Explosion : MonoBehaviour 
 {
-    Animator anim;
+    public AudioClip explosionSound;
+
+    private Animator anim;
 
 	// Use this for initialization
 	void Start () 
     {
         anim = GetComponent<Animator>();
+
+        AudioSource.PlayClipAtPoint(explosionSound, transform.position);
 	}
 
     void OnTriggerEnter2D(Collider2D other)

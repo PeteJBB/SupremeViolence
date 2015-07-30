@@ -33,7 +33,7 @@ public class PlayerControl : MonoBehaviour {
     public Vector2 CurrentGridPos;
 
 	// Use this for initialization
-	void Awake () 
+	void Start () 
     {
         animator = this.GetComponent<Animator>();
         rigidbody = this.GetComponent<Rigidbody2D>();
