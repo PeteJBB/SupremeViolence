@@ -31,6 +31,7 @@ public class DestroyOnCollision : MonoBehaviour {
         var rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
         Explode(contact.point, rot);
         DamageOther(contact.collider.gameObject);
+        Helper.DetachParticles(gameObject);
 		Destroy(gameObject);
 	}
 
