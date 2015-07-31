@@ -5,25 +5,35 @@ public class Flamer : Pickup
 {
     public GameObject FlamePrefab;
     private float fireDelay = 0.04f;
-    private bool isTriggerDown= false;
+    private bool isFiring = false;
     private float lastFireTime = 0;
-    private PlayerControl player;
 
-    public AudioClip FireSound;
+    private AudioSource jetSound;
+    private AudioSource flameSound;
 
 	// Use this for initialization
 	void Start()
     {
         BaseStart();
+        jetSound = GetComponents<AudioSource>()[0];
+        flameSound = GetComponents<AudioSource>()[1];
+        flameSound.volume = 0;
 	}
 	
 	// Update is called once per frame
 	void Update() 
     {
-        if (isTriggerDown && Time.time - lastFireTime > fireDelay)
+        if (isFiring && Time.time - lastFireTime > fireDelay)
         {
-            Fire();
-            lastFireTime = Time.time;
+            if(ammo > 0)
+            {
+                Fire();
+                lastFireTime = Time.time;
+            }
+            else
+            {
+                StopFiring();
+            }
         }
 	}
 
@@ -37,8 +47,8 @@ public class Flamer : Pickup
         return 0.1f;
     }
 
-    private int fullAmmo = 100;
-    private int ammo = 100;
+    private int fullAmmo = 1000;
+    private int ammo = 1000;
     public override int GetAmmoCount()
     {
         return ammo;
@@ -53,33 +63,30 @@ public class Flamer : Pickup
 
     public override void OnFireDown(PlayerControl player)
     {
-        isTriggerDown = true;
-        this.player = player;
+        if(ammo > 0)
+        {
+            StartFiring();
+        }
     }
 
     float aimingError = 5;
     public void Fire()
     {
-        if(ammo > 0)
-        {
-            var rotation = Quaternion.AngleAxis(player.AimingAngle + Random.Range(-aimingError, aimingError), Vector3.forward);
-            var flame = (GameObject)GameObject.Instantiate(FlamePrefab, player.transform.position, rotation);
-            flame.SetOwner(player.gameObject);
+        var rotation = Quaternion.AngleAxis(Player.AimingAngle + Random.Range(-aimingError, aimingError), Vector3.forward);
+        var flame = (GameObject)GameObject.Instantiate(FlamePrefab, Player.transform.position, rotation);
+        flame.SetOwner(Player.gameObject);
 
-            Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
-            var rb = flame.GetComponent<Rigidbody2D>();
-            rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
-            rb.AddTorque(Random.Range(-0.2f, 0.2f));
+        Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
+        var rb = flame.GetComponent<Rigidbody2D>();
+        rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
+        rb.AddTorque(Random.Range(-0.2f, 0.2f));
 
-            AudioSource.PlayClipAtPoint(FireSound, transform.position);
-            ammo--;
-
-        }
+        ammo--;
     }
 
     public override void OnFireUp(PlayerControl player)
     {
-        isTriggerDown = false;
+        StopFiring();
     }
 
     public override void OnDeselectWeapon()
@@ -87,7 +94,31 @@ public class Flamer : Pickup
         if(ammo <= 0)
         {
             // drop weapon
-            player.RemovePickup(this);
+            Player.RemovePickup(this);
         }
+    }
+
+    private void StartFiring()
+    {
+        isFiring = true;
+        jetSound.Play();
+        flameSound.Play();
+
+        iTween.StopByName("flameFadeOut");
+        iTween.AudioTo(gameObject, iTween.Hash("name", "flameFadeIn", "audiosource", flameSound, "volume", 1, "time", 1));
+    }
+
+    private void StopFiring()
+    {
+        isFiring = false;
+        jetSound.Stop();
+
+        iTween.StopByName("flameFadeIn");
+        iTween.AudioTo(gameObject, iTween.Hash("name", "flameFadeOut", "audiosource", flameSound, "volume", 0, "time", 1, "oncomplete", "StopFlameSounds", "oncompletetarget", gameObject));
+    }
+
+    private void StopFlameSounds()
+    {
+        flameSound.Stop();
     }
 }

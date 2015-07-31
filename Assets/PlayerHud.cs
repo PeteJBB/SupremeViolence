@@ -26,7 +26,7 @@ public class PlayerHud : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        var health = damageable.health / damageable.startingHealth;
+        var health = Mathf.Clamp(damageable.health / damageable.startingHealth, 0, 1);
         healthBar.localScale = new Vector3(health, 1, 1);
 
         if(Player.CurrentWeapon == null)

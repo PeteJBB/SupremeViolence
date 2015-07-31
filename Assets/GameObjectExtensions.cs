@@ -8,16 +8,22 @@ public static class GameObjectExtensions
     // owner is not Parent, it is mostly used for tracking who fired projectiles
     public static void SetOwner(this GameObject obj, GameObject owner)
     {
-        var ownedObj = obj.GetComponent<IOwnedObject>();
-        if(ownedObj == null)
-            ownedObj = obj.AddComponent<OwnedObject>();
+        if(obj != null)
+        {
+            var ownedObj = obj.GetComponent<OwnedObject>();
+            if(ownedObj == null)
+                ownedObj = obj.AddComponent<OwnedObject>();
 
-        ownedObj.Owner = owner;
+            ownedObj.Owner = owner;
+        }
     }
 
     public static GameObject GetOwner(this GameObject obj)
     {
-        var ownedObj = obj.GetComponent<IOwnedObject>();
+        if(obj == null)
+            return null;
+
+        var ownedObj = obj.GetComponent<OwnedObject>();
         if(ownedObj != null)
             return ownedObj.Owner;
 

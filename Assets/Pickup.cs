@@ -34,7 +34,6 @@ public class Pickup : MonoBehaviour
 
     public virtual void CollectPickup(PlayerControl player)
     {
-        Debug.Log("Picked up "+this.Name);
         OnPlayerPickup(player);
 
         // check if player already has one of these

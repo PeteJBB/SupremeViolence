@@ -107,12 +107,10 @@ public class PlayerControl : MonoBehaviour {
             // change weapon
             if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 4"))
             {
-                Debug.Log("Prev Weapon");
                 SelectNextWeapon(-1);
             }
             if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 5"))
             {
-                Debug.Log("Next Weapon");
                 SelectNextWeapon();
             }
 
