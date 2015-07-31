@@ -1,45 +1,29 @@
 fileFormatVersion: 2
-guid: 52b899416eb395a4eba08a788e7cdd35
-timeCreated: 1437965499
+guid: df3abbd420df6bc44a68342992b455e8
+timeCreated: 1438327956
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: GuySprite2_0
-    21300002: GuySprite2_1
-    21300004: GuySprite2_2
-    21300006: GuySprite2_3
-    21300008: GuySprite2_4
-    21300010: GuySprite2_5
-    21300012: GuySprite2_6
-    21300014: GuySprite2_7
-    21300016: GuySprite2_8
-    21300018: GuySprite2_9
-    21300020: GuySprite2_10
-    21300022: GuySprite2_11
-    21300024: GuySprite2_12
-    21300026: GuySprite2_13
-    21300028: GuySprite2_14
-    21300030: GuySprite2_15
-    21300032: GuySprite_0
-    21300034: GuySprite_1
-    21300036: GuySprite_2
-    21300038: GuySprite_3
-    21300040: GuySprite_4
-    21300042: GuySprite_5
-    21300044: GuySprite_6
-    21300046: GuySprite_7
-    21300048: GuySprite_8
-    21300050: GuySprite_9
-    21300052: GuySprite_10
-    21300054: GuySprite_11
-    21300056: GuySprite_12
-    21300058: GuySprite_13
-    21300060: GuySprite_14
-    21300062: GuySprite_15
+    21300000: legsSprite_0
+    21300002: legsSprite_1
+    21300004: legsSprite_2
+    21300006: legsSprite_3
+    21300008: legsSprite_4
+    21300010: legsSprite_5
+    21300012: legsSprite_6
+    21300014: legsSprite_7
+    21300016: legsSprite_8
+    21300018: legsSprite_9
+    21300020: legsSprite_10
+    21300022: legsSprite_11
+    21300024: legsSprite_12
+    21300026: legsSprite_13
+    21300028: legsSprite_14
+    21300030: legsSprite_15
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -58,11 +42,11 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -2
+  textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
-    aniso: 16
+    aniso: -1
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -75,13 +59,13 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: .5, y: .5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 50
+  spritePixelsToUnits: 100
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: GuySprite_0
+    - name: legsSprite_0
       rect:
         serializedVersion: 2
         x: 0
@@ -91,7 +75,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_1
+    - name: legsSprite_1
       rect:
         serializedVersion: 2
         x: 32
@@ -101,7 +85,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_2
+    - name: legsSprite_2
       rect:
         serializedVersion: 2
         x: 64
@@ -111,7 +95,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_3
+    - name: legsSprite_3
       rect:
         serializedVersion: 2
         x: 96
@@ -121,7 +105,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_4
+    - name: legsSprite_4
       rect:
         serializedVersion: 2
         x: 0
@@ -131,7 +115,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_5
+    - name: legsSprite_5
       rect:
         serializedVersion: 2
         x: 32
@@ -141,7 +125,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_6
+    - name: legsSprite_6
       rect:
         serializedVersion: 2
         x: 64
@@ -151,7 +135,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_7
+    - name: legsSprite_7
       rect:
         serializedVersion: 2
         x: 96
@@ -161,7 +145,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_8
+    - name: legsSprite_8
       rect:
         serializedVersion: 2
         x: 0
@@ -171,7 +155,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_9
+    - name: legsSprite_9
       rect:
         serializedVersion: 2
         x: 32
@@ -181,7 +165,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_10
+    - name: legsSprite_10
       rect:
         serializedVersion: 2
         x: 64
@@ -191,7 +175,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_11
+    - name: legsSprite_11
       rect:
         serializedVersion: 2
         x: 96
@@ -201,7 +185,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_12
+    - name: legsSprite_12
       rect:
         serializedVersion: 2
         x: 0
@@ -211,7 +195,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_13
+    - name: legsSprite_13
       rect:
         serializedVersion: 2
         x: 32
@@ -221,7 +205,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_14
+    - name: legsSprite_14
       rect:
         serializedVersion: 2
         x: 64
@@ -231,7 +215,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: GuySprite_15
+    - name: legsSprite_15
       rect:
         serializedVersion: 2
         x: 96

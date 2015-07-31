@@ -1,18 +1,17 @@
 fileFormatVersion: 2
-guid: 6f08c2829bb84d649a486469973eb2ac
-timeCreated: 1438245963
+guid: fd086a83b04c35442aed6ce6fbba6008
+timeCreated: 1438326171
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: RocketLauncherSprite_0
-    21300002: RocketLauncherSprite_1
-    21300004: RocketLauncherSprite_2
-    21300006: RocketLauncherSprite_3
-    21300008: RocketLauncherSprite_4
+    21300000: headSprite_0
+    21300002: headSprite_1
+    21300004: headSprite_2
+    21300006: headSprite_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -34,8 +33,8 @@ TextureImporter:
   textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
-    filterMode: 1
-    aniso: 16
+    filterMode: 0
+    aniso: -1
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -54,55 +53,45 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: RocketLauncherSprite_0
+    - name: headSprite_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 42
-        width: 22
-        height: 22
+        y: 0
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: RocketLauncherSprite_1
+    - name: headSprite_1
       rect:
         serializedVersion: 2
-        x: 6
-        y: 26
-        width: 6
-        height: 15
+        x: 16
+        y: 0
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: RocketLauncherSprite_2
+    - name: headSprite_2
       rect:
         serializedVersion: 2
-        x: 14
-        y: 26
-        width: 6
-        height: 15
+        x: 32
+        y: 0
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: RocketLauncherSprite_3
+    - name: headSprite_3
       rect:
         serializedVersion: 2
-        x: 22
-        y: 26
-        width: 6
-        height: 15
+        x: 48
+        y: 0
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: .5, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: RocketLauncherSprite_4
-      rect:
-        serializedVersion: 2
-        x: 30
-        y: 26
-        width: 6
-        height: 15
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

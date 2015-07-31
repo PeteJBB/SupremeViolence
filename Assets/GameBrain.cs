@@ -21,12 +21,12 @@ public class GameBrain : MonoBehaviour
     private PlayerControl player1;
     private PlayerControl player2;
 
+    private float targetOrthSize;
+
 	void Awake () 
     {
         GameBrain.Instance = this;  
         arena = Transform.FindObjectOfType<Arena>();
-
-
 	}
 
     void Start()
@@ -42,7 +42,9 @@ public class GameBrain : MonoBehaviour
         // disable camera tracking while intro pan is running
         camera1 = cameras[0].GetComponent<Camera>();
         camera2 = cameras[1].GetComponent<Camera>();
-        
+
+        targetOrthSize = camera1.orthographicSize;
+
         if(StartupSound != null)
             AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
         
@@ -107,7 +109,7 @@ public class GameBrain : MonoBehaviour
         mainCanvas.ShowMessage("Get Ready!", panTime);
 
         // adjust zoom
-        iTween.ValueTo(gameObject, iTween.Hash("from", camera1.orthographicSize, "to", 4, "time", panTime, "onupdate", "CamPerspectiveTween", "easetype", iTween.EaseType.easeOutExpo));
+        iTween.ValueTo(gameObject, iTween.Hash("from", camera1.orthographicSize, "to", targetOrthSize, "time", panTime, "onupdate", "CamPerspectiveTween", "easetype", iTween.EaseType.easeOutExpo));
 
         // pan
         var guy1 = camera1.gameObject.GetComponent<TrackObject>().target;
