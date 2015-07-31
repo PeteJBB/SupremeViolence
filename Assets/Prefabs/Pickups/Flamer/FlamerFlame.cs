@@ -1,33 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FlamerFlame : MonoBehaviour 
+public class FlamerFlame : MonoBehaviour
 {
-    float timeToFullSize = 1f;
-    float birthday;
-
-    SpriteRenderer sprite;
+    private Animator anim;
 
 	// Use this for initialization
 	void Start () 
     {
-        birthday = Time.time;
+        anim = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        var time = Time.time - birthday;
-        if(time > timeToFullSize)
+        if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+        {
             Destroy(gameObject);
-
-
+        }
 	}
 
     void OnCollisionEnter2D(Collision2D collision) 
     {
         var dam = collision.collider.GetComponent<Damageable>();
-        dam.Damage(3);
-        //Physics2D.IgnoreCollision(GetComponent<Collider2D>(), collision.collider);
+        if(dam != null)
+        {
+            dam.Damage(3, gameObject);
+            //Physics2D.IgnoreCollision(GetComponent<Collider2D>(), collision.collider);
+        }
     }
 }

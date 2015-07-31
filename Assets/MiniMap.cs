@@ -9,10 +9,12 @@ public class MiniMap : MonoBehaviour
     public GameObject GridSquarePrefab;
     public GameObject[,] GridMap;
 
+    private float mapSize = 120;
+
 	// Use this for initialization
 	void Start () 
     {
-        var gridSize = 12;
+        var gridSize = mapSize / Arena.Instance.ArenaSize.y;
         GridMap = new GameObject[(int)Arena.Instance.ArenaSize.x, (int)Arena.Instance.ArenaSize.y];
         // create the minimap grid squares to match arena size
         for(var x = 0; x < Arena.Instance.ArenaSize.x; x++)

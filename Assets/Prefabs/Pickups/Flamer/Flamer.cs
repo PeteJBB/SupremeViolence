@@ -64,10 +64,13 @@ public class Flamer : Pickup
         {
             var rotation = Quaternion.AngleAxis(player.AimingAngle + Random.Range(-aimingError, aimingError), Vector3.forward);
             var flame = (GameObject)GameObject.Instantiate(FlamePrefab, player.transform.position, rotation);
+            flame.SetOwner(player.gameObject);
+
             Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
             var rb = flame.GetComponent<Rigidbody2D>();
             rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
             rb.AddTorque(Random.Range(-0.2f, 0.2f));
+
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             ammo--;
 

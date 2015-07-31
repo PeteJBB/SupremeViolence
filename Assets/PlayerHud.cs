@@ -11,6 +11,7 @@ public class PlayerHud : MonoBehaviour
     private Transform healthBar;
     private Transform healthBarBorder;
     private Text weaponLabel;
+    private Text score;
 
 	// Use this for initialization
 	void Start () 
@@ -19,6 +20,7 @@ public class PlayerHud : MonoBehaviour
         healthBar = transform.FindChild("HealthBar");
         healthBarBorder = transform.FindChild("HealthBarBorder");
         weaponLabel = transform.FindChild("WeaponLabel").GetComponent<Text>();
+        score = transform.FindChild("Score").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
@@ -37,5 +39,6 @@ public class PlayerHud : MonoBehaviour
                 weaponLabel.text += " " + ammo;
         }
 
+        score.text = Player.Score.ToString();
 	}
 }

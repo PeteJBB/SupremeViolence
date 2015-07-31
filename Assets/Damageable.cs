@@ -10,8 +10,9 @@ public class Damageable : MonoBehaviour
     public float RespawnDelaySeconds = 1;
 
     public AudioClip DeathSound;
+    public int PointsValue = 0;
 
-    private bool isDead = false;
+    public bool IsDead = false;
 
 	// Use this for initialization
 	void Start () 
@@ -22,30 +23,7 @@ public class Damageable : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (health <= 0 && !isDead)
-        {
-            isDead = true;
 
-            // explode
-            if(explosionPrefab != null)
-            {
-                Instantiate(explosionPrefab, transform.position, transform.rotation);
-            }
-
-            // play sound
-            if(DeathSound != null)
-                AudioSource.PlayClipAtPoint(DeathSound, transform.position);
-
-            if(RespawnOnDeath)
-            {
-                gameObject.SetActive(false);
-                GameBrain.Instance.WaitAndThenCall(RespawnDelaySeconds, () => Respawn());
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
 	}
 
     public void Respawn() 
@@ -57,14 +35,50 @@ public class Damageable : MonoBehaviour
         var spot = emptySpots[Random.Range(0,emptySpots.Count)];
         transform.position = arena.GridToWorldPosition(spot);
 
-        isDead = false;
+        IsDead = false;
         health = startingHealth;
         gameObject.SetActive(true);
     }
 
-    public void Damage(float amount)
+    public void Damage(float amount, GameObject damageSource = null)
     {
-        Debug.Log(gameObject.name + " damageable hit " + amount);
         health -= amount;
+
+        if (health <= 0 && !IsDead)
+        {
+            IsDead = true;
+
+            // report to Owner
+            var owner = damageSource.GetOwner();
+            if(owner != null)
+            {
+                Debug.Log(gameObject.name + " was killed by " + owner);
+                var player = owner.GetComponent<PlayerControl>();
+                if(player != null)
+                {
+                    player.Score += PointsValue;
+                }
+            }
+            
+            // explode
+            if(explosionPrefab != null)
+            {
+                Instantiate(explosionPrefab, transform.position, transform.rotation);
+            }
+            
+            // play sound
+            if(DeathSound != null)
+                AudioSource.PlayClipAtPoint(DeathSound, transform.position);
+            
+            if(RespawnOnDeath)
+            {
+                gameObject.SetActive(false);
+                GameBrain.Instance.WaitAndThenCall(RespawnDelaySeconds, () => Respawn());
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

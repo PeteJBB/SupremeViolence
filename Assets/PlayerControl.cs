@@ -32,6 +32,8 @@ public class PlayerControl : MonoBehaviour {
 
     public Vector2 CurrentGridPos;
 
+    public int Score = 0;
+
 	// Use this for initialization
 	void Start () 
     {
