@@ -23,10 +23,6 @@ public class PlayerControl : MonoBehaviour {
     private int walkRightHash;// = Animator.StringToHash("WalkRight");
     private int currentAnimHash;
 
-    private OrientedSprite head;
-    private OrientedSprite torso;
-    private OrientedSprite legs;
-
     public float AimingAngle = 0;
     private bool triggerDown = false;
 
@@ -44,9 +40,8 @@ public class PlayerControl : MonoBehaviour {
         animator = this.GetComponent<Animator>();
         rigidbody = this.GetComponent<Rigidbody2D>();
 
-        head = transform.FindChild("Head").GetComponent<OrientedSprite>();
-        torso = transform.FindChild("Torso").GetComponent<OrientedSprite>();
-        legs = transform.FindChild("Legs").GetComponent<OrientedSprite>();
+        BroadcastMessage("SetOrientation", Orientation.Up);
+        BroadcastMessage("SetAnimationSpeed", 0f);
 
         // turn startingpickups into actual pickup instances
         foreach(var p in StartingPickups)
@@ -73,45 +68,30 @@ public class PlayerControl : MonoBehaviour {
         {
             var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
             rigidbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
-            //animator.SetFloat("Speed", rigidbody.velocity.magnitude);
+            BroadcastMessage("SetAnimationSpeed", rigidbody.velocity.magnitude);
 
             if(input.magnitude > 0)
             {
         		// rotate to face input dir
+                var orientation = Orientation.Down;
                 float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
                 if(angle >= -45 && angle < 45)// && currentAnimHash != walkUpHash)
                 {
-                    head.SetOrientation(Orientation.Up);
-                    torso.SetOrientation(Orientation.Up);
-                    legs.SetOrientation(Orientation.Up);
-
-                    //animator.SetTrigger(walkUpHash);
-                    //currentAnimHash = walkUpHash;
+                    orientation = Orientation.Up;
                 }
                 else if(angle >= 45 && angle < 135)// && currentAnimHash != walkLeftHash)
                 {
-                    head.SetOrientation(Orientation.Left);
-                    torso.SetOrientation(Orientation.Left);
-                    legs.SetOrientation(Orientation.Left);
-                    //animator.SetTrigger(walkLeftHash);
-                    //currentAnimHash = walkLeftHash;
+                    orientation = Orientation.Left;
                 }
                 else if(angle >= -135 && angle < -45)// && currentAnimHash != walkRightHash)
                 {
-                    head.SetOrientation(Orientation.Right);
-                    torso.SetOrientation(Orientation.Right);
-                    legs.SetOrientation(Orientation.Right);
-                    //animator.SetTrigger(walkRightHash);
-                    //currentAnimHash = walkRightHash;
+                    orientation = Orientation.Right;
                 }
                 else if(angle >= 135 || angle < -135)// && currentAnimHash != walkDownHash)
                 {
-                    head.SetOrientation(Orientation.Down);
-                    torso.SetOrientation(Orientation.Down);
-                    legs.SetOrientation(Orientation.Down);
-                    //animator.SetTrigger(walkDownHash);
-                    //currentAnimHash = walkDownHash;
+                    orientation = Orientation.Down;
                 }
+                BroadcastMessage("SetOrientation", orientation);
 
                 // update aim angle for pickups to use
                 AimingAngle = angle;
