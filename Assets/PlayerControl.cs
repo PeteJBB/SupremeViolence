@@ -13,37 +13,35 @@ public class PlayerControl : MonoBehaviour {
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
     public Pickup CurrentWeapon;
-
     public AudioClip[] CollectPickupSounds; // one sound is chosen at random when collecting a pickup
 
-    private Animator animator;
-    private int walkUpHash;// = Animator.StringToHash("WalkUp");
-    private int walkLeftHash;// = Animator.StringToHash("WalkLeft");
-    private int walkDownHash;// = Animator.StringToHash("WalkDown");
-    private int walkRightHash;// = Animator.StringToHash("WalkRight");
-    private int currentAnimHash;
 
-    public float AimingAngle = 0;
+    public float AimingAngle = 90;
     private bool triggerDown = false;
 
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rbody;
 
-    private bool muteSounds = true;
+    private bool muteSounds = true; // sounds muted while we assign pickups etc
+    private Orientation orientation = Orientation.Down;
 
     public Vector2 CurrentGridPos;
-
     public int Score = 0;
+
+    public Vector2 AimingOffsetUp;
+    public Vector2 AimingOffsetDown;
+    public Vector2 AimingOffsetLeft;
+    public Vector2 AimingOffsetRight;
+
 
 	// Use this for initialization
 	void Start () 
     {
-        animator = this.GetComponent<Animator>();
-        rigidbody = this.GetComponent<Rigidbody2D>();
-
-        BroadcastMessage("SetOrientation", Orientation.Up);
-        BroadcastMessage("SetAnimationSpeed", 0f);
+        // make sure mass is right
+        rbody = this.GetComponent<Rigidbody2D>();
+        rbody.mass = baseMass;
 
         // turn startingpickups into actual pickup instances
+        muteSounds = true;
         foreach(var p in StartingPickups)
         {
             var instance = Instantiate(p);
@@ -55,10 +53,11 @@ public class PlayerControl : MonoBehaviour {
 
         SelectNextWeapon();
 
-        // make sure mass is right
-        rigidbody.mass = baseMass;
-
+        // enable sounds
         muteSounds = false;
+
+        BroadcastMessage("SetOrientation", orientation);
+        BroadcastMessage("SetAnimationSpeed", 0f);
 	}
 	
 	// Update is called once per frame
@@ -67,13 +66,12 @@ public class PlayerControl : MonoBehaviour {
         if(GameBrain.Instance.State == GameState.GameOn)
         {
             var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
-            rigidbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
-            BroadcastMessage("SetAnimationSpeed", rigidbody.velocity.magnitude);
+            rbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
+            BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 
             if(input.magnitude > 0)
             {
         		// rotate to face input dir
-                var orientation = Orientation.Down;
                 float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
                 if(angle >= -45 && angle < 45)// && currentAnimHash != walkUpHash)
                 {
@@ -121,16 +119,54 @@ public class PlayerControl : MonoBehaviour {
                 if(!triggerDown)
                 {
                     triggerDown = true;
-                    CurrentWeapon.OnFireDown(this);
+                    if(CurrentWeapon != null)
+                    {
+                        CurrentWeapon.OnFireDown(GetAimingOrigin());
+                    }
                 }
     		}
             else if(triggerDown)
             {
                 triggerDown = false;
-                CurrentWeapon.OnFireUp(this);
+                if(CurrentWeapon != null)
+                {
+                    CurrentWeapon.OnFireUp(GetAimingOrigin());
+                }
             }
         }
 	}
+
+    /// <summary>
+    /// Get the position of the player's gun
+    /// This changes depending on player orientation
+    /// </summary>
+    /// <returns>The aiming origin.</returns>
+    public Vector2 GetAimingOrigin()
+    {
+        switch(orientation)
+        {
+            case Orientation.Left:
+                return transform.position.ToVector2() + AimingOffsetLeft;
+            case Orientation.Right:
+                return transform.position.ToVector2() + AimingOffsetRight;
+                break;
+            case Orientation.Up:
+                return transform.position.ToVector2() + AimingOffsetUp;
+                break;
+            case Orientation.Down:
+            default:
+                return transform.position.ToVector2() + AimingOffsetDown;
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        var cubeSize = 0.01f;
+        Gizmos.DrawWireCube(transform.position + AimingOffsetUp.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
+        Gizmos.DrawWireCube(transform.position + AimingOffsetDown.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
+        Gizmos.DrawWireCube(transform.position + AimingOffsetLeft.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
+        Gizmos.DrawWireCube(transform.position + AimingOffsetRight.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
+    }
 
     float GetLegStrengthMultiplier()
     {
@@ -151,6 +187,7 @@ public class PlayerControl : MonoBehaviour {
         if (!muteSounds && CollectPickupSounds.Length > 0)
         {
             var sound = CollectPickupSounds [Random.Range(0, CollectPickupSounds.Length)];
+            Debug.Log(sound.name);
             AudioSource.PlayClipAtPoint(sound, transform.position);
         }
     }
@@ -166,7 +203,7 @@ public class PlayerControl : MonoBehaviour {
         if(triggerDown)
         {
             triggerDown = false;
-            CurrentWeapon.OnFireUp(this);
+            CurrentWeapon.OnFireUp(GetAimingOrigin());
         }
 
         var weapons = Pickups.Where(x => x.IsWeapon()).ToList();
@@ -185,7 +222,7 @@ public class PlayerControl : MonoBehaviour {
                 CurrentWeapon = weapons.FirstOrDefault();
             else
             {
-                index = (index + dir) % weapons.Count;
+                index = (weapons.Count + index + dir) % weapons.Count;
                 CurrentWeapon = weapons[index];
             }
         }
@@ -201,6 +238,6 @@ public class PlayerControl : MonoBehaviour {
         {
             mass += pu.GetMass();
         }
-        rigidbody.mass = mass;
+        rbody.mass = mass;
     }
 }

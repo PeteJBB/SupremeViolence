@@ -7,7 +7,6 @@ public class MachineGun : Pickup
     private float fireDelay = 0.1f;
     private bool isTriggerDown= false;
     private float lastFireTime = 0;
-    private PlayerControl player;
 
     public AudioClip FireSound;
 
@@ -15,6 +14,7 @@ public class MachineGun : Pickup
 	void Start()
     {
         BaseStart();
+        Ammo = MaxAmmo = 30;
 	}
 	
 	// Update is called once per frame
@@ -32,54 +32,26 @@ public class MachineGun : Pickup
         return true;
     }
 
-    public override float GetMass()
-    {
-        return 0.1f;
-    }
-
-    private int ammo = 30;
-    public override int GetAmmoCount()
-    {
-        return ammo;
-    }
-
-    public override void AddAmmo(int amount)
-    {
-        ammo += amount;
-        if(ammo > 30)
-            ammo = 30;
-    }
-
-    public override void OnFireDown(PlayerControl player)
+    public override void OnFireDown(Vector3 origin)
     {
         isTriggerDown = true;
-        this.player = player;
     }
 
     public void FireBullet()
     {
-        if(ammo > 0)
+        if(Ammo > 0)
         {
-            var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
-            var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
-            Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
+            var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
+            var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, Player.GetAimingOrigin(), rotation);
+            Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
             bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse); 
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
-            ammo--;
+            Ammo--;
         }
     }
 
-    public override void OnFireUp(PlayerControl player)
+    public override void OnFireUp(Vector3 origin)
     {
         isTriggerDown = false;
-    }
-
-    public override void OnDeselectWeapon()
-    {
-        if(ammo <= 0)
-        {
-            // drop weapon
-            player.RemovePickup(this);
-        }
     }
 }

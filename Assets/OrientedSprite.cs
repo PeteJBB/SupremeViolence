@@ -13,8 +13,8 @@ public class OrientedSprite : MonoBehaviour
 
     private Animator anim;
 
-    public Orientation orientation = Orientation.Up;
-    private Orientation lastOrientation = Orientation.Up;
+    public Orientation orientation = Orientation.Down;
+    private Orientation lastOrientation = Orientation.Down;
 
     SpriteRenderer spriteRenderer;
 
@@ -23,6 +23,7 @@ public class OrientedSprite : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        lastOrientation = orientation;
 	}
 
     public void SetAnimationSpeed(float speed)

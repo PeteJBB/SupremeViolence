@@ -10,7 +10,9 @@ public class Pickup : MonoBehaviour
     private Transform background;
     private Transform icon;
     private bool isPickedUp = false;
-    
+
+    public int Ammo;
+    public int MaxAmmo;
 
     void Start()
     {
@@ -49,6 +51,7 @@ public class Pickup : MonoBehaviour
             // pick it up
             player.AddPickup(this);
             this.Player = player;
+            gameObject.SetOwner(player.gameObject);
 
             if(icon != null)
                 icon.gameObject.SetActive(false);
@@ -91,11 +94,6 @@ public class Pickup : MonoBehaviour
         return 0;
     }
 
-    public virtual int GetAmmoCount()
-    {
-        return -1;
-    }
-
     public virtual void OnPlayerPickup(PlayerControl player)
     {
 
@@ -110,6 +108,18 @@ public class Pickup : MonoBehaviour
         }
     }
 
+    public virtual int GetAmmoCount()
+    {
+        return Ammo;
+    }
+
+    public virtual void AddAmmo(int amount)
+    {
+        Ammo += amount;
+        if(Ammo > MaxAmmo)
+            Ammo = MaxAmmo;
+    }
+
     public virtual void OnSelectWeapon()
     {
         
@@ -117,20 +127,18 @@ public class Pickup : MonoBehaviour
 
     public virtual void OnDeselectWeapon()
     {
-        
+        if(GetAmmoCount() <= 0 && Player != null)
+            Player.RemovePickup(this);
     }
 
-    public virtual void AddAmmo(int amount)
+
+
+    public virtual void OnFireDown(Vector3 origin)
     {
 
     }
 
-    public virtual void OnFireDown(PlayerControl player)
-    {
-
-    }
-
-    public virtual void OnFireUp(PlayerControl player)
+    public virtual void OnFireUp(Vector3 origin)
     {
         
     }

@@ -23,11 +23,16 @@ public class Pistol : Pickup
         return true;
     }
 
-    public override void OnFireDown(PlayerControl player)
+    public virtual int GetAmmoCount()
     {
-        var rotation = Quaternion.AngleAxis(player.AimingAngle, Vector3.forward);
-        var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, player.transform.position, rotation);
-        Physics2D.IgnoreCollision(player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
+        return int.MaxValue;
+    }
+
+    public override void OnFireDown(Vector3 origin)
+    {
+        var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
+        var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, origin, rotation);
+        Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
         bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
 
         AudioSource.PlayClipAtPoint(FireSound, transform.position);

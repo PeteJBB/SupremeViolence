@@ -35,7 +35,7 @@ public class PlayerHud : MonoBehaviour
         {
             weaponLabel.text = Player.CurrentWeapon.Name;
             var ammo = Player.CurrentWeapon.GetAmmoCount();
-            if(ammo >= 0)
+            if(ammo != int.MaxValue)
                 weaponLabel.text += " " + ammo;
         }
 

@@ -18,6 +18,8 @@ public class Flamer : Pickup
         jetSound = GetComponents<AudioSource>()[0];
         flameSound = GetComponents<AudioSource>()[1];
         flameSound.volume = 0;
+
+        Ammo = MaxAmmo = 100;
 	}
 	
 	// Update is called once per frame
@@ -25,7 +27,7 @@ public class Flamer : Pickup
     {
         if (isFiring && Time.time - lastFireTime > fireDelay)
         {
-            if(ammo > 0)
+            if(Ammo > 0)
             {
                 Fire();
                 lastFireTime = Time.time;
@@ -42,28 +44,9 @@ public class Flamer : Pickup
         return true;
     }
 
-    public override float GetMass()
+    public override void OnFireDown(Vector3 origin)
     {
-        return 0.1f;
-    }
-
-    private int fullAmmo = 1000;
-    private int ammo = 1000;
-    public override int GetAmmoCount()
-    {
-        return ammo;
-    }
-
-    public override void AddAmmo(int amount)
-    {
-        ammo += amount;
-        if(ammo > fullAmmo)
-            ammo = fullAmmo;
-    }
-
-    public override void OnFireDown(PlayerControl player)
-    {
-        if(ammo > 0)
+        if(Ammo > 0)
         {
             StartFiring();
         }
@@ -73,7 +56,7 @@ public class Flamer : Pickup
     public void Fire()
     {
         var rotation = Quaternion.AngleAxis(Player.AimingAngle + Random.Range(-aimingError, aimingError), Vector3.forward);
-        var flame = (GameObject)GameObject.Instantiate(FlamePrefab, Player.transform.position, rotation);
+        var flame = (GameObject)GameObject.Instantiate(FlamePrefab, Player.GetAimingOrigin(), rotation);
         flame.SetOwner(Player.gameObject);
 
         Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
@@ -81,21 +64,12 @@ public class Flamer : Pickup
         rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
         rb.AddTorque(Random.Range(-0.2f, 0.2f));
 
-        ammo--;
+        Ammo--;
     }
 
-    public override void OnFireUp(PlayerControl player)
+    public override void OnFireUp(Vector3 origin)
     {
         StopFiring();
-    }
-
-    public override void OnDeselectWeapon()
-    {
-        if(ammo <= 0)
-        {
-            // drop weapon
-            Player.RemovePickup(this);
-        }
     }
 
     private void StartFiring()
@@ -104,7 +78,7 @@ public class Flamer : Pickup
         jetSound.Play();
         flameSound.Play();
 
-        iTween.StopByName("flameFadeOut");
+        iTween.StopByName(gameObject, "flameFadeOut");
         iTween.AudioTo(gameObject, iTween.Hash("name", "flameFadeIn", "audiosource", flameSound, "volume", 1, "time", 1));
     }
 
@@ -113,7 +87,7 @@ public class Flamer : Pickup
         isFiring = false;
         jetSound.Stop();
 
-        iTween.StopByName("flameFadeIn");
+        iTween.StopByName(gameObject, "flameFadeIn");
         iTween.AudioTo(gameObject, iTween.Hash("name", "flameFadeOut", "audiosource", flameSound, "volume", 0, "time", 1, "oncomplete", "StopFlameSounds", "oncompletetarget", gameObject));
     }
 

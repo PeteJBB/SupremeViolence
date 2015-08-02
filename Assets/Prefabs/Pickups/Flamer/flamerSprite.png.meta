@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 50f7e0d2f2c6fe14dbb99eb85e9ece7a
-timeCreated: 1438271109
+timeCreated: 1438527248
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -80,8 +80,8 @@ TextureImporter:
         y: 202
         width: 9
         height: 19
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flamerSprite_2
       rect:
@@ -90,8 +90,8 @@ TextureImporter:
         y: 205
         width: 9
         height: 15
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: flamerSprite_3
       rect:

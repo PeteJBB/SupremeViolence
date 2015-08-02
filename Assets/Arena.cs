@@ -137,12 +137,19 @@ public class Arena : MonoBehaviour
     public void SetGridObject(int x, int y, GameObject obj)
     {
         RemoveGridObject(obj);
+        if(x < 0 || y < 0 || x > ArenaSize.x || y > ArenaSize.y)
+        {
+            Debug.LogWarningFormat("Cant set grid pos {0}, {1} for object {2}", x, y, obj.name);
+            return;
+        }
+
         GridMap[x,y].Add(obj);
 
         var minimap = GameObject.FindObjectOfType<MiniMap>();
 
         if(OnGridContentsChanged != null)
             OnGridContentsChanged(x, y, GridMap[x,y]);
+
     }
 
     public void SetGridObject(Vector2 gridPosition, GameObject obj)
