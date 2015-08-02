@@ -115,9 +115,12 @@ public class Pickup : MonoBehaviour
 
     public virtual void AddAmmo(int amount)
     {
-        Ammo += amount;
-        if(Ammo > MaxAmmo)
-            Ammo = MaxAmmo;
+        if(Ammo < int.MaxValue)
+        {
+            Ammo += amount;
+            if(Ammo > MaxAmmo)
+                Ammo = MaxAmmo;
+        }
     }
 
     public virtual void OnSelectWeapon()

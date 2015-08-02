@@ -100,12 +100,12 @@ public class Arena : MonoBehaviour
 	
 	}
 
-    public Vector3 GridToWorldPosition(int gridx, int gridy)
+    public Vector3 GridToWorldPosition(int gridx, int gridy, float z = 0)
     {
-        return new Vector3((-ArenaSize.x / 2) + gridx + 0.5f, (-ArenaSize.y / 2) + gridy + 0.5f, 0);
+        return new Vector3((-ArenaSize.x / 2) + gridx + 0.5f, (-ArenaSize.y / 2) + gridy + 0.5f, z);
     }
 
-    public Vector3 GridToWorldPosition(Vector2 gridPoint)
+    public Vector3 GridToWorldPosition(Vector2 gridPoint, float z = 0)
     {
         return GridToWorldPosition((int)gridPoint.x, (int)gridPoint.y);
     }

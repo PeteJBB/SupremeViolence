@@ -6,10 +6,16 @@ public class Pistol : Pickup
     public GameObject BulletPrefab;
 	public AudioClip FireSound;
 
+    private GameObject muzzleFlash;
+
 	// Use this for initialization
 	void Start()
     {
         BaseStart();
+        Ammo = int.MaxValue;
+
+        muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
+        HideMuzzleFlash();
 	}
 	
 	// Update is called once per frame
@@ -23,11 +29,6 @@ public class Pistol : Pickup
         return true;
     }
 
-    public virtual int GetAmmoCount()
-    {
-        return int.MaxValue;
-    }
-
     public override void OnFireDown(Vector3 origin)
     {
         var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
@@ -36,5 +37,22 @@ public class Pistol : Pickup
         bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
 
         AudioSource.PlayClipAtPoint(FireSound, transform.position);
+
+        ShowMuzzleFlash();
+
+        GameBrain.Instance.WaitAndThenCall(0.1f, HideMuzzleFlash);
+    }
+
+    private void ShowMuzzleFlash()
+    {
+        muzzleFlash.GetComponentInChildren<Light>().enabled = true;
+        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = true;
+        muzzleFlash.transform.position = Player.GetAimingOrigin().ToVector3();
+    }
+    
+    private void HideMuzzleFlash()
+    {
+        muzzleFlash.GetComponentInChildren<Light>().enabled = false;
+        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 }

@@ -10,11 +10,16 @@ public class MachineGun : Pickup
 
     public AudioClip FireSound;
 
+    private GameObject muzzleFlash;
+
 	// Use this for initialization
 	void Start()
     {
         BaseStart();
         Ammo = MaxAmmo = 30;
+
+        muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
+        HideMuzzleFlash();
 	}
 	
 	// Update is called once per frame
@@ -47,11 +52,28 @@ public class MachineGun : Pickup
             bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse); 
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
+
+            ShowMuzzleFlash();
+            
+            GameBrain.Instance.WaitAndThenCall(fireDelay / 1.5f, HideMuzzleFlash);
         }
     }
 
     public override void OnFireUp(Vector3 origin)
     {
         isTriggerDown = false;
+    }
+
+    private void ShowMuzzleFlash()
+    {
+        muzzleFlash.GetComponentInChildren<Light>().enabled = true;
+        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = true;
+        muzzleFlash.transform.position = Player.GetAimingOrigin().ToVector3();
+    }
+
+    private void HideMuzzleFlash()
+    {
+        muzzleFlash.GetComponentInChildren<Light>().enabled = false;
+        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 }

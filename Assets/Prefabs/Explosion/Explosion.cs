@@ -41,7 +41,8 @@ public class Explosion : MonoBehaviour
             //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
             GameBrain.Instance.WaitAndThenCall(0.1f, () => 
             {
-                rb.drag = dragOrig;
+                if(rb != null)
+                    rb.drag = dragOrig;
             });
         }
     }
