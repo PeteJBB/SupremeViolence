@@ -14,8 +14,8 @@ public class TrackObject : MonoBehaviour {
         transform.position = pos;
 	}
 	
-	// Update is called once per frame
-	void Update () 
+	// LateUpdate is called once per frame after Update
+	void LateUpdate () 
     {
         if(target != null)
         {

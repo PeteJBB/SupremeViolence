@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
+[ExecuteInEditMode]
+[RequireComponent (typeof (SpriteRenderer))]
 public class OrientedSprite : MonoBehaviour 
 {
     public Sprite SpriteUp;
@@ -10,7 +13,8 @@ public class OrientedSprite : MonoBehaviour
 
     private Animator anim;
 
-    private Orientation orientation;
+    public Orientation orientation = Orientation.Up;
+    private Orientation lastOrientation = Orientation.Up;
 
     SpriteRenderer spriteRenderer;
 
@@ -29,11 +33,11 @@ public class OrientedSprite : MonoBehaviour
         }
     }
 
-    public void SetOrientation(Orientation o)
+    void Update()
     {
-        if(orientation != o)
+        if(orientation != lastOrientation)
         {
-            switch(o)
+            switch(orientation)
             {
                 case Orientation.Up:
                     spriteRenderer.sprite = SpriteUp;
@@ -48,14 +52,18 @@ public class OrientedSprite : MonoBehaviour
                     spriteRenderer.sprite = SpriteRight;
                     break;
             }
-
+            
             if(anim != null)
             {
-                anim.SetTrigger(o.ToString());
+                anim.SetTrigger(orientation.ToString());
             }
-
-            orientation = o;
+            lastOrientation = orientation;
         }
+    }
+
+    public void SetOrientation(Orientation o)
+    {
+        orientation = o;
     }
 }
 
