@@ -65,12 +65,12 @@ public class GameBrain : MonoBehaviour
         
         
         var aspect = (float)Screen.width / Screen.height;
-        float baseX = (arena.ArenaSize.x + 2) / 4;//  position if width and height are equal
+        float baseX = (arena.ArenaSizeX + 2) / 4;//  position if width and height are equal
         float aspectAdjustX;
         if (aspect < 1)
         {
             Debug.Log("Higher than wide");
-            var orth = (arena.ArenaSize.x + 2) / 2;
+            var orth = (arena.ArenaSizeX + 2) / 2;
             camera1.orthographicSize = orth / aspect;
             camera2.orthographicSize = orth / aspect;
             
@@ -79,9 +79,9 @@ public class GameBrain : MonoBehaviour
         else
         {
             Debug.Log("Wider than high");
-            camera1.orthographicSize = (arena.ArenaSize.y + 2) / 2;
-            camera2.orthographicSize = (arena.ArenaSize.y + 2) / 2;
-            
+            camera1.orthographicSize = (arena.ArenaSizeY + 2) / 2;
+            camera2.orthographicSize = (arena.ArenaSizeY + 2) / 2;
+
             // orth size is for y axis so what is it on x?
             var orthX = camera1.orthographicSize * aspect;
             aspectAdjustX = (orthX - camera1.orthographicSize) / 2; // adjusted for aspect ratio

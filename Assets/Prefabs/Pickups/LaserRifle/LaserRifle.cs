@@ -83,7 +83,6 @@ public class LaserRifle : Pickup
             while(d < hit.distance)
             {
                 var pos = transform.position + (beamDirection * d);
-                pos.z = -0.1f;
                 var light = Instantiate(LightPrefab, pos, Quaternion.identity);
                 d += step;
 

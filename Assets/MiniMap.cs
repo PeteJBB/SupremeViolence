@@ -14,12 +14,12 @@ public class MiniMap : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        var gridSize = mapSize / Arena.Instance.ArenaSize.y;
-        GridMap = new GameObject[(int)Arena.Instance.ArenaSize.x, (int)Arena.Instance.ArenaSize.y];
+        var gridSize = mapSize / Arena.Instance.ArenaSizeY;
+        GridMap = new GameObject[Arena.Instance.ArenaSizeX, Arena.Instance.ArenaSizeY];
         // create the minimap grid squares to match arena size
-        for(var x = 0; x < Arena.Instance.ArenaSize.x; x++)
+        for(var x = 0; x < Arena.Instance.ArenaSizeX; x++)
         {
-            for(var y = 0; y < Arena.Instance.ArenaSize.y; y++)
+            for(var y = 0; y < Arena.Instance.ArenaSizeY; y++)
             {
                 var sq = (GameObject)Instantiate(GridSquarePrefab);
                 sq.transform.parent = transform;
@@ -34,7 +34,7 @@ public class MiniMap : MonoBehaviour
         }
 
         var myrect = GetComponent<RectTransform>();
-        myrect.sizeDelta = new Vector2((Arena.Instance.ArenaSize.x * gridSize) + Arena.Instance.ArenaSize.x, (Arena.Instance.ArenaSize.y * gridSize) + Arena.Instance.ArenaSize.y);
+        myrect.sizeDelta = new Vector2((Arena.Instance.ArenaSizeX * gridSize) + Arena.Instance.ArenaSizeX, (Arena.Instance.ArenaSizeY * gridSize) + Arena.Instance.ArenaSizeY);
         myrect.localPosition = new Vector3(-myrect.sizeDelta.x / 2, myrect.localPosition.y + 16, 0);
 
         Arena.Instance.OnGridContentsChanged += Arena_GridContentsChanged;
