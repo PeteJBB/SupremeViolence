@@ -13,6 +13,7 @@ public class Arena : MonoBehaviour
     public float WallDensity = 0.25f;
 
     private List<GameObject>[,] GridMap;
+    private List<GameObject> wallList;
 
     public static Arena Instance;
 
@@ -23,9 +24,13 @@ public class Arena : MonoBehaviour
     private int lastGeneratedSeed;
     private bool regenerateOnNextUpdate = false;
 
+    private Transform generatedStuff;
+
 	void Awake () 
     {
         Instance = this;
+        generatedStuff = transform.FindChild("GeneratedStuff");
+        RemovePreviouslyGeneratedArena();
         GenerateArena();
         SetPlayerStarts();
 	}
@@ -62,24 +67,33 @@ public class Arena : MonoBehaviour
 
     private void RemovePreviouslyGeneratedArena()
     {
-        if(!EditorApplication.isPlaying)
+        // clear previously generated stuff
+        var childList = new List<GameObject>();
+        for(var i=0; i<generatedStuff.transform.childCount; i++)
         {
-            // clear previously generated stuff
-            var childrenToRemove = new List<GameObject>();
-            for(var i=0; i<transform.childCount; i++)
-            {
-                var child = transform.GetChild(i);
-                if(child.hideFlags == HideFlags.HideAndDontSave)
-                {
-                    childrenToRemove.Add(child.gameObject);
-                }
-            }
-
-            foreach(var child in childrenToRemove)
-            {
-                Object.DestroyImmediate(child, true);
-            }
+            childList.Add(generatedStuff.transform.GetChild(i).gameObject);
         }
+            
+        childList.ForEach(child => SafeDestroyRecursive(child));
+
+        wallList = new List<GameObject>();
+    }
+
+    private void SafeDestroyRecursive(GameObject obj)
+    {
+        if(obj.transform.childCount > 0)
+        {
+            var childList = new List<GameObject>();
+            for(var i=0; i<obj.transform.childCount; i++)
+            {
+                childList.Add(obj.transform.GetChild(i).gameObject);
+            }
+            childList.ForEach(child => SafeDestroyRecursive(child));
+        }
+        if(EditorApplication.isPlaying)
+            Destroy(obj);
+        else
+            DestroyImmediate(obj);
     }
 
     private void GenerateArena()
@@ -89,6 +103,7 @@ public class Arena : MonoBehaviour
 
         // init gridmap
         GridMap = new List<GameObject>[ArenaSizeX, ArenaSizeY];
+
         for(var i=0; i<ArenaSizeX; i++)
         {
             for(var j=0; j<ArenaSizeY; j++)
@@ -96,31 +111,23 @@ public class Arena : MonoBehaviour
                 GridMap[i,j] = new List<GameObject>();
             }
         }
-        
+
         // create walls
-        //top
-        var topWall = (GameObject)Instantiate(WallPrefab, new Vector3(0, (ArenaSizeY / 2f) + 0.5f, transform.position.z), Quaternion.identity);
-        topWall.transform.localScale = new Vector3(ArenaSizeX, 1, 1);
-        topWall.transform.parent = transform;
-        topWall.hideFlags = HideFlags.HideAndDontSave;
+        wallList = new List<GameObject>();
 
-        //bottom
-        var bottomWall = (GameObject)Instantiate(WallPrefab, new Vector3(0, (-ArenaSizeY / 2f) - 0.5f, transform.position.z), Quaternion.identity);
-        bottomWall.transform.localScale = new Vector3(ArenaSizeX, 1, 1);
-        bottomWall.transform.parent = transform;
-        bottomWall.hideFlags = HideFlags.HideAndDontSave;
+        //top and bottom
+        for(var x = -1; x < ArenaSizeX + 1; x++)
+        {
+            CreateWall(x,ArenaSizeY);
+            CreateWall(x,-1);
+        }
 
-        //left
-        var leftWall = (GameObject)Instantiate(WallPrefab, new Vector3((-ArenaSizeX / 2f) - 0.5f, 0, transform.position.z), Quaternion.identity);
-        leftWall.transform.localScale = new Vector3(1, ArenaSizeY + 2, 1);
-        leftWall.transform.parent = transform;
-        leftWall.hideFlags = HideFlags.HideAndDontSave;
-
-        //right
-        var rightWall = (GameObject)Instantiate(WallPrefab, new Vector3((ArenaSizeX / 2f) + 0.5f, 0, transform.position.z), Quaternion.identity);
-        rightWall.transform.localScale = new Vector3(1, ArenaSizeY + 2, 1);
-        rightWall.transform.parent = transform;
-        rightWall.hideFlags = HideFlags.HideAndDontSave;
+        // left and right
+        for(var y = 0; y < ArenaSizeY; y++)
+        {
+            CreateWall(ArenaSizeX,y);
+            CreateWall(-1,y);
+        }
 
         // spawn walls and floors inside
         for(var gridx = 0; gridx < ArenaSizeX; gridx++)
@@ -130,20 +137,61 @@ public class Arena : MonoBehaviour
                 // use density to decide if there should be a wall here
                 if(Random.Range(0f, 1f) < WallDensity)
                 {
-                    var wall = (GameObject)Instantiate(WallPrefab, GridToWorldPosition(gridx, gridy, transform.position.z), Quaternion.identity);
-                    wall.transform.parent = transform;
-                    wall.hideFlags = HideFlags.HideAndDontSave;
-                    SetGridObject(gridx, gridy, wall);
+                    CreateWall(gridx, gridy);
                 }
                 else
                 {
                     // spawn floor tile
                     var floor = (GameObject)Instantiate(FloorPrefab, GridToWorldPosition(gridx, gridy, transform.position.z), Quaternion.identity);
-                    floor.transform.parent = transform;
-                    floor.hideFlags = HideFlags.HideAndDontSave;
+                    floor.transform.parent = generatedStuff;
                 }
             }
         }
+
+        // now loop through walls, turning off the edges which adjoin another wall
+        foreach(var wall in wallList)
+        {
+            var gridPos = WorldToGridPosition(wall.transform.position);
+            var x = (int)gridPos.x;
+            var y = (int)gridPos.y;
+
+            // top
+            if(y >= ArenaSizeY - 1 || x < 0 || x > ArenaSizeX - 1 || GridMap[x, y + 1].Any())
+            {
+                SafeDestroyRecursive(wall.transform.FindChild("Top").gameObject);
+            }
+            // bottom
+            if(y <= 0 || x < 0 || x > ArenaSizeX - 1 || GridMap[x, y - 1].Any())
+            {
+                SafeDestroyRecursive(wall.transform.FindChild("Bottom").gameObject);
+            }
+            // left
+            if(x <= 0 || y < 0 || y > ArenaSizeY - 1  || GridMap[x - 1, y].Any())
+            {
+                SafeDestroyRecursive(wall.transform.FindChild("Left").gameObject);
+            }
+            // right
+            if(gridPos.x >= ArenaSizeX - 1 || y < 0 || y > ArenaSizeY - 1 || GridMap[x + 1, y].Any())
+            {
+                SafeDestroyRecursive(wall.transform.FindChild("Right").gameObject);
+            }
+        }
+    }
+
+    private GameObject CreateWall(int gridx, int gridy)
+    {
+        var pos = GridToWorldPosition(gridx, gridy, transform.position.z);
+        var wall = (GameObject)Instantiate(WallPrefab, pos, Quaternion.identity);
+        wall.transform.parent = generatedStuff;
+
+        if(gridx >= 0 && gridx < ArenaSizeX && gridy >= 0 && gridy < ArenaSizeY)
+        {
+            SetGridObject(gridx, gridy, wall);
+        }
+
+        wallList.Add(wall);
+
+        return wall;
     }
 
     private void SetPlayerStarts()
@@ -201,7 +249,7 @@ public class Arena : MonoBehaviour
     public void SetGridObject(int x, int y, GameObject obj)
     {
         RemoveGridObject(obj);
-        if(x < 0 || y < 0 || x > ArenaSizeX || y > ArenaSizeY)
+        if(x < 0 || y < 0 || x >= ArenaSizeX || y >= ArenaSizeY)
         {
             Debug.LogWarningFormat("Cant set grid pos {0}, {1} for object {2}", x, y, obj.name);
             return;
