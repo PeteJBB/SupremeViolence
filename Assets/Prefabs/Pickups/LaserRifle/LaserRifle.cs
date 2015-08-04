@@ -15,7 +15,7 @@ public class LaserRifle : Pickup
         BaseStart();
         line = GetComponent<LineRenderer>();
         line.enabled = false;
-        line.sortingLayerName = "Fore_Front";
+        line.sortingLayerName = "Mid_Front";
         Ammo = MaxAmmo = 30;
 	}
 	

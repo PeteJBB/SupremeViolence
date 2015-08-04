@@ -148,34 +148,50 @@ public class Arena : MonoBehaviour
             }
         }
 
-        // now loop through walls, turning off the edges which adjoin another wall
+        // now loop through walls, turning on the edges which are adjacent to empty space
         foreach(var wall in wallList)
         {
             var gridPos = WorldToGridPosition(wall.transform.position);
             var x = (int)gridPos.x;
             var y = (int)gridPos.y;
 
-            // top
-            if(y >= ArenaSizeY - 1 || x < 0 || x > ArenaSizeX - 1 || GridMap[x, y + 1].Any())
-            {
-                SafeDestroyRecursive(wall.transform.FindChild("Top").gameObject);
-            }
-            // bottom
-            if(y <= 0 || x < 0 || x > ArenaSizeX - 1 || GridMap[x, y - 1].Any())
-            {
-                SafeDestroyRecursive(wall.transform.FindChild("Bottom").gameObject);
-            }
-            // left
-            if(x <= 0 || y < 0 || y > ArenaSizeY - 1  || GridMap[x - 1, y].Any())
-            {
-                SafeDestroyRecursive(wall.transform.FindChild("Left").gameObject);
-            }
-            // right
-            if(gridPos.x >= ArenaSizeX - 1 || y < 0 || y > ArenaSizeY - 1 || GridMap[x + 1, y].Any())
-            {
-                SafeDestroyRecursive(wall.transform.FindChild("Right").gameObject);
-            }
+            // wall edges
+//            if(x > 0 && y >= 0 && y < ArenaSizeY && GridMap[x - 1, y].Count == 0)
+//                wall.transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = true;
+//            if(x < ArenaSizeX - 1 && y >= 0 && y < ArenaSizeY && GridMap[x + 1, y].Count == 0)
+//                wall.transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = true;
+//            if(y < ArenaSizeY - 1 && x >= 0 && x < ArenaSizeX && GridMap[x, y + 1].Count == 0)
+//                wall.transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = true;
+//            if(y > 0 && x >= 0 && x < ArenaSizeX && GridMap[x, y - 1].Count == 0)
+//                wall.transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = true;
+
+            if(!IsThereAWallAt(x - 1, y))
+                wall.transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = true;
+            if(!IsThereAWallAt(x + 1, y))
+                wall.transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = true;
+            if(!IsThereAWallAt(x, y + 1))
+                wall.transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = true;
+            if(!IsThereAWallAt(x, y - 1))
+                wall.transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = true;
+
+            // now do inside corners
+            if(IsThereAWallAt(x-1, y) && IsThereAWallAt(x, y+1) && !IsThereAWallAt(x-1, y+1))
+                wall.transform.FindChild("TopLeft").GetComponent<SpriteRenderer>().enabled = true;
+            if(IsThereAWallAt(x+1, y) && IsThereAWallAt(x, y+1) && !IsThereAWallAt(x+1, y+1))
+                wall.transform.FindChild("TopRight").GetComponent<SpriteRenderer>().enabled = true;
+            if(IsThereAWallAt(x+1, y) && IsThereAWallAt(x, y-1) && !IsThereAWallAt(x+1, y-1))
+                wall.transform.FindChild("BottomRight").GetComponent<SpriteRenderer>().enabled = true;
+            if(IsThereAWallAt(x-1, y) && IsThereAWallAt(x, y-1) && !IsThereAWallAt(x-1, y-1))
+                wall.transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>().enabled = true;
         }
+    }
+
+    private bool IsThereAWallAt(int x, int y)
+    {
+        if(x < 0 || x >= ArenaSizeX || y < 0 || y >= ArenaSizeY)
+            return true;
+
+        return GridMap[x,y].Any(o => wallList.Contains(o));
     }
 
     private GameObject CreateWall(int gridx, int gridy)
