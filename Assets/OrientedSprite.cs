@@ -14,7 +14,7 @@ public class OrientedSprite : MonoBehaviour
     private Animator anim;
 
     public Orientation orientation = Orientation.Down;
-    private Orientation lastOrientation = Orientation.Down;
+    private Orientation lastOrientation = Orientation.Unknown;
 
     SpriteRenderer spriteRenderer;
 
@@ -70,6 +70,7 @@ public class OrientedSprite : MonoBehaviour
 
 public enum Orientation
 {
+    Unknown,
     Up,
     Down,
     Left,

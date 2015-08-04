@@ -7,12 +7,11 @@ public class Helper : MonoBehaviour
 	public static void DetachParticles(GameObject obj)
     {
         var particles = obj.transform.GetComponentsInChildren<ParticleSystem>();//.FindChild("Particles");
-        foreach(var part in particles)
+        foreach(var p in particles)
         {
-            part.transform.parent = null;
-            var pSys = part.GetComponent<ParticleSystem>();
-            pSys.Stop();
-            Destroy(part.gameObject, pSys.startLifetime);
+            p.transform.parent = null;
+            p.Stop();
+            Destroy(p.gameObject, p.startLifetime);
         }
     }
 }

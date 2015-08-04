@@ -80,10 +80,10 @@ public class LaserRifle : Pickup
             // create lights
             var d = 0f;
             var lightPre = LightPrefab.GetComponent<Light>();
-            var step = lightPre.intensity * lightPre.range / 3;
+            var step = lightPre.range / 2f;
             while(d < hit.distance)
             {
-                var pos = transform.position + (beamDirection * d);
+                var pos = origin + (beamDirection * d);
                 var light = Instantiate(LightPrefab, pos, Quaternion.identity);
                 d += step;
 

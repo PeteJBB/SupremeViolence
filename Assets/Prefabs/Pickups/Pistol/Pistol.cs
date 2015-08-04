@@ -45,14 +45,14 @@ public class Pistol : Pickup
 
     private void ShowMuzzleFlash()
     {
-        muzzleFlash.GetComponentInChildren<Light>().enabled = true;
-        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = true;
+        muzzleFlash.GetComponent<Light>().enabled = true;
+        muzzleFlash.GetComponent<SpriteRenderer>().enabled = true;
         muzzleFlash.transform.position = Player.GetAimingOrigin().ToVector3();
     }
     
     private void HideMuzzleFlash()
     {
-        muzzleFlash.GetComponentInChildren<Light>().enabled = false;
-        muzzleFlash.GetComponentInChildren<SpriteRenderer>().enabled = false;
+        muzzleFlash.GetComponent<Light>().enabled = false;
+        muzzleFlash.GetComponent<SpriteRenderer>().enabled = false;
     }
 }
