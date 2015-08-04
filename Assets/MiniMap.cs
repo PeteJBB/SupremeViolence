@@ -16,6 +16,7 @@ public class MiniMap : MonoBehaviour
     {
         var gridSize = mapSize / Arena.Instance.ArenaSizeY;
         GridMap = new GameObject[Arena.Instance.ArenaSizeX, Arena.Instance.ArenaSizeY];
+
         // create the minimap grid squares to match arena size
         for(var x = 0; x < Arena.Instance.ArenaSizeX; x++)
         {
@@ -39,7 +40,7 @@ public class MiniMap : MonoBehaviour
 
         Arena.Instance.OnGridContentsChanged += Arena_GridContentsChanged;
 	}
-	
+
     public void Arena_GridContentsChanged(int gridX, int gridY, List<GameObject> objList)
     {
         var sq = GridMap[gridX, gridY];

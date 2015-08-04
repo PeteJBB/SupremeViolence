@@ -1,13 +1,13 @@
 fileFormatVersion: 2
 guid: fd086a83b04c35442aed6ce6fbba6008
-timeCreated: 1438417578
+timeCreated: 1438694857
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: headSprite_0
-    21300002: headSprite_1
-    21300004: headSprite_2
-    21300006: headSprite_3
+    21300000: headSprite_up
+    21300002: headSprite_down
+    21300004: headSprite_left
+    21300006: headSprite_right
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -53,45 +53,45 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: headSprite_0
+    - name: headSprite_up
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: headSprite_1
+    - name: headSprite_down
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: headSprite_2
+    - name: headSprite_left
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: headSprite_3
+    - name: headSprite_right
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

@@ -1,7 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System;
 using UnityEngine.UI;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 
 public class GameBrain : MonoBehaviour 
 {
@@ -37,7 +40,9 @@ public class GameBrain : MonoBehaviour
         player2 = players[1].GetComponent<PlayerControl>();
         
         // set each camera to cover half the play area then pan to each player
-        var cameras = GameObject.FindGameObjectsWithTag("MainCamera");
+        var cameras = GameObject.FindGameObjectsWithTag("MainCamera")
+            .OrderBy(cam => cam.GetComponent<Camera>().rect.x)
+            .ToList();
         
         // disable camera tracking while intro pan is running
         camera1 = cameras[0].GetComponent<Camera>();
@@ -62,14 +67,16 @@ public class GameBrain : MonoBehaviour
     {
         camera1.GetComponent<TrackObject>().enabled = false;
         camera2.GetComponent<TrackObject>().enabled = false;
-        
+        camera1.GetComponent<PixelPerfectCamera>().enabled = false;
+        camera2.GetComponent<PixelPerfectCamera>().enabled = false;
+
         
         var aspect = (float)Screen.width / Screen.height;
         float baseX = (arena.ArenaSizeX + 2) / 4;//  position if width and height are equal
         float aspectAdjustX;
         if (aspect < 1)
         {
-            Debug.Log("Higher than wide");
+            //Debug.Log("Higher than wide");
             var orth = (arena.ArenaSizeX + 2) / 2;
             camera1.orthographicSize = orth / aspect;
             camera2.orthographicSize = orth / aspect;
@@ -78,7 +85,7 @@ public class GameBrain : MonoBehaviour
         } 
         else
         {
-            Debug.Log("Wider than high");
+            //Debug.Log("Wider than high");
             camera1.orthographicSize = (arena.ArenaSizeY + 2) / 2;
             camera2.orthographicSize = (arena.ArenaSizeY + 2) / 2;
 
@@ -142,6 +149,9 @@ public class GameBrain : MonoBehaviour
         State = GameState.GameOn;
         camera1.GetComponent<TrackObject>().enabled = true;
         camera2.GetComponent<TrackObject>().enabled = true;
+
+        camera1.GetComponent<PixelPerfectCamera>().enabled = true;
+        camera2.GetComponent<PixelPerfectCamera>().enabled = true;
     }
 
 }

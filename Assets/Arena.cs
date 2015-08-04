@@ -24,7 +24,10 @@ public class Arena : MonoBehaviour
     private int lastGeneratedSeed;
     private bool regenerateOnNextUpdate = false;
 
+    public Texture2D WallSkin;
+
     private Transform generatedStuff;
+    private bool isFirstUpdate = true;
 
 	void Awake () 
     {
@@ -35,20 +38,14 @@ public class Arena : MonoBehaviour
         SetPlayerStarts();
 	}
 
-    void Start () 
+    void Update () 
     {
-        for(var x = 0; x < ArenaSizeX; x++)
+        if(isFirstUpdate)
         {
-            for(var y = 0; y < ArenaSizeY; y++)
-            {
-                if(OnGridContentsChanged != null)
-                    OnGridContentsChanged(x, y, GridMap[x,y]);
-            }
+            NotifyAllGridContentsChanged();
+            isFirstUpdate = false;
         }
-    }
-	
-	void Update () 
-    {
+        
         if(!EditorApplication.isPlaying && regenerateOnNextUpdate)
         {
             regenerateOnNextUpdate = false;
@@ -59,6 +56,18 @@ public class Arena : MonoBehaviour
 
         transform.position = new Vector3(0,0,0.1f);
 	}
+
+    void NotifyAllGridContentsChanged () 
+    {
+        for(var x = 0; x < ArenaSizeX; x++)
+        {
+            for(var y = 0; y < ArenaSizeY; y++)
+            {
+                if(OnGridContentsChanged != null)
+                    OnGridContentsChanged(x, y, GridMap[x,y]);
+            }
+        }
+    }
 
     void OnValidate()
     {
@@ -195,13 +204,22 @@ public class Arena : MonoBehaviour
         var pos = GridToWorldPosition(gridx, gridy, transform.position.z);
         var wall = (GameObject)Instantiate(WallPrefab, pos, Quaternion.identity);
         wall.transform.parent = generatedStuff;
+        wallList.Add(wall);
+        
+        // set skin
+        if(WallSkin != null)
+        {
+            foreach(var s in wall.GetComponentsInChildren<SkinableSprite>())
+            {
+                s.SetSkin(WallSkin);
+            }
+        }
 
+        // set grid pos
         if(gridx >= 0 && gridx < ArenaSizeX && gridy >= 0 && gridy < ArenaSizeY)
         {
             SetGridObject(gridx, gridy, wall);
         }
-
-        wallList.Add(wall);
 
         return wall;
     }
