@@ -155,20 +155,16 @@ public class Arena : MonoBehaviour
             var x = (int)gridPos.x;
             var y = (int)gridPos.y;
 
-            // wall edges
-//            if(x > 0 && y >= 0 && y < ArenaSizeY && GridMap[x - 1, y].Count == 0)
-//                wall.transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = true;
-//            if(x < ArenaSizeX - 1 && y >= 0 && y < ArenaSizeY && GridMap[x + 1, y].Count == 0)
-//                wall.transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = true;
-//            if(y < ArenaSizeY - 1 && x >= 0 && x < ArenaSizeX && GridMap[x, y + 1].Count == 0)
-//                wall.transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = true;
-//            if(y > 0 && x >= 0 && x < ArenaSizeX && GridMap[x, y - 1].Count == 0)
-//                wall.transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = true;
-
             if(!IsThereAWallAt(x - 1, y))
-                wall.transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = true;
+            {
+                wall.transform.FindChild("LeftTop").GetComponent<SpriteRenderer>().enabled = true;
+                wall.transform.FindChild("LeftBottom").GetComponent<SpriteRenderer>().enabled = true;
+            }
             if(!IsThereAWallAt(x + 1, y))
-                wall.transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = true;
+            {
+                wall.transform.FindChild("RightTop").GetComponent<SpriteRenderer>().enabled = true;
+                wall.transform.FindChild("RightBottom").GetComponent<SpriteRenderer>().enabled = true;
+            }
             if(!IsThereAWallAt(x, y + 1))
                 wall.transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = true;
             if(!IsThereAWallAt(x, y - 1))
@@ -186,7 +182,7 @@ public class Arena : MonoBehaviour
         }
     }
 
-    private bool IsThereAWallAt(int x, int y)
+    public bool IsThereAWallAt(int x, int y)
     {
         if(x < 0 || x >= ArenaSizeX || y < 0 || y >= ArenaSizeY)
             return true;
@@ -260,6 +256,11 @@ public class Arena : MonoBehaviour
         }
 
         return list;
+    }
+
+    public List<GameObject> GetGridObjects(int x, int y)
+    {
+        return GridMap[x,y];
     }
 
     public void SetGridObject(int x, int y, GameObject obj)

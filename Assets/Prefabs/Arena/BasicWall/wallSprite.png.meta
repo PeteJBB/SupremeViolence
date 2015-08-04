@@ -1,19 +1,21 @@
 fileFormatVersion: 2
 guid: 4cbe0673c9372de4d8438be3d09138f5
-timeCreated: 1438665564
+timeCreated: 1438678408
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: wall_bg_top
-    21300002: wall_top
-    21300004: wall_bottom
-    21300006: wall_left
-    21300008: wall_right
-    21300010: wall_topleft
-    21300012: wall_topright
-    21300014: wall_bottomright
-    21300016: wall_bottomleft
-    21300018: wall_bg_bottom
+    21300000: wallSprite_bgtop
+    21300002: wallSprite_bgbottom
+    21300004: wallSprite_top
+    21300006: wallSprite_bottom
+    21300008: wallSprite_lefttop
+    21300010: wallSprite_leftbottom
+    21300012: wallSprite_righttop
+    21300014: wallSprite_rightbottom
+    21300016: wallSprite_topleft
+    21300018: wallSprite_topright
+    21300020: wallSprite_bottomright
+    21300022: wallSprite_bottomleft
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -36,11 +38,11 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
-    aniso: 16
+    aniso: -1
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -59,105 +61,125 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: wall_bg_top
+    - name: wallSprite_bgtop
       rect:
         serializedVersion: 2
-        x: 0
-        y: 192
+        x: 128
+        y: 256
         width: 128
-        height: 64
+        height: 128
       alignment: 7
       pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_top
+    - name: wallSprite_bgbottom
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
+        x: 128
+        y: 128
         width: 128
-        height: 64
+        height: 128
+      alignment: 2
+      pivot: {x: .5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_top
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 384
+        width: 128
+        height: 128
       alignment: 7
       pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_bottom
+    - name: wallSprite_bottom
       rect:
         serializedVersion: 2
-        x: 0
+        x: 128
         y: 0
         width: 128
-        height: 64
-      alignment: 9
-      pivot: {x: .5, y: 1.25}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_left
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 128
-        width: 64
         height: 128
-      alignment: 5
-      pivot: {x: 1, y: .5}
+      alignment: 2
+      pivot: {x: .5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_right
+    - name: wallSprite_lefttop
       rect:
         serializedVersion: 2
-        x: 192
-        y: 128
-        width: 64
-        height: 128
-      alignment: 4
-      pivot: {x: 0, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_topleft
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 64
-        width: 64
-        height: 64
+        x: 0
+        y: 257
+        width: 128
+        height: 127
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_topright
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 64
-        width: 64
-        height: 64
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_bottomright
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 0
-        width: 64
-        height: 64
-      alignment: 1
-      pivot: {x: 0, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_bottomleft
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 64
-        height: 64
-      alignment: 3
-      pivot: {x: 1, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_bg_bottom
+    - name: wallSprite_leftbottom
       rect:
         serializedVersion: 2
         x: 0
         y: 128
         width: 128
-        height: 64
-      alignment: 2
-      pivot: {x: .5, y: 1}
+        height: 128
+      alignment: 3
+      pivot: {x: 1, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_righttop
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 128
+        height: 128
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_rightbottom
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_topleft
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 128
+        height: 128
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_topright
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 384
+        width: 128
+        height: 128
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_bottomright
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 128
+        height: 128
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite_bottomleft
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 128
+        height: 128
+      alignment: 3
+      pivot: {x: 1, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
