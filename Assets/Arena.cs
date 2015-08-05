@@ -29,6 +29,11 @@ public class Arena : MonoBehaviour
     private Transform generatedStuff;
     private bool isFirstUpdate = true;
 
+    // pickup spawning stuff
+    public GameObject[] PickupPool;
+    public float SpawnRate = 0.05f; // chance that an item spawns every second
+    private float lastSpawnCheck = 0;
+
 	void Awake () 
     {
         Instance = this;
@@ -36,7 +41,13 @@ public class Arena : MonoBehaviour
         RemovePreviouslyGeneratedArena();
         GenerateArena();
         SetPlayerStarts();
+        SpawnOneOfEachItem();
 	}
+
+    void Start()
+    {
+
+    }
 
     void Update () 
     {
@@ -45,6 +56,15 @@ public class Arena : MonoBehaviour
             NotifyAllGridContentsChanged();
             isFirstUpdate = false;
         }
+
+        if (GameBrain.Instance != null && GameBrain.Instance.State == GameState.GameOn && Time.time - lastSpawnCheck > 1)
+        {
+            if(Random.Range(0f,1f) < SpawnRate)
+            {
+                SpawnOneRandomItem();
+            }
+            lastSpawnCheck = Time.time;
+        }
         
         if(!EditorApplication.isPlaying && regenerateOnNextUpdate)
         {
@@ -52,6 +72,7 @@ public class Arena : MonoBehaviour
             RemovePreviouslyGeneratedArena();
             GenerateArena();
             SetPlayerStarts();
+            SpawnOneOfEachItem();
         }
 
         transform.position = new Vector3(0,0,0.1f);
@@ -321,6 +342,39 @@ public class Arena : MonoBehaviour
                     return;
                 }
             }
+        }
+    }
+
+    private void SpawnOneOfEachItem()
+    {
+        // spawn one of each item at random free location
+        var emptySpots = GetEmptyGridSpots();
+        for(var i = 0; i< PickupPool.Length; i++)
+        {
+            if(emptySpots.Count == 0)
+            {
+                Debug.Log("Ran out of empty places to spawn items");
+                break;
+            }   
+            
+            var spot = emptySpots[Random.Range(0,emptySpots.Count)];
+            var instance = (GameObject)Instantiate(PickupPool[i], GridToWorldPosition(spot), Quaternion.identity);
+            instance.transform.parent = generatedStuff;
+            SetGridObject(spot, instance);
+            emptySpots.Remove(spot);
+        }
+    }
+
+    private void SpawnOneRandomItem()
+    {
+        var pickup = PickupPool[Random.Range(0, PickupPool.Length)];
+        var emptySpots = Arena.Instance.GetEmptyGridSpots();
+        if(emptySpots.Count > 0)
+        {
+            var spot = emptySpots[Random.Range(0, emptySpots.Count)];
+            var instance = (GameObject)Instantiate(pickup, GridToWorldPosition(spot), Quaternion.identity);
+            instance.transform.parent = generatedStuff;
+            SetGridObject(spot, instance);
         }
     }
 }
