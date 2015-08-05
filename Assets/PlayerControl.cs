@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using XInputDotNetPure;
 
 public class PlayerControl : MonoBehaviour {
 
     private float baseLegStrength = 4f;
     private float baseMass = 1;
 
-    public int PlayerNumber = 1;
+    public PlayerIndex PlayerNumber;
 
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
@@ -32,6 +33,7 @@ public class PlayerControl : MonoBehaviour {
     public Vector2 AimingOffsetLeft;
     public Vector2 AimingOffsetRight;
 
+    private GamePadState lastGamePadState;
 
 	// Use this for initialization
 	void Start () 
@@ -65,27 +67,35 @@ public class PlayerControl : MonoBehaviour {
     {
         if(GameBrain.Instance.State == GameState.GameOn)
         {
-            var input = new Vector2(Input.GetAxis("XboxAxisXJoy" + PlayerNumber), Input.GetAxis("XboxAxisYJoy" + PlayerNumber));
-            rbody.AddForce(input * baseLegStrength * GetLegStrengthMultiplier());
+            var gamepadState = GamePad.GetState(PlayerNumber);
+
+            // move
+            var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
+            rbody.AddForce(moveInput * baseLegStrength * GetLegStrengthMultiplier());
             BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 
-            if(input.magnitude > 0)
+            // aim
+            var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);
+            if(aimInput.magnitude == 0)
+                aimInput = moveInput;
+
+            if(aimInput.magnitude > 0)
             {
         		// rotate to face input dir
-                float angle = Mathf.Rad2Deg * Mathf.Atan2(-input.x, input.y);
-                if(angle >= -45 && angle < 45)// && currentAnimHash != walkUpHash)
+                float angle = Mathf.Rad2Deg * Mathf.Atan2(-aimInput.x, aimInput.y);
+                if(angle >= -45 && angle < 45)
                 {
                     orientation = Orientation.Up;
                 }
-                else if(angle >= 45 && angle < 135)// && currentAnimHash != walkLeftHash)
+                else if(angle >= 45 && angle < 135)
                 {
                     orientation = Orientation.Left;
                 }
-                else if(angle >= -135 && angle < -45)// && currentAnimHash != walkRightHash)
+                else if(angle >= -135 && angle < -45)
                 {
                     orientation = Orientation.Right;
                 }
-                else if(angle >= 135 || angle < -135)// && currentAnimHash != walkDownHash)
+                else if(angle >= 135 || angle < -135)
                 {
                     orientation = Orientation.Down;
                 }
@@ -104,17 +114,17 @@ public class PlayerControl : MonoBehaviour {
             }
 
             // change weapon
-            if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 4"))
+            if (gamepadState.Buttons.LeftShoulder == ButtonState.Pressed && lastGamePadState.Buttons.LeftShoulder == ButtonState.Released)
             {
                 SelectNextWeapon(-1);
             }
-            if (Input.GetKeyDown("joystick " + (PlayerNumber)+ " button 5"))
+            if (gamepadState.Buttons.RightShoulder == ButtonState.Pressed && lastGamePadState.Buttons.RightShoulder == ButtonState.Released)
             {
                 SelectNextWeapon();
             }
 
     		// shoot?
-            if (Input.GetAxis("XboxAxis3Joy" + PlayerNumber) < 0)
+            if (gamepadState.Triggers.Right > 0)
     		{
                 if(!triggerDown)
                 {
@@ -133,6 +143,8 @@ public class PlayerControl : MonoBehaviour {
                     CurrentWeapon.OnFireUp(GetAimingOrigin());
                 }
             }
+
+            lastGamePadState = gamepadState;
         }
 	}
 
@@ -161,6 +173,7 @@ public class PlayerControl : MonoBehaviour {
 
     void OnDrawGizmos()
     {
+        // show the Aiming Origin markers - this is where bullets will originate from in each orientation
         var cubeSize = 0.01f;
         Gizmos.DrawWireCube(transform.position + AimingOffsetUp.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
         Gizmos.DrawWireCube(transform.position + AimingOffsetDown.ToVector3(transform.position.z), new Vector3(cubeSize, cubeSize, cubeSize));
