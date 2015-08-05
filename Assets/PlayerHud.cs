@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
@@ -26,7 +26,7 @@ public class PlayerHud : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        var health = Mathf.Clamp(damageable.health / damageable.startingHealth, 0, 1);
+        var health = Mathf.Clamp(damageable.Health / damageable.StartingHealth, 0, 1);
         healthBar.localScale = new Vector3(health, 1, 1);
 
         if(Player.CurrentWeapon == null)

@@ -3,9 +3,11 @@ using System.Collections;
 
 public class Damageable : MonoBehaviour 
 {
-    public float startingHealth = 100;
-    public float health;
-    public GameObject explosionPrefab;
+    public float StartingHealth = 100;
+    public float Health;
+    public GameObject ExplosionPrefab;
+    public GameObject CorpsePrefab;
+
     public bool RespawnOnDeath = false;
     public float RespawnDelaySeconds = 1;
 
@@ -17,7 +19,7 @@ public class Damageable : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        health = startingHealth;
+        Health = StartingHealth;
 	}
 	
 	// Update is called once per frame
@@ -36,15 +38,15 @@ public class Damageable : MonoBehaviour
         transform.position = arena.GridToWorldPosition(spot);
 
         IsDead = false;
-        health = startingHealth;
+        Health = StartingHealth;
         gameObject.SetActive(true);
     }
 
     public void Damage(float amount, GameObject damageSource = null)
     {
-        health -= amount;
+        Health -= amount;
 
-        if (health <= 0 && !IsDead)
+        if (Health <= 0 && !IsDead)
         {
             IsDead = true;
 
@@ -61,9 +63,15 @@ public class Damageable : MonoBehaviour
             }
             
             // explode
-            if(explosionPrefab != null)
+            if(ExplosionPrefab != null)
             {
-                Instantiate(explosionPrefab, transform.position, transform.rotation);
+                Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+            }
+
+            // corpse
+            if(CorpsePrefab != null)
+            {
+                Instantiate(CorpsePrefab, transform.position, transform.rotation);
             }
             
             // play sound
