@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,11 @@ using System.Linq;
 
 public class GameBrain : MonoBehaviour 
 {
-    public static GameBrain Instance;
+    public static GameBrain Instance
+    {
+        get { return FindObjectOfType<GameBrain>(); }
+    }
+
     public GameState State = GameState.Startup;
     public bool EnableStartupSequence = true;
 
@@ -19,8 +24,6 @@ public class GameBrain : MonoBehaviour
     private Camera camera1;
     private Camera camera2;
 
-    private Arena arena;
-
     private PlayerControl player1;
     private PlayerControl player2;
 
@@ -28,8 +31,7 @@ public class GameBrain : MonoBehaviour
 
 	void Awake () 
     {
-        GameBrain.Instance = this;  
-        arena = Transform.FindObjectOfType<Arena>();
+
 	}
 
     void Start()
@@ -72,12 +74,12 @@ public class GameBrain : MonoBehaviour
 
         
         var aspect = (float)Screen.width / Screen.height;
-        float baseX = (arena.ArenaSizeX + 2) / 4;//  position if width and height are equal
+        float baseX = (Arena.Instance.ArenaSizeX + 2) / 4;//  position if width and height are equal
         float aspectAdjustX;
         if (aspect < 1)
         {
             //Debug.Log("Higher than wide");
-            var orth = (arena.ArenaSizeX + 2) / 2;
+            var orth = (Arena.Instance.ArenaSizeX + 2) / 2;
             camera1.orthographicSize = orth / aspect;
             camera2.orthographicSize = orth / aspect;
             
@@ -86,8 +88,8 @@ public class GameBrain : MonoBehaviour
         else
         {
             //Debug.Log("Wider than high");
-            camera1.orthographicSize = (arena.ArenaSizeY + 2) / 2;
-            camera2.orthographicSize = (arena.ArenaSizeY + 2) / 2;
+            camera1.orthographicSize = (Arena.Instance.ArenaSizeY + 2) / 2;
+            camera2.orthographicSize = (Arena.Instance.ArenaSizeY + 2) / 2;
 
             // orth size is for y axis so what is it on x?
             var orthX = camera1.orthographicSize * aspect;
@@ -154,6 +156,10 @@ public class GameBrain : MonoBehaviour
         camera2.GetComponent<PixelPerfectCamera>().enabled = true;
     }
 
+    public static bool IsEditMode()
+    {
+        return !EditorApplication.isPlaying;
+    }
 }
 
 public enum GameState

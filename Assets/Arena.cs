@@ -15,10 +15,18 @@ public class Arena : MonoBehaviour
     private List<GameObject>[,] GridMap;
     private List<GameObject> wallList;
 
-    public static Arena Instance;
-
-    public delegate void GridContentsChangedHandler(int x, int y, List<GameObject> list);
-    public event GridContentsChangedHandler OnGridContentsChanged;
+    private static Arena _instance;
+    public static Arena Instance
+    {
+        get
+        {
+            if(_instance == null)
+            {
+                _instance = GameObject.FindObjectOfType<Arena>();
+            }
+            return _instance;
+        }
+    }
 
     public int Seed = 0;
     private int lastGeneratedSeed;
@@ -30,23 +38,35 @@ public class Arena : MonoBehaviour
     private bool isFirstUpdate = true;
 
     // pickup spawning stuff
-    public GameObject[] PickupPool;
-    public float SpawnRate = 0.05f; // chance that an item spawns every second
+    private GameObject[] PickupPrefabs;
+    public float PickupSpawnRate = 0.05f; // chance that an item spawns every second
     private float lastSpawnCheck = 0;
 
-	void Awake () 
+    // Decorations
+    private GameObject[] DecorationPrefabs;
+
+    private MiniMap miniMap;
+
+	void Start () 
     {
-        Instance = this;
         generatedStuff = transform.FindChild("GeneratedStuff");
+        miniMap = FindObjectOfType<MiniMap>();
+
+        LoadResources();
+
         RemovePreviouslyGeneratedArena();
         GenerateArena();
         SetPlayerStarts();
-        SpawnOneOfEachItem();
+
+        SpawnDecorations();
+        SpawnInitialPickups();
+
 	}
 
-    void Start()
+    void LoadResources()
     {
-
+        PickupPrefabs = Resources.LoadAll<GameObject>("Pickups");
+        DecorationPrefabs = Resources.LoadAll<GameObject>("Decorations");
     }
 
     void Update () 
@@ -59,9 +79,9 @@ public class Arena : MonoBehaviour
 
         if (GameBrain.Instance != null && GameBrain.Instance.State == GameState.GameOn && Time.time - lastSpawnCheck > 1)
         {
-            if(Random.Range(0f,1f) < SpawnRate)
+            if(Random.Range(0f,1f) < PickupSpawnRate)
             {
-                SpawnOneRandomItem();
+                SpawnOneRandomPickup();
             }
             lastSpawnCheck = Time.time;
         }
@@ -72,7 +92,7 @@ public class Arena : MonoBehaviour
             RemovePreviouslyGeneratedArena();
             GenerateArena();
             SetPlayerStarts();
-            SpawnOneOfEachItem();
+            SpawnInitialPickups();
         }
 
         transform.position = new Vector3(0,0,0.1f);
@@ -84,8 +104,8 @@ public class Arena : MonoBehaviour
         {
             for(var y = 0; y < ArenaSizeY; y++)
             {
-                if(OnGridContentsChanged != null)
-                    OnGridContentsChanged(x, y, GridMap[x,y]);
+                if(miniMap != null)
+                    miniMap.GridContentsChanged(x, y, GridMap[x,y]);
             }
         }
     }
@@ -313,10 +333,8 @@ public class Arena : MonoBehaviour
 
         GridMap[x,y].Add(obj);
 
-        var minimap = GameObject.FindObjectOfType<MiniMap>();
-
-        if(OnGridContentsChanged != null)
-            OnGridContentsChanged(x, y, GridMap[x,y]);
+        if(miniMap != null)
+            miniMap.GridContentsChanged(x, y, GridMap[x,y]);
 
     }
 
@@ -336,8 +354,8 @@ public class Arena : MonoBehaviour
                 {
                     list.Remove(obj);
 
-                    if(OnGridContentsChanged != null)
-                        OnGridContentsChanged(x, y, list);
+                    if(miniMap != null)
+                        miniMap.GridContentsChanged(x, y, list);
 
                     return;
                 }
@@ -345,11 +363,11 @@ public class Arena : MonoBehaviour
         }
     }
 
-    private void SpawnOneOfEachItem()
+    private void SpawnInitialPickups()
     {
         // spawn one of each item at random free location
         var emptySpots = GetEmptyGridSpots();
-        for(var i = 0; i< PickupPool.Length; i++)
+        for(var i = 0; i< PickupPrefabs.Length; i++)
         {
             if(emptySpots.Count == 0)
             {
@@ -358,16 +376,20 @@ public class Arena : MonoBehaviour
             }   
             
             var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-            var instance = (GameObject)Instantiate(PickupPool[i], GridToWorldPosition(spot), Quaternion.identity);
-            instance.transform.parent = generatedStuff;
-            SetGridObject(spot, instance);
-            emptySpots.Remove(spot);
+            var prefab = PickupPrefabs[i];
+            if(prefab.GetComponent<Pickup>() != null)
+            {
+                var instance = (GameObject)Instantiate(prefab, GridToWorldPosition(spot), Quaternion.identity);
+                instance.transform.parent = generatedStuff;
+                SetGridObject(spot, instance);
+                emptySpots.Remove(spot);
+            }
         }
     }
 
-    private void SpawnOneRandomItem()
+    private void SpawnOneRandomPickup()
     {
-        var pickup = PickupPool[Random.Range(0, PickupPool.Length)];
+        var pickup = PickupPrefabs[Random.Range(0, PickupPrefabs.Length)];
         var emptySpots = Arena.Instance.GetEmptyGridSpots();
         if(emptySpots.Count > 0)
         {
@@ -375,6 +397,31 @@ public class Arena : MonoBehaviour
             var instance = (GameObject)Instantiate(pickup, GridToWorldPosition(spot), Quaternion.identity);
             instance.transform.parent = generatedStuff;
             SetGridObject(spot, instance);
+        }
+    }
+
+    private void SpawnDecorations()
+    {
+        foreach(var prefab in DecorationPrefabs)
+        {
+            var deco = prefab.GetComponent<Decoration>();
+            if(deco != null)
+            {
+                // check each square to see if the decorations should spawn here
+                for (int x = 0; x < GridMap.GetLength(0); x += 1) 
+                {
+                    for (int y = 0; y < GridMap.GetLength(1); y += 1) 
+                    {
+                        var pos = deco.GetSpawnLocationForGridSquare(x,y, GridMap[x,y]);
+                        if(pos.HasValue)
+                        {
+                            var instance = (GameObject)Instantiate(prefab, pos.Value, Quaternion.identity);
+                            instance.transform.parent = generatedStuff;
+                        }
+                    }
+
+                }
+            }
         }
     }
 }

@@ -35,36 +35,43 @@ public class PlayerControl : MonoBehaviour {
 
     private GamePadState lastGamePadState;
 
+    private bool isFirstUpdate = true;
+
 	// Use this for initialization
 	void Start () 
     {
         // make sure mass is right
         rbody = this.GetComponent<Rigidbody2D>();
         rbody.mass = baseMass;
-
-        // turn startingpickups into actual pickup instances
-        muteSounds = true;
-        foreach(var p in StartingPickups)
-        {
-            var instance = Instantiate(p);
-            var pickup = instance.GetComponent<Pickup>();
-            pickup.BaseStart();
-            pickup.PickupSound = null;
-            pickup.CollectPickup(this);
-        }
-
-        SelectNextWeapon();
-
-        // enable sounds
-        muteSounds = false;
-
-        BroadcastMessage("SetOrientation", orientation);
-        BroadcastMessage("SetAnimationSpeed", 0f);
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
+        if(isFirstUpdate)
+        {
+            isFirstUpdate = false;
+
+            // turn startingpickups into actual pickup instances
+            muteSounds = true;
+            foreach(var p in StartingPickups)
+            {
+                var instance = Instantiate(p);
+                var pickup = instance.GetComponent<Pickup>();
+                pickup.BaseStart();
+                pickup.PickupSound = null;
+                pickup.CollectPickup(this);
+            }
+            
+            SelectNextWeapon();
+            
+            // enable sounds
+            muteSounds = false;
+            
+            BroadcastMessage("SetOrientation", orientation);
+            BroadcastMessage("SetAnimationSpeed", 0f);
+        }
+
         if(GameBrain.Instance.State == GameState.GameOn)
         {
             var gamepadState = GamePad.GetState(PlayerNumber);

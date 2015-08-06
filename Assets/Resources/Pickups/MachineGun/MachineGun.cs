@@ -70,7 +70,7 @@ public class MachineGun : Pickup
         muzzleFlash.GetComponent<SpriteRenderer>().enabled = true;
         muzzleFlash.transform.position = Player.GetAimingOrigin().ToVector3();
     }
-
+    
     private void HideMuzzleFlash()
     {
         muzzleFlash.GetComponent<Light>().enabled = false;

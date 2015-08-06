@@ -6,6 +6,7 @@ public class Explosion : MonoBehaviour
     public AudioClip explosionSound;
 
     private Animator anim;
+    private float DamageRadius = 0.5f;
 
 	// Use this for initialization
 	void Start () 
@@ -13,37 +14,38 @@ public class Explosion : MonoBehaviour
         anim = GetComponent<Animator>();
 
         AudioSource.PlayClipAtPoint(explosionSound, transform.position);
-	}
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        var myCollider = GetComponent<CircleCollider2D>();
-        var v = other.transform.position - transform.position;
-
-        var dam = other.GetComponent<Damageable>();
-        if(dam != null)
+        var colliders = Physics2D.OverlapCircleAll(transform.position, DamageRadius);
+	
+        foreach(var other in colliders)
         {
-            var maxDamage = 100;
-            var actualDamage = Mathf.Lerp(maxDamage, 0, v.magnitude / myCollider.radius);
-            dam.Damage(actualDamage);
-        }
+            var v = other.transform.position - transform.position;
 
-        var rb = other.GetComponent<Rigidbody2D>();
-        if(rb != null)
-        {
-            var dragOrig = rb.drag;
-            rb.drag = 0f;
-
-            var maxForce = 100;
-            var actForce = Mathf.Lerp(maxForce, 0, v.magnitude / myCollider.radius);
-            rb.AddForce(v * actForce, ForceMode2D.Impulse);
-
-            //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
-            GameBrain.Instance.WaitAndThenCall(0.1f, () => 
+            var dam = other.GetComponent<Damageable>();
+            if(dam != null)
             {
-                if(rb != null)
-                    rb.drag = dragOrig;
-            });
+                var maxDamage = 100;
+                var actualDamage = Mathf.Lerp(maxDamage, 0, v.magnitude / DamageRadius);
+                dam.Damage(actualDamage);
+            }
+
+            var rb = other.GetComponent<Rigidbody2D>();
+            if(rb != null)
+            {
+                var dragOrig = rb.drag;
+                rb.drag = 0f;
+
+                var maxForce = 100;
+                var actForce = Mathf.Lerp(maxForce, 0, v.magnitude / DamageRadius);
+                rb.AddForce(v * actForce, ForceMode2D.Impulse);
+
+                //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
+                GameBrain.Instance.WaitAndThenCall(0.1f, () => 
+                {
+                    if(rb != null)
+                        rb.drag = dragOrig;
+                });
+            }
         }
     }
 	

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 
 public class MiniMap : MonoBehaviour 
 {
@@ -10,13 +11,22 @@ public class MiniMap : MonoBehaviour
     public GameObject[,] GridMap;
 
     private float mapSize = 120;
+    private bool isInitialised = false;
 
 	// Use this for initialization
 	void Start () 
     {
+        if(!isInitialised)
+            Init();
+	}
+
+    private void Init()
+    {
+        isInitialised = true;
+
         var gridSize = mapSize / Arena.Instance.ArenaSizeY;
         GridMap = new GameObject[Arena.Instance.ArenaSizeX, Arena.Instance.ArenaSizeY];
-
+        
         // create the minimap grid squares to match arena size
         for(var x = 0; x < Arena.Instance.ArenaSizeX; x++)
         {
@@ -29,20 +39,24 @@ public class MiniMap : MonoBehaviour
                 var posx = (x * gridSize) + (x); //<-- leave a gap of 1px for every sq except the first one
                 var posy = (y * gridSize) + (y); //<-- leave a gap of 1px for every sq except the first one
                 sq.transform.localPosition = new Vector3(posx, posy, 0);
-
+                
                 GridMap[x,y] = sq;
             }
         }
-
+        
         var myrect = GetComponent<RectTransform>();
         myrect.sizeDelta = new Vector2((Arena.Instance.ArenaSizeX * gridSize) + Arena.Instance.ArenaSizeX, (Arena.Instance.ArenaSizeY * gridSize) + Arena.Instance.ArenaSizeY);
         myrect.localPosition = new Vector3(-myrect.sizeDelta.x / 2, myrect.localPosition.y + 16, 0);
+    }
 
-        Arena.Instance.OnGridContentsChanged += Arena_GridContentsChanged;
-	}
-
-    public void Arena_GridContentsChanged(int gridX, int gridY, List<GameObject> objList)
+    public void GridContentsChanged(int gridX, int gridY, List<GameObject> objList)
     {
+        if(GameBrain.IsEditMode())
+            return;
+
+        if(!isInitialised)
+            return;//Init();
+
         var sq = GridMap[gridX, gridY];
         var img = sq.GetComponent<Image>();
 
