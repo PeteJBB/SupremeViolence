@@ -36,7 +36,6 @@ public class Pickup : MonoBehaviour
 
     public virtual void CollectPickup(PlayerControl player)
     {
-        OnPlayerPickup(player);
 
         // check if player already has one of these
         var duplicate = player.Pickups.Find(x => x.Name == this.Name);
@@ -49,6 +48,7 @@ public class Pickup : MonoBehaviour
         else
         {
             // pick it up
+            OnPlayerPickup(player);
             player.AddPickup(this);
             this.Player = player;
             gameObject.SetOwner(player.gameObject);
@@ -96,11 +96,12 @@ public class Pickup : MonoBehaviour
 
     public virtual void OnPlayerPickup(PlayerControl player)
     {
-
+        MainCanvas.Instance.ShowPickupText(this.Name, player.gameObject, (int)player.PlayerIndex + 1);
     }
 
     public virtual void OnPickupDuplicate(PlayerControl player, Pickup duplicate)
     {
+        MainCanvas.Instance.ShowPickupText("+Ammo", player.gameObject, (int)player.PlayerIndex + 1);
         var ammo = GetAmmoCount();
         if(ammo > 0)
         {

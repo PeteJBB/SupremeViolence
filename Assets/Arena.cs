@@ -43,7 +43,7 @@ public class Arena : MonoBehaviour
     private float lastSpawnCheck = 0;
 
     // Decorations
-    private GameObject[] DecorationPrefabs;
+    private Decoration[] DecorationPrefabs;
 
     private MiniMap miniMap;
 
@@ -66,7 +66,7 @@ public class Arena : MonoBehaviour
     void LoadResources()
     {
         PickupPrefabs = Resources.LoadAll<GameObject>("Pickups");
-        DecorationPrefabs = Resources.LoadAll<GameObject>("Decorations");
+        DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
     }
 
     void Update () 
@@ -92,6 +92,7 @@ public class Arena : MonoBehaviour
             RemovePreviouslyGeneratedArena();
             GenerateArena();
             SetPlayerStarts();
+            SpawnDecorations();
             SpawnInitialPickups();
         }
 
@@ -345,9 +346,9 @@ public class Arena : MonoBehaviour
 
     public void RemoveGridObject(GameObject obj)
     {
-        for (int x = 0; x < GridMap.GetLength(0); x += 1) 
+        for (int x = 0; x < ArenaSizeX; x++) 
         {
-            for (int y = 0; y < GridMap.GetLength(1); y += 1) 
+            for (int y = 0; y < ArenaSizeY; y++) 
             {
                 var list = GridMap[x,y];
                 if(list.Contains(obj))
@@ -408,14 +409,14 @@ public class Arena : MonoBehaviour
             if(deco != null)
             {
                 // check each square to see if the decorations should spawn here
-                for (int x = 0; x < GridMap.GetLength(0); x += 1) 
+                for (int x = 0; x < ArenaSizeX; x++) 
                 {
-                    for (int y = 0; y < GridMap.GetLength(1); y += 1) 
+                    for (int y = 0; y < ArenaSizeY; y++) 
                     {
                         var pos = deco.GetSpawnLocationForGridSquare(x,y, GridMap[x,y]);
                         if(pos.HasValue)
                         {
-                            var instance = (GameObject)Instantiate(prefab, pos.Value, Quaternion.identity);
+                            var instance = (GameObject)Instantiate(prefab.gameObject, pos.Value, Quaternion.identity);
                             instance.transform.parent = generatedStuff;
                         }
                     }

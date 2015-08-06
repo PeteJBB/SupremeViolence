@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Decoration : MonoBehaviour {
+public class Decoration : MonoBehaviour 
+{
 
 	// Use this for initialization
 	void Start () 

@@ -9,7 +9,7 @@ public class PlayerControl : MonoBehaviour {
     private float baseLegStrength = 4f;
     private float baseMass = 1;
 
-    public PlayerIndex PlayerNumber;
+    public PlayerIndex PlayerIndex;
 
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
@@ -74,7 +74,7 @@ public class PlayerControl : MonoBehaviour {
 
         if(GameBrain.Instance.State == GameState.GameOn)
         {
-            var gamepadState = GamePad.GetState(PlayerNumber);
+            var gamepadState = GamePad.GetState(PlayerIndex);
 
             // move
             var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
@@ -207,7 +207,6 @@ public class PlayerControl : MonoBehaviour {
         if (!muteSounds && CollectPickupSounds.Length > 0)
         {
             var sound = CollectPickupSounds [Random.Range(0, CollectPickupSounds.Length)];
-            Debug.Log(sound.name);
             AudioSource.PlayClipAtPoint(sound, transform.position);
         }
     }
