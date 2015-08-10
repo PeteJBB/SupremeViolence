@@ -5,20 +5,20 @@ using System;
 using System.Collections;
 using System.Linq;
 
-public class MainCanvas : MonoBehaviour 
+public class PlayerHudCanvas : MonoBehaviour 
 {
     private GameObject MessageTextTemplate;
     private GameObject PickupTextTemplate;
 
     public GameObject PlayerHudPrefab;
 
-    private static MainCanvas _instance;
-    public static MainCanvas Instance
+    private static PlayerHudCanvas _instance;
+    public static PlayerHudCanvas Instance
     {
         get
         {
             if(_instance == null)
-                _instance = FindObjectOfType<MainCanvas>();
+                _instance = FindObjectOfType<PlayerHudCanvas>();
             return _instance;
         }
     }
@@ -28,6 +28,56 @@ public class MainCanvas : MonoBehaviour
     {
         MessageTextTemplate = transform.FindChild("MessageTextTemplate").gameObject;
         PickupTextTemplate = transform.FindChild("PickupTextTemplate").gameObject;
+
+        // create player HUDs
+        for(var i=0; i<GameBrain.NumberOfPlayers; i++)
+        {
+            var hud = Instantiate(PlayerHudPrefab).GetComponent<PlayerHud>();
+            hud.PlayerIndex = i;
+            hud.transform.parent = transform;
+            hud.name = "PlayerHud" + i;
+            var rect = hud.GetComponent<RectTransform>();
+
+            if(GameBrain.NumberOfPlayers == 2)
+            {
+                switch(i)
+                {
+                    case 0:
+                        rect.anchorMin = new Vector2(0,0);
+                        rect.anchorMax = new Vector2(0.5f,1);
+                        break;
+                    case 1:
+                        rect.anchorMin = new Vector2(0.5f,0);
+                        rect.anchorMax = new Vector2(1,1);
+                        break;
+                }
+            }
+            if(GameBrain.NumberOfPlayers > 2)
+            {
+                switch(i)
+                {
+                    case 0:
+                        rect.anchorMin = new Vector2(0,0.5f);
+                        rect.anchorMax = new Vector2(0.5f,1);
+                        break;
+                    case 1:
+                        rect.anchorMin = new Vector2(0.5f,0.5f);
+                        rect.anchorMax = new Vector2(1,1);
+                        break;
+                    case 2:
+                        rect.anchorMin = new Vector2(0,0);
+                        rect.anchorMax = new Vector2(0.5f,0.5f);
+                        break;
+                    case 3:
+                        rect.anchorMin = new Vector2(0.5f,0);
+                        rect.anchorMax = new Vector2(1,0.5f);
+                        break;
+                }
+            }
+
+            rect.offsetMin = new Vector2(0,0);
+            rect.offsetMax = new Vector2(0,0);
+        }
 	}
 	
 	// Update is called once per frame
@@ -56,7 +106,7 @@ public class MainCanvas : MonoBehaviour
         return text;
     }
 
-    public Text ShowPickupText(string msg, GameObject obj, int playerNumber)
+    public Text ShowPickupText(string msg, GameObject obj, int playerIndex)
     {
         var textObj = (GameObject)Instantiate(PickupTextTemplate);
         var text = textObj.GetComponent<Text>();
@@ -64,7 +114,7 @@ public class MainCanvas : MonoBehaviour
         
         textObj.transform.parent = transform;
         var rect = textObj.GetComponent<RectTransform>();
-        var point = WorldToCanvasPoint(obj.transform.position, playerNumber);
+        var point = WorldToCanvasPoint(obj.transform.position, playerIndex);
         rect.anchoredPosition = point;
 
         iTween.MoveTo(textObj, iTween.Hash("y", point.y + 38, "time", 1));

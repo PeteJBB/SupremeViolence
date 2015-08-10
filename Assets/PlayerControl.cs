@@ -9,7 +9,7 @@ public class PlayerControl : MonoBehaviour {
     private float baseLegStrength = 4f;
     private float baseMass = 1;
 
-    public PlayerIndex PlayerIndex;
+    public int PlayerIndex;
 
     public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
@@ -74,7 +74,7 @@ public class PlayerControl : MonoBehaviour {
 
         if(GameBrain.Instance.State == GameState.GameOn)
         {
-            var gamepadState = GamePad.GetState(PlayerIndex);
+            var gamepadState = GetGamePadInput();
 
             // move
             var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
@@ -154,6 +154,22 @@ public class PlayerControl : MonoBehaviour {
             lastGamePadState = gamepadState;
         }
 	}
+
+    private GamePadState GetGamePadInput()
+    {
+        switch(PlayerIndex)
+        {
+            case 0:
+            default:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.One);
+            case 1:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Two);
+            case 2:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Three);
+            case 3:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
+        }
+    }
 
     /// <summary>
     /// Get the position of the player's gun

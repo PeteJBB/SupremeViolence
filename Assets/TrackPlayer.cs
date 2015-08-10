@@ -1,25 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
-public class TrackObject : MonoBehaviour {
+public class TrackPlayer : MonoBehaviour {
 
-    public GameObject target;
     private float maxSpeed = 6f; // world units per second
+
+    public int PlayerIndex;
+    public PlayerControl Player;
 
 	// Use this for initialization
 	void Start () 
     {
-        var pos = target.transform.position;
-        pos.z = transform.position.z;
-        transform.position = pos;
+
 	}
 	
 	// LateUpdate is called once per frame after Update
 	void LateUpdate () 
     {
-        if(target != null)
+        if(Player == null)
         {
-            var path = target.transform.position - transform.position;
+            Player = FindObjectsOfType<PlayerControl>().FirstOrDefault(x => (int)x.PlayerIndex == this.PlayerIndex);
+            if(Player != null)
+            {
+                var pos = Player.transform.position;
+                pos.z = transform.position.z;
+                transform.position = pos;
+            }
+        }
+
+        if(Player != null)
+        {
+            var path = Player.transform.position - transform.position;
             path.z = 0;
 
 //            if(path.magnitude < maxSpeed * Time.deltaTime)

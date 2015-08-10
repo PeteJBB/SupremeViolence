@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class SpeedyBoots : Pickup
@@ -35,6 +35,6 @@ public class SpeedyBoots : Pickup
         particles.enableEmission = true;
 
         if(GameBrain.Instance.State == GameState.GameOn)
-            MainCanvas.Instance.ShowPickupText(this.Name, player.gameObject, (int)player.PlayerIndex + 1);
+            PlayerHudCanvas.Instance.ShowPickupText(this.Name, player.gameObject, player.PlayerIndex);
     }
 }

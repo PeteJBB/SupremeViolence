@@ -26,7 +26,7 @@ public class Explosion : MonoBehaviour
             {
                 var maxDamage = 100;
                 var actualDamage = Mathf.Lerp(maxDamage, 0, v.magnitude / DamageRadius);
-                dam.Damage(actualDamage);
+                dam.Damage(actualDamage, gameObject);
             }
 
             var rb = other.GetComponent<Rigidbody2D>();

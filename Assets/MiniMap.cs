@@ -68,10 +68,12 @@ public class MiniMap : MonoBehaviour
             if(o.tag == "Wall")
             {
                 img.color = new Vector4(0.33f,0.33f,0.33f,0.5f);
+                break;
             }
             else if(o.tag == "Player")
             {
                 img.color = Color.red;
+                break;
             }
             else if(o.GetComponent<Pickup>() != null)
             {

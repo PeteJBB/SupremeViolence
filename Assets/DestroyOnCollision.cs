@@ -39,7 +39,8 @@ public class DestroyOnCollision : MonoBehaviour {
     {
         if(explosionPrefab != null)
         {
-            Instantiate(explosionPrefab, pos, rot);
+            var exp = (GameObject)Instantiate(explosionPrefab, pos, rot);
+            exp.SetOwner(gameObject.GetOwner());
         }
     }
 
@@ -50,7 +51,7 @@ public class DestroyOnCollision : MonoBehaviour {
             var damageable = other.GetComponent<Damageable>();
             if(damageable != null)
             {
-                damageable.Damage(baseDamage);
+                damageable.Damage(baseDamage, gameObject);
             }
         }
     }

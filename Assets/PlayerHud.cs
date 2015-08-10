@@ -5,9 +5,9 @@ using System.Linq;
 
 public class PlayerHud : MonoBehaviour 
 {
-    public PlayerControl Player;
+    public int PlayerIndex;
+    private PlayerControl player;
 
-    private Damageable damageable;
     private Transform healthBar;
     private Transform healthBarBorder;
     private Text weaponLabel;
@@ -16,7 +16,6 @@ public class PlayerHud : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        damageable = Player.GetComponent<Damageable>();
         healthBar = transform.FindChild("HealthBar");
         healthBarBorder = transform.FindChild("HealthBarBorder");
         weaponLabel = transform.FindChild("WeaponLabel").GetComponent<Text>();
@@ -26,19 +25,30 @@ public class PlayerHud : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        var health = Mathf.Clamp(damageable.Health / damageable.StartingHealth, 0, 1);
-        healthBar.localScale = new Vector3(health, 1, 1);
-
-        if(Player.CurrentWeapon == null)
-            weaponLabel.text = "";
-        else
+        if(player == null)
         {
-            weaponLabel.text = Player.CurrentWeapon.Name;
-            var ammo = Player.CurrentWeapon.GetAmmoCount();
-            if(ammo != int.MaxValue)
-                weaponLabel.text += " " + ammo;
+            var players = FindObjectsOfType<PlayerControl>();
+            player = players.FirstOrDefault(x => (int)x.PlayerIndex == PlayerIndex);
+
         }
 
-        score.text = Player.Score.ToString();
+        if(player != null)
+        {
+            var damageable = player.GetComponent<Damageable>();
+            var health = Mathf.Clamp(damageable.Health / damageable.StartingHealth, 0, 1);
+            healthBar.localScale = new Vector3(health, 1, 1);
+
+            if(player.CurrentWeapon == null)
+                weaponLabel.text = "";
+            else
+            {
+                weaponLabel.text = player.CurrentWeapon.Name;
+                var ammo = player.CurrentWeapon.GetAmmoCount();
+                if(ammo != int.MaxValue)
+                    weaponLabel.text += " " + ammo;
+            }
+
+            score.text = player.Score.ToString();
+        }
 	}
 }

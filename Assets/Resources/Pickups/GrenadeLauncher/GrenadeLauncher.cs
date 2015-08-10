@@ -27,6 +27,7 @@ public class GrenadeLauncher : Pickup
             Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), grenade.GetComponent<Collider2D>());
             grenade.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 5f), ForceMode2D.Impulse);
             grenade.GetComponent<Rigidbody2D>().AddTorque(1);
+            grenade.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
         }

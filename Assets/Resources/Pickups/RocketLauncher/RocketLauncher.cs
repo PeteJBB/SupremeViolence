@@ -32,6 +32,7 @@ public class RocketLauncher : Pickup
             var rocket = (GameObject)GameObject.Instantiate(RocketPrefab, origin, rotation);
             Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), rocket.GetComponent<Collider2D>());
             rocket.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 5f), ForceMode2D.Impulse);
+            rocket.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
         }

@@ -73,7 +73,7 @@ public class Railgun : Pickup
             if(aSources != null)
             {
                 humming.Stop();
-                iTween.StopByName("RailgunHum");
+                iTween.StopByName(gameObject, "RailgunHum");
                 iTween.AudioTo(gameObject, iTween.Hash("audiosource", chargingSound, "volume", 0, "time", 0.5f, "pitch", 0));
             }
             if (Time.time - chargeTime > chargingTime)
@@ -82,7 +82,7 @@ public class Railgun : Pickup
                 var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, origin, rotation);
                 Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
                 bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 30f), ForceMode2D.Impulse);
-            
+                bullet.SetOwner(Player.gameObject);
                 AudioSource.PlayClipAtPoint(Fire, transform.position);
                 Ammo--;
             } 

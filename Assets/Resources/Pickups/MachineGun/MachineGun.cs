@@ -50,6 +50,7 @@ public class MachineGun : Pickup
             var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, Player.GetAimingOrigin(), rotation);
             Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
             bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse); 
+            bullet.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
 

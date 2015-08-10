@@ -13,7 +13,6 @@ public class Arena : MonoBehaviour
     public float WallDensity = 0.25f;
 
     public GameObject PlayerPrefab;
-    public GameObject PlayerCameraPrefab;
 
     private List<GameObject>[,] GridMap;
     private List<GameObject> wallList;
@@ -34,14 +33,14 @@ public class Arena : MonoBehaviour
     public int Seed = 0;
     private int lastGeneratedSeed;
     private bool regenerateOnNextUpdate = false;
+    private Transform generatedStuff;
 
     public Texture2D WallSkin;
 
-    private Transform generatedStuff;
     private bool isFirstUpdate = true;
 
     // pickup spawning stuff
-    private GameObject[] PickupPrefabs;
+    private Pickup[] PickupPrefabs;
     public float PickupSpawnRate = 0.05f; // chance that an item spawns every second
     private float lastSpawnCheck = 0;
 
@@ -59,7 +58,7 @@ public class Arena : MonoBehaviour
 
         RemovePreviouslyGeneratedArena();
         GenerateArena();
-        SetPlayerStarts();
+        SpawnPlayers();
 
         SpawnDecorations();
         SpawnInitialPickups();
@@ -68,7 +67,7 @@ public class Arena : MonoBehaviour
 
     void LoadResources()
     {
-        PickupPrefabs = Resources.LoadAll<GameObject>("Pickups");
+        PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
         DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
     }
 
@@ -94,13 +93,26 @@ public class Arena : MonoBehaviour
             regenerateOnNextUpdate = false;
             RemovePreviouslyGeneratedArena();
             GenerateArena();
-            SetPlayerStarts();
+            SpawnPlayers();
             SpawnDecorations();
             SpawnInitialPickups();
         }
 
         transform.position = new Vector3(0,0,0.1f);
 	}
+
+    void LateUpdate()
+    {
+        // cleanup grid objects that have been destroyed
+        for(var x = 0; x < ArenaSizeX; x++)
+        {
+            for(var y = 0; y < ArenaSizeY; y++)
+            {
+                if(GridMap[x,y].Any(o => o == null))
+                    GridMap[x,y] = GridMap[x,y].Where(o => o != null).ToList();
+            }
+        }
+    }
 
     void NotifyAllGridContentsChanged () 
     {
@@ -269,20 +281,39 @@ public class Arena : MonoBehaviour
         return wall;
     }
 
-    private void SetPlayerStarts()
+    private void SpawnPlayers()
     {
-        // set player positions
-        foreach(var player in GameObject.FindObjectsOfType<PlayerControl>())
+        for(var i=0; i<GameBrain.NumberOfPlayers; i++)
         {
             var emptySpots = GetEmptyGridSpots();
-
+            
             if(emptySpots.Count > 0)
             {
                 // choose a random spot
                 var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-                player.transform.position = GridToWorldPosition(spot);
+                var player = ((GameObject)Instantiate(PlayerPrefab, GridToWorldPosition(spot), Quaternion.identity)).GetComponent<PlayerControl>();
                 player.CurrentGridPos = spot;
+                player.PlayerIndex = i;
+                player.transform.parent = generatedStuff;
                 SetGridObject(spot, player.gameObject);
+
+                // set color
+                var torso = player.transform.Find("Torso").GetComponent<SpriteRenderer>();
+                switch(i)
+                {
+                    case 0:
+                        torso.color = new Color(.2f, .4f, 1);
+                        break;
+                    case 1:
+                        torso.color = Color.red;
+                        break;
+                    case 2:
+                        torso.color = Color.green;
+                        break;
+                    case 3:
+                        torso.color = Color.yellow;
+                        break;
+                }
             }
         }
     }
@@ -381,13 +412,10 @@ public class Arena : MonoBehaviour
             
             var spot = emptySpots[Random.Range(0,emptySpots.Count)];
             var prefab = PickupPrefabs[i];
-            if(prefab.GetComponent<Pickup>() != null)
-            {
-                var instance = (GameObject)Instantiate(prefab, GridToWorldPosition(spot), Quaternion.identity);
-                instance.transform.parent = generatedStuff;
-                SetGridObject(spot, instance);
-                emptySpots.Remove(spot);
-            }
+            var instance = (Pickup)Instantiate(prefab, GridToWorldPosition(spot), Quaternion.identity);
+            instance.transform.parent = generatedStuff;
+            SetGridObject(spot, instance.gameObject);
+            emptySpots.Remove(spot);
         }
     }
 
@@ -398,9 +426,9 @@ public class Arena : MonoBehaviour
         if(emptySpots.Count > 0)
         {
             var spot = emptySpots[Random.Range(0, emptySpots.Count)];
-            var instance = (GameObject)Instantiate(pickup, GridToWorldPosition(spot), Quaternion.identity);
+            var instance = (Pickup)Instantiate(pickup, GridToWorldPosition(spot), Quaternion.identity);
             instance.transform.parent = generatedStuff;
-            SetGridObject(spot, instance);
+            SetGridObject(spot, instance.gameObject);
         }
     }
 

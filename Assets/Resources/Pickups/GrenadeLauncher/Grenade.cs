@@ -21,7 +21,10 @@ public class Grenade : MonoBehaviour
         {
             // explode!
             if(ExplosionPrefab != null)
-                Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
+            {
+                var exp = (GameObject)Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
+                exp.SetOwner(gameObject.GetOwner());
+            }
 
             // detach particle sys
             var particles = transform.FindChild("Particles");

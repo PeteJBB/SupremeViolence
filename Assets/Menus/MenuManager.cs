@@ -36,12 +36,25 @@ public class MenuManager : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        Debug.Log("LoadScene " + sceneName);
         Application.LoadLevelAsync(sceneName);
     }
 
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public void SetNumberOfPlayers(int num)
+    {
+        Debug.Log("SetNumberOfPlayers " + num);
+        if(num < 2)
+            GameBrain.NumberOfPlayers = 2;
+        else if (num > 4)
+            GameBrain.NumberOfPlayers = 4;
+        else
+            GameBrain.NumberOfPlayers = num;
+        
     }
 }
 
