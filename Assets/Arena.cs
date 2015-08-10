@@ -12,6 +12,9 @@ public class Arena : MonoBehaviour
     public GameObject WallPrefab;
     public float WallDensity = 0.25f;
 
+    public GameObject PlayerPrefab;
+    public GameObject PlayerCameraPrefab;
+
     private List<GameObject>[,] GridMap;
     private List<GameObject> wallList;
 

@@ -10,6 +10,8 @@ public class MainCanvas : MonoBehaviour
     private GameObject MessageTextTemplate;
     private GameObject PickupTextTemplate;
 
+    public GameObject PlayerHudPrefab;
+
     private static MainCanvas _instance;
     public static MainCanvas Instance
     {

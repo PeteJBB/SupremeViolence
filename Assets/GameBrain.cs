@@ -24,10 +24,13 @@ public class GameBrain : MonoBehaviour
     private Camera camera1;
     private Camera camera2;
 
+    private PlayerControl[] players;
     private PlayerControl player1;
     private PlayerControl player2;
 
     private float targetOrthSize;
+
+    public static int NumberOfPlayers = 2;
 
 	void Awake () 
     {
