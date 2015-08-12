@@ -6,6 +6,11 @@ public class RocketLauncher : Pickup
     public GameObject RocketPrefab;
     public AudioClip FireSound;
 
+    public override string GetPickupName()
+    {
+        return "Rocket Launcher";
+    }
+
 	// Use this for initialization
 	void Start()
     {

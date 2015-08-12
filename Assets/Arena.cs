@@ -289,7 +289,7 @@ public class Arena : MonoBehaviour
 
     private void SpawnPlayers()
     {
-        for(var i=0; i<GameBrain.NumberOfPlayers; i++)
+        for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {
             var emptySpots = GetEmptyGridSpots();
             

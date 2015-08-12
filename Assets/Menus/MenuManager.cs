@@ -2,16 +2,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using System.Linq;
 
 public class MenuManager : MonoBehaviour 
 {
     private Stack<Canvas> navStack = new Stack<Canvas>();
     public Canvas ActiveCanvas;
     private EventSystem eventSys;
+    public GameObject lastSelected;
 
     void Start()
     {
         eventSys = FindObjectOfType<EventSystem>();
+    }
+
+    void Update()
+    {
+        if(eventSys.currentSelectedGameObject == null)
+        {
+            eventSys.SetSelectedGameObject(lastSelected);
+            lastSelected = null;
+        }
+        else if(lastSelected == null)
+        {
+            lastSelected = eventSys.currentSelectedGameObject;
+        }
     }
 
 	public void NavigateForwards(Canvas canvas)
@@ -21,7 +37,9 @@ public class MenuManager : MonoBehaviour
         ActiveCanvas = canvas;
         ActiveCanvas.gameObject.SetActive(true);
 
-        eventSys.SetSelectedGameObject(canvas.transform.GetChild(0).gameObject);
+        var selectables = canvas.GetComponentsInChildren<Selectable>();
+        var first = selectables.OrderBy(x => x.GetComponent<RectTransform>().position.y).FirstOrDefault();
+        eventSys.SetSelectedGameObject(first.gameObject);
     }
 
     public void GoBack()
@@ -49,11 +67,11 @@ public class MenuManager : MonoBehaviour
     {
         Debug.Log("SetNumberOfPlayers " + num);
         if(num < 2)
-            GameBrain.NumberOfPlayers = 2;
+            GameSettings.NumberOfPlayers = 2;
         else if (num > 4)
-            GameBrain.NumberOfPlayers = 4;
+            GameSettings.NumberOfPlayers = 4;
         else
-            GameBrain.NumberOfPlayers = num;
+            GameSettings.NumberOfPlayers = num;
         
     }
 }

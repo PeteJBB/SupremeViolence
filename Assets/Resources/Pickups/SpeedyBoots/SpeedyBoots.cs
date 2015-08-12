@@ -6,6 +6,11 @@ public class SpeedyBoots : Pickup
     ParticleSystem particles;
     Rigidbody2D ownerPlayerBody;
 
+    public override string GetPickupName()
+    {
+        return "Speedy Boots";
+    }
+
 	// Use this for initialization
 	void Start()
     {
@@ -35,6 +40,6 @@ public class SpeedyBoots : Pickup
         particles.enableEmission = true;
 
         if(GameBrain.Instance.State == GameState.GameOn)
-            PlayerHudCanvas.Instance.ShowPickupText(this.Name, player.gameObject, player.PlayerIndex);
+            PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Pickup : MonoBehaviour
 {
-    public string Name;
+
     public PlayerControl Player;
     public AudioClip PickupSound;
 
@@ -25,6 +25,11 @@ public class Pickup : MonoBehaviour
         icon = transform.FindChild("Icon");
     }
 
+    public virtual string GetPickupName()
+    {
+        return "Default Pickup";
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "Player")
@@ -36,9 +41,8 @@ public class Pickup : MonoBehaviour
 
     public virtual void CollectPickup(PlayerControl player)
     {
-
         // check if player already has one of these
-        var duplicate = player.Pickups.Find(x => x.Name == this.Name);
+        var duplicate = player.Pickups.Find(x => x.GetPickupName() == this.GetPickupName());
         if(duplicate != null)
         {
             // already got one, take ammo etc and destroy
@@ -97,7 +101,7 @@ public class Pickup : MonoBehaviour
     public virtual void OnPlayerPickup(PlayerControl player)
     {
         if(GameBrain.Instance.State == GameState.GameOn)
-            PlayerHudCanvas.Instance.ShowPickupText(this.Name, player.gameObject, player.PlayerIndex);
+            PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
     }
 
     public virtual void OnPickupDuplicate(PlayerControl player, Pickup duplicate)
@@ -148,6 +152,11 @@ public class Pickup : MonoBehaviour
     public virtual void OnFireUp(Vector3 origin)
     {
         
+    }
+
+    public override string ToString()
+    {
+        return this.GetPickupName();
     }
 
 }

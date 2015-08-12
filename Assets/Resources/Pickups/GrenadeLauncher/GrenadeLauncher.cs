@@ -6,6 +6,11 @@ public class GrenadeLauncher : Pickup
     public GameObject GrenadePrefab;
     public AudioClip FireSound;
 
+    public override string GetPickupName()
+    {
+        return "Grenade Launcher";
+    }
+
 	// Use this for initialization
 	void Start()
     {

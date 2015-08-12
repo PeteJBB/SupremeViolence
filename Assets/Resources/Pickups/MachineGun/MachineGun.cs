@@ -12,6 +12,11 @@ public class MachineGun : Pickup
 
     private GameObject muzzleFlash;
 
+    public override string GetPickupName()
+    {
+        return "Machine Gun";
+    }
+
 	// Use this for initialization
 	void Start()
     {

@@ -11,6 +11,11 @@ public class Flamer : Pickup
     private AudioSource jetSound;
     private AudioSource flameSound;
 
+    public override string GetPickupName()
+    {
+        return "Flamer";
+    }
+
 	// Use this for initialization
 	void Start()
     {

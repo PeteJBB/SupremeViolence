@@ -8,6 +8,11 @@ public class Pistol : Pickup
 
     private GameObject muzzleFlash;
 
+    public override string GetPickupName()
+    {
+        return "Pistol";
+    }
+
 	// Use this for initialization
 	void Start()
     {

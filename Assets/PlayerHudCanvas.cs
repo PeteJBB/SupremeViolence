@@ -30,7 +30,7 @@ public class PlayerHudCanvas : MonoBehaviour
         PickupTextTemplate = transform.FindChild("PickupTextTemplate").gameObject;
 
         // create player HUDs
-        for(var i=0; i<GameBrain.NumberOfPlayers; i++)
+        for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {
             var hud = Instantiate(PlayerHudPrefab).GetComponent<PlayerHud>();
             hud.PlayerIndex = i;
@@ -38,7 +38,7 @@ public class PlayerHudCanvas : MonoBehaviour
             hud.name = "PlayerHud" + i;
             var rect = hud.GetComponent<RectTransform>();
 
-            if(GameBrain.NumberOfPlayers == 2)
+            if(GameSettings.NumberOfPlayers == 2)
             {
                 switch(i)
                 {
@@ -52,7 +52,7 @@ public class PlayerHudCanvas : MonoBehaviour
                         break;
                 }
             }
-            if(GameBrain.NumberOfPlayers > 2)
+            if(GameSettings.NumberOfPlayers > 2)
             {
                 switch(i)
                 {

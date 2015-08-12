@@ -14,9 +14,6 @@ public class GameBrain : MonoBehaviour
         get { return FindObjectOfType<GameBrain>(); }
     }
 
-    public static int NumberOfPlayers = 2;
-    public static int ScoreLimit = 1;
-
     public GameState State = GameState.Startup;
     public bool EnableStartupSequence = true;
 
@@ -57,7 +54,7 @@ public class GameBrain : MonoBehaviour
     // create player cameras
     void CreatePlayerCameras()
     {
-        for(var i=0; i<NumberOfPlayers; i++)
+        for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {
             var cam = Instantiate(PlayerCameraPrefab).GetComponent<Camera>();
             cameras.Add(cam);
@@ -70,9 +67,9 @@ public class GameBrain : MonoBehaviour
             
             // set camera rect
             var w = 0.5f;
-            var h = 2f / GameBrain.NumberOfPlayers;
+            var h = 2f / GameSettings.NumberOfPlayers;
             var x = (i % 2) * 0.5f;
-            var y = NumberOfPlayers < 3 || i > 1
+            var y = GameSettings.NumberOfPlayers < 3 || i > 1
                 ? 0f
                     : 0.5f;
             
@@ -142,7 +139,7 @@ public class GameBrain : MonoBehaviour
 
             foreach(var p in players)
             {
-                if(p.Score >= ScoreLimit)
+                if(p.Score >= GameSettings.ScoreLimit)
                 {
                     GameOver();
                 }

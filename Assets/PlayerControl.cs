@@ -11,7 +11,6 @@ public class PlayerControl : MonoBehaviour {
 
     public int PlayerIndex;
 
-    public List<GameObject> StartingPickups = new List<GameObject>();
     public List<Pickup> Pickups = new List<Pickup>();
     public Pickup CurrentWeapon;
     public AudioClip[] CollectPickupSounds; // one sound is chosen at random when collecting a pickup
@@ -52,21 +51,16 @@ public class PlayerControl : MonoBehaviour {
         {
             isFirstUpdate = false;
 
-            // turn startingpickups into actual pickup instances
+            // turn startweapon into actual pickup instance
             muteSounds = true;
-            foreach(var p in StartingPickups)
-            {
-                var instance = Instantiate(p);
-                var pickup = instance.GetComponent<Pickup>();
-                pickup.BaseStart();
-                pickup.PickupSound = null;
-                pickup.CollectPickup(this);
-            }
-            
-            SelectNextWeapon();
-            
-            // enable sounds
+            var instance = Instantiate(GameSettings.StartWeapon);
+            var pickup = instance.GetComponent<Pickup>();
+            pickup.BaseStart();
+            pickup.PickupSound = null;
+            pickup.CollectPickup(this);
             muteSounds = false;
+
+            SelectNextWeapon();
             
             BroadcastMessage("SetOrientation", orientation);
             BroadcastMessage("SetAnimationSpeed", 0f);
@@ -79,7 +73,6 @@ public class PlayerControl : MonoBehaviour {
             // move
             var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
             rbody.AddForce(moveInput * baseLegStrength * GetLegStrengthMultiplier());
-            BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 
             // aim
             var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);
@@ -153,6 +146,8 @@ public class PlayerControl : MonoBehaviour {
 
             lastGamePadState = gamepadState;
         }
+
+        BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 	}
 
     private GamePadState GetGamePadInput()

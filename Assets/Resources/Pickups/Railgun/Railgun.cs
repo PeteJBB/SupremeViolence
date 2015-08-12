@@ -13,6 +13,10 @@ public class Railgun : Pickup
     private AudioSource humming;
     ParticleSystem particles;
    
+    public override string GetPickupName()
+    {
+        return "Railgun";
+    }
 
 	// Use this for initialization
 	void Start()

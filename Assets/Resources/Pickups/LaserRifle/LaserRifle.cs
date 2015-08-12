@@ -9,6 +9,11 @@ public class LaserRifle : Pickup
     public GameObject LightPrefab;
     public GameObject ImpactPrefab;
 
+    public override string GetPickupName()
+    {
+        return "Laser Rifle";
+    }
+
 	// Use this for initialization
 	void Start()
     {
