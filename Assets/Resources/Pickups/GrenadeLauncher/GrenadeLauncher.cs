@@ -23,6 +23,16 @@ public class GrenadeLauncher : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 400;
+    }
+    
+    public override string GetDescription()
+    {
+        return "Launches explosive grenades with a 3 second fuse and which can bounce off walls. Available now in time for mothers' day.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         if(Ammo > 0)

@@ -49,6 +49,16 @@ public class Flamer : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 500;
+    }
+    
+    public override string GetDescription()
+    {
+        return "Whether you're warding off extraterrestrial invaders or just kick-starting a barbecue, the flamer guarantees delivery of charred and smouldering heaps on time, every time.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         if(Ammo > 0)

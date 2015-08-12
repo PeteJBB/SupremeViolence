@@ -83,11 +83,6 @@ public class Pickup : MonoBehaviour
         return false;
     }
 
-    public virtual float GetMoveMultiplier()
-    {
-        return 1;
-    }
-
     public virtual float GetLegStrengthMultiplier()
     {
         return 1;
@@ -96,6 +91,16 @@ public class Pickup : MonoBehaviour
     public virtual float GetMass()
     {
         return 0;
+    }
+
+    public virtual int GetPrice()
+    {
+        return 200;
+    }
+
+    public virtual string GetDescription()
+    {
+        return GetPickupName();
     }
 
     public virtual void OnPlayerPickup(PlayerControl player)

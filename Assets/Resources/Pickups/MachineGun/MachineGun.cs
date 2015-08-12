@@ -42,6 +42,16 @@ public class MachineGun : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 350;
+    }
+    
+    public override string GetDescription()
+    {
+        return "This here is your standard high rate of fire meat grinder. Hold down the trigger and watch the other guy turn to mush.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         isTriggerDown = true;

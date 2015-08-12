@@ -38,6 +38,16 @@ public class LaserRifle : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 250;
+    }
+    
+    public override string GetDescription()
+    {
+        return "Fires a narrow but high-powered laser beam which can cut a watermelon clean in half. Protective goggles are recommended during use.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         if(Ammo <= 0)

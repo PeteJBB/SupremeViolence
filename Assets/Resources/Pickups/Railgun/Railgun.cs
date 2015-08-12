@@ -49,6 +49,16 @@ public class Railgun : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 600;
+    }
+    
+    public override string GetDescription()
+    {
+        return "Hold down the trigger for a few seconds to charge this beastly contraption. Once charged release the trigger to hurl a hefty iron skewer at high velocity. Aim away from face.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         if(Ammo > 0)

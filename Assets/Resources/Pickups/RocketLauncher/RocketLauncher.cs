@@ -29,6 +29,16 @@ public class RocketLauncher : Pickup
         return true;
     }
 
+    public override int GetPrice()
+    {
+        return 900;
+    }
+    
+    public override string GetDescription()
+    {
+        return "Rockets sure are fun aren't they? This is your high-explosive, point and shoot, no frills model favoured by terrorists, and action movie stars alike.";
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
         if(Ammo > 0)
