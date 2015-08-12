@@ -73,13 +73,13 @@ public class Arena : MonoBehaviour
 
     void Update () 
     {
-        if(isFirstUpdate)
+        if(!GameBrain.IsEditMode() && isFirstUpdate)
         {
             NotifyAllGridContentsChanged();
             isFirstUpdate = false;
         }
 
-        if (GameBrain.Instance != null && GameBrain.Instance.State == GameState.GameOn && Time.time - lastSpawnCheck > 1)
+        if (GameBrain.Instance.State == GameState.GameOn && Time.time - lastSpawnCheck > 1)
         {
             if(Random.Range(0f,1f) < PickupSpawnRate)
             {
@@ -88,8 +88,9 @@ public class Arena : MonoBehaviour
             lastSpawnCheck = Time.time;
         }
         
-        if(!EditorApplication.isPlaying && regenerateOnNextUpdate)
+        if(GameBrain.IsEditMode() && regenerateOnNextUpdate)
         {
+            Debug.Log("Arena regen");
             regenerateOnNextUpdate = false;
             RemovePreviouslyGeneratedArena();
             GenerateArena();
@@ -103,25 +104,30 @@ public class Arena : MonoBehaviour
 
     void LateUpdate()
     {
-        // cleanup grid objects that have been destroyed
-        for(var x = 0; x < ArenaSizeX; x++)
+        if(!GameBrain.IsEditMode())
         {
-            for(var y = 0; y < ArenaSizeY; y++)
+            // cleanup grid objects that have been destroyed
+            for(var x = 0; x < ArenaSizeX; x++)
             {
-                if(GridMap[x,y].Any(o => o == null))
-                    GridMap[x,y] = GridMap[x,y].Where(o => o != null).ToList();
+                for(var y = 0; y < ArenaSizeY; y++)
+                {
+                    if(GridMap[x,y].Any(o => o == null))
+                        GridMap[x,y] = GridMap[x,y].Where(o => o != null).ToList();
+                }
             }
         }
     }
 
     void NotifyAllGridContentsChanged () 
     {
-        for(var x = 0; x < ArenaSizeX; x++)
+        if(!GameBrain.IsEditMode() && miniMap != null)
         {
-            for(var y = 0; y < ArenaSizeY; y++)
+            for(var x = 0; x < ArenaSizeX; x++)
             {
-                if(miniMap != null)
+                for(var y = 0; y < ArenaSizeY; y++)
+                {
                     miniMap.GridContentsChanged(x, y, GridMap[x,y]);
+                }
             }
         }
     }
@@ -366,6 +372,10 @@ public class Arena : MonoBehaviour
             return;
         }
 
+        if(GridMap == null || GridMap[x,y] == null)
+        {
+            Debug.Break();
+        }
         GridMap[x,y].Add(obj);
 
         if(miniMap != null)
@@ -380,19 +390,20 @@ public class Arena : MonoBehaviour
 
     public void RemoveGridObject(GameObject obj)
     {
-        for (int x = 0; x < ArenaSizeX; x++) 
+        if(!GameBrain.IsEditMode() && miniMap != null)
         {
-            for (int y = 0; y < ArenaSizeY; y++) 
+            for (int x = 0; x < ArenaSizeX; x++) 
             {
-                var list = GridMap[x,y];
-                if(list.Contains(obj))
+                for (int y = 0; y < ArenaSizeY; y++) 
                 {
-                    list.Remove(obj);
-
-                    if(miniMap != null)
+                    var list = GridMap[x,y];
+                    if(list.Contains(obj))
+                    {
+                        list.Remove(obj);
                         miniMap.GridContentsChanged(x, y, list);
 
-                    return;
+                        return;
+                    }
                 }
             }
         }

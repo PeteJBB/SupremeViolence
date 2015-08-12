@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using UnityEngine.EventSystems;
 
 public class GameBrain : MonoBehaviour 
 {
@@ -15,6 +15,7 @@ public class GameBrain : MonoBehaviour
     }
 
     public static int NumberOfPlayers = 2;
+    public static int ScoreLimit = 1;
 
     public GameState State = GameState.Startup;
     public bool EnableStartupSequence = true;
@@ -39,6 +40,9 @@ public class GameBrain : MonoBehaviour
             AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
 
         CreatePlayerCameras();
+
+        var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
+        resultsCanvas.alpha = 0;
 
         if (EnableStartupSequence)
         {
@@ -79,8 +83,10 @@ public class GameBrain : MonoBehaviour
     void RunStartupSequence()
     {
         // hide UI
-        var canvasGroup = GameObject.FindObjectOfType<PlayerHudCanvas>().GetComponent<CanvasGroup>();
-        canvasGroup.alpha = 0;
+        var uiCanvas = GameObject.FindObjectOfType<PlayerHudCanvas>().GetComponent<CanvasGroup>();
+        uiCanvas.alpha = 0;
+        var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
+        resultsCanvas.alpha = 0;
 
         // create a new camera which will display the entire play area
         var cam = new GameObject("StartupCamera").AddComponent<Camera>();
@@ -88,6 +94,7 @@ public class GameBrain : MonoBehaviour
         cam.transform.position = new Vector3(0,0,-10);
         cam.orthographic = true;
         cam.orthographicSize = Arena.Instance.ArenaSizeY / 2f;
+        cam.gameObject.AddComponent<GUILayer>();
 
         // 0 - wob
         // 2 - fade in ui
@@ -97,7 +104,7 @@ public class GameBrain : MonoBehaviour
         // fade in UI
         iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "delay", 2, "time", 0.5f, "onupdate", (Action<object>) (newVal =>  
         { 
-            canvasGroup.alpha = (float)newVal;
+            uiCanvas.alpha = (float)newVal;
         })));
 
         // Get ready!
@@ -109,7 +116,6 @@ public class GameBrain : MonoBehaviour
         });
 
         // fade cam to black (requires GUILayer)
-        cam.gameObject.AddComponent<GUILayer>();
         iTween.CameraFadeAdd();
         iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 3, "time", 0.5f));
 
@@ -128,7 +134,20 @@ public class GameBrain : MonoBehaviour
     // Update is called once per frame
 	void Update () 
     {
+        if(State == GameState.GameOn)
+        {
+            // check player scores, when limit reached, end the game
+            if(players == null)
+                players = GameObject.FindObjectsOfType<PlayerControl>().ToArray();
 
+            foreach(var p in players)
+            {
+                if(p.Score >= ScoreLimit)
+                {
+                    GameOver();
+                }
+            }
+        }
 	}
 
     public void WaitAndThenCall(float waitSeconds, Action funcToRun)
@@ -148,6 +167,85 @@ public class GameBrain : MonoBehaviour
             AudioSource.PlayClipAtPoint(GameOnSound, Vector3.zero);
 
         State = GameState.GameOn;
+    }
+
+    private void GameOver()
+    {
+        PlayerHudCanvas.Instance.ShowMessage("Game Over!", 2);
+
+        // slow mo!
+        Time.timeScale = 0.05f;
+        var physicsTimeDefault = Time.fixedDeltaTime;
+        Time.fixedDeltaTime = physicsTimeDefault * Time.timeScale;
+        WaitAndThenCall(0.25f, () => { Time.timeScale = 1; Time.fixedDeltaTime = physicsTimeDefault ; });
+
+        // fade to black
+        iTween.CameraFadeAdd();
+        iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 1, "time", 0.5f));
+
+        // fade out UI
+        var uiCanvas = GameObject.FindObjectOfType<PlayerHudCanvas>().GetComponent<CanvasGroup>();
+        iTween.ValueTo(gameObject, iTween.Hash("from", 1, "to", 0, "delay", 1, "time", 0.5f, "onupdate", (Action<object>) (newVal =>  
+        { 
+            uiCanvas.alpha = (float)newVal;
+        })));
+
+        // show results table
+        SetResultsValues();
+        var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
+        var eventSys = FindObjectOfType<EventSystem>();
+        eventSys.SetSelectedGameObject(resultsCanvas.transform.Find("Panel/Continue").gameObject);
+
+        // fade in results
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "delay", 2, "time", 0.5f, "onupdate", (Action<object>) (newVal =>                                                                                                           { 
+            resultsCanvas.alpha = (float)newVal;
+        })));
+
+
+        // create a new camera which will display the entire play area
+        var cam = new GameObject("StartupCamera").AddComponent<Camera>();
+        cam.backgroundColor = Color.black;
+        cam.transform.position = new Vector3(0,0,-10);
+        cam.orthographic = true;
+        cam.orthographicSize = Arena.Instance.ArenaSizeY / 2f;
+        cam.enabled = false;
+        cam.gameObject.AddComponent<GUILayer>();
+
+        // fade in arena cam
+        WaitAndThenCall(3, () => { cam.enabled = true; });
+        iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3, "time", 0.5f));
+        
+
+        State = GameState.GameOver;
+    }
+
+    /// <summary>
+    /// Set values ont he results ui prior to displaying at end of match
+    /// </summary>
+    private void SetResultsValues()
+    {
+        var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
+
+        // rank players by score
+        var playersRanked = players.OrderByDescending(x => x.Score).ToList();
+        for(var i=0; i<4; i++)
+        {
+            var row = resultsCanvas.transform.Find("Panel/PlayerResults/PlayerResult" + i).gameObject;
+            if(playersRanked.Count > i)
+            {
+                var pl = playersRanked[i];
+
+                row.SetActive(true);
+                row.transform.Find("Color").GetComponent<Image>().color = pl.transform.Find("Torso").GetComponent<SpriteRenderer>().color;
+                row.transform.Find("Name").GetComponent<Text>().text = "Player " + (pl.PlayerIndex+1);
+                row.transform.Find("Kills").GetComponent<Text>().text = pl.Score.ToString();
+                row.transform.Find("Winnings").GetComponent<Text>().text = "$" + (pl.Score * 500);
+            }
+            else
+            {
+                row.SetActive(false);
+            }
+        }
     }
 
     public static bool IsEditMode()

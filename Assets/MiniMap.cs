@@ -33,7 +33,7 @@ public class MiniMap : MonoBehaviour
             for(var y = 0; y < Arena.Instance.ArenaSizeY; y++)
             {
                 var sq = (GameObject)Instantiate(GridSquarePrefab);
-                sq.transform.parent = transform;
+                sq.transform.SetParent(transform);
                 var rect = sq.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(gridSize, gridSize);
                 var posx = (x * gridSize) + (x); //<-- leave a gap of 1px for every sq except the first one

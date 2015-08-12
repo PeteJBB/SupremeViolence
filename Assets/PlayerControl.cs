@@ -184,10 +184,8 @@ public class PlayerControl : MonoBehaviour {
                 return transform.position.ToVector2() + AimingOffsetLeft;
             case Orientation.Right:
                 return transform.position.ToVector2() + AimingOffsetRight;
-                break;
             case Orientation.Up:
                 return transform.position.ToVector2() + AimingOffsetUp;
-                break;
             case Orientation.Down:
             default:
                 return transform.position.ToVector2() + AimingOffsetDown;

@@ -34,7 +34,7 @@ public class PlayerHudCanvas : MonoBehaviour
         {
             var hud = Instantiate(PlayerHudPrefab).GetComponent<PlayerHud>();
             hud.PlayerIndex = i;
-            hud.transform.parent = transform;
+            hud.transform.SetParent(transform);
             hud.name = "PlayerHud" + i;
             var rect = hud.GetComponent<RectTransform>();
 
@@ -112,7 +112,7 @@ public class PlayerHudCanvas : MonoBehaviour
         var text = textObj.GetComponent<Text>();
         text.text = msg;
         
-        textObj.transform.parent = transform;
+        textObj.transform.SetParent(transform);
         var rect = textObj.GetComponent<RectTransform>();
         var point = WorldToCanvasPoint(obj.transform.position, playerIndex);
         rect.anchoredPosition = point;

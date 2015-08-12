@@ -30,16 +30,19 @@ public class Damageable : MonoBehaviour
 
     public void Respawn() 
     {
-        var arena = Transform.FindObjectOfType<Arena>();
-        var emptySpots = arena.GetEmptyGridSpots();
+        if(GameBrain.Instance.State == GameState.GameOn)
+        {
+            var arena = Transform.FindObjectOfType<Arena>();
+            var emptySpots = arena.GetEmptyGridSpots();
 
-        // choose a random spot
-        var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-        transform.position = arena.GridToWorldPosition(spot);
+            // choose a random spot
+            var spot = emptySpots[Random.Range(0,emptySpots.Count)];
+            transform.position = arena.GridToWorldPosition(spot);
 
-        IsDead = false;
-        Health = StartingHealth;
-        gameObject.SetActive(true);
+            IsDead = false;
+            Health = StartingHealth;
+            gameObject.SetActive(true);
+        }
     }
 
     public void Damage(float amount, GameObject damageSource = null)
