@@ -90,7 +90,6 @@ public class Arena : MonoBehaviour
         
         if(GameBrain.IsEditMode() && regenerateOnNextUpdate)
         {
-            Debug.Log("Arena regen");
             regenerateOnNextUpdate = false;
             RemovePreviouslyGeneratedArena();
             GenerateArena();

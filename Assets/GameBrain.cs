@@ -67,7 +67,7 @@ public class GameBrain : MonoBehaviour
             
             // set camera rect
             var w = 0.5f;
-            var h = 2f / GameSettings.NumberOfPlayers;
+            var h = GameSettings.NumberOfPlayers > 2 ? 0.5f : 1;
             var x = (i % 2) * 0.5f;
             var y = GameSettings.NumberOfPlayers < 3 || i > 1
                 ? 0f
@@ -92,6 +92,7 @@ public class GameBrain : MonoBehaviour
         cam.orthographic = true;
         cam.orthographicSize = Arena.Instance.ArenaSizeY / 2f;
         cam.gameObject.AddComponent<GUILayer>();
+        cam.depth = 1;
 
         // 0 - wob
         // 2 - fade in ui
@@ -207,6 +208,7 @@ public class GameBrain : MonoBehaviour
         cam.orthographicSize = Arena.Instance.ArenaSizeY / 2f;
         cam.enabled = false;
         cam.gameObject.AddComponent<GUILayer>();
+        cam.depth = 1;
 
         // fade in arena cam
         WaitAndThenCall(3, () => { cam.enabled = true; });

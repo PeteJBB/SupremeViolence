@@ -11,7 +11,7 @@ public class GameSettings
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
-    public static int ScoreLimit = 10;
+    public static int ScoreLimit = 5;
     public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Pistol");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
@@ -41,7 +41,14 @@ public class GameSettings
         return null;
     }
 
-    public static object IncrementValue(string settingName, int dir = 1)
+    /// <summary>
+    /// Set the value of the setting to the next or previous value from the allowed values list
+    /// </summary>
+    /// <returns>The newly set value</returns>
+    /// <param name="settingName">Setting name.</param>
+    /// <param name="dir">Direction of increment 1 = next, -1 = previous</param>
+    /// <param name="wrap">If set to <c>true</c> the indexer will wrap around back to zero or to the end of the array if dir = -1.</param>
+    public static object IncrementValue(string settingName, int dir = 1, bool wrap = false)
     {
         var field = typeof(GameSettings).GetField(settingName);
         if(field == null)
@@ -52,11 +59,16 @@ public class GameSettings
         var currentVal = field.GetValue(null);
         var setting = Settings[settingName];
         var currentIndex = Array.IndexOf(setting.AllowedValues, currentVal);
-        var newIndex = currentIndex + dir;
-        if(newIndex < 0)
-            newIndex = 0;
-        if(newIndex >= setting.AllowedValues.Length)
-            newIndex = setting.AllowedValues.Length - 1;
+
+        int newIndex;
+        if(wrap)
+        {
+            newIndex = (currentIndex + setting.AllowedValues.Length + dir ) % setting.AllowedValues.Length;
+        }
+        else
+        {
+            newIndex = Mathf.Clamp(currentIndex + dir, 0, setting.AllowedValues.Length);
+        }
 
         var val = setting.AllowedValues[newIndex];
         field.SetValue(null, val);

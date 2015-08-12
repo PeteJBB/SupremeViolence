@@ -5,7 +5,7 @@ using System.Collections;
 using System;
 using System.Linq;
 
-public class OptionCycler: MonoBehaviour, IMoveHandler
+public class OptionCycler: MonoBehaviour, ISubmitHandler, IMoveHandler, IPointerClickHandler
 {
     Text valText;
     public string SettingName;
@@ -14,9 +14,6 @@ public class OptionCycler: MonoBehaviour, IMoveHandler
     void Start()
     {
         valText = GetComponent<Text>();
-        var val = GameSettings.GetValue(SettingName);
-        if(val != null)
-            valText.text = val.ToString();
     }
 
     void Update()
@@ -31,6 +28,17 @@ public class OptionCycler: MonoBehaviour, IMoveHandler
             valText.text = string.Format(DisplayFormat, val);
     }
 
+    public void OnSubmit(BaseEventData eventData)
+    {
+        GameSettings.IncrementValue(SettingName, 1, true).ToString();
+    }
+
+    public void OnPointerClick (PointerEventData eventData)
+    {
+        var dir = eventData.button == PointerEventData.InputButton.Left ? 1 : -1;
+        GameSettings.IncrementValue(SettingName, dir, true).ToString();
+    }
+
     public void OnMove(AxisEventData eventData)
     {
         if(eventData.moveDir == MoveDirection.Left)
@@ -41,66 +49,5 @@ public class OptionCycler: MonoBehaviour, IMoveHandler
         {
             GameSettings.IncrementValue(SettingName).ToString();
         }
-//        var currentIndex = Array.IndexOf(s.AllowedValues, s.Value);
-//
-//        if(eventData.moveDir == MoveDirection.Left)
-//        {
-//            var newIndex = (currentIndex + s.AllowedValues.Length - 1) % s.AllowedValues.Length;
-//            var val = s.AllowedValues[newIndex];
-//            GameSettings.Settings[SettingName].Value = val;
-//        }
-//        if(eventData.moveDir == MoveDirection.Right)
-//        {
-//            var newIndex = (currentIndex + s.AllowedValues.Length + 1) % s.AllowedValues.Length;
-//            var val = s.AllowedValues[newIndex];
-//            GameSettings.Settings[SettingName].Value = val;
-//        }
-
-
-
-//        var vals = GameSettings.GetAllowedValues(SettingName);
-//        if(vals != null)
-//        {
-//            var currentIndex = vals.IndexOf(GetCurrentSettingValue(SettingName));
-//        }
-//
-//        if(eventData.moveDir == MoveDirection.Left)
-//        {
-//            if(SettingType == GameSettingType.Int)
-//            {
-//
-//                var field = typeof(GameSettings).GetField(SettingName);
-//                if(field != null)
-//                {
-//                    var val = (int)field.GetValue(null);
-//                    val--;
-//
-//                    field.SetValue(null, val);
-//                    valText.text = val.ToString();
-//                }
-//            }
-//        }
-//        else if(eventData.moveDir == MoveDirection.Right)
-//        {
-//            if(SettingType == GameSettingType.Int)
-//            {
-//                var field = typeof(GameSettings).GetField(SettingName);
-//                if(field != null)
-//                {
-//                    var val = (int)field.GetValue(null);
-//                    val++;
-//                    
-//                    field.SetValue(null, val);
-//                    valText.text = val.ToString();
-//                }
-//            }
-//        }
     }
-
-}
-
-public enum GameSettingType
-{
-    Int,
-    Custom
 }

@@ -37,9 +37,7 @@ public class MenuManager : MonoBehaviour
         ActiveCanvas = canvas;
         ActiveCanvas.gameObject.SetActive(true);
 
-        var selectables = canvas.GetComponentsInChildren<Selectable>();
-        var first = selectables.OrderBy(x => x.GetComponent<RectTransform>().position.y).FirstOrDefault();
-        eventSys.SetSelectedGameObject(first.gameObject);
+        SelectFirstVisibleItem();
     }
 
     public void GoBack()
@@ -49,7 +47,15 @@ public class MenuManager : MonoBehaviour
             ActiveCanvas.gameObject.SetActive(false);
             ActiveCanvas = navStack.Pop();
             ActiveCanvas.gameObject.SetActive(true);
+            SelectFirstVisibleItem();
         }
+    }
+
+    private void SelectFirstVisibleItem()
+    {
+        var selectables = ActiveCanvas.GetComponentsInChildren<Selectable>();
+        var first = selectables.OrderByDescending(x => x.GetComponent<RectTransform>().position.y).FirstOrDefault();
+        eventSys.SetSelectedGameObject(first.gameObject);
     }
 
     public void LoadScene(string sceneName)
