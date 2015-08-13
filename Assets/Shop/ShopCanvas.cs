@@ -1,28 +1,39 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class StoreCanvas: MonoBehaviour 
+public class ShopCanvas: MonoBehaviour 
 {
     public GameObject ShopWindowPrefab;
+    public GameObject ShopImagePrefab;
 
 	// Use this for initialization
 	void Start () 
     {
-        // cleanup dev scene
-        foreach(var w in GetComponentsInChildren<ShopWindow>())
-        {
-            Destroy(w.gameObject);
-        }
+        GameState.StartNewGame(); //<-- this should happen on the main menu, really
 
-        GameState.StartNewGame();
+        // clean up dev scene
+        Destroy(GameObject.Find("ShopWindow").gameObject);
+        Destroy(GetComponentInChildren<RawImage>().gameObject);
+
         for(var i=0; i<GameState.Players.Count; i++)
         {
+            // create a ShopWindow which actually contains the UI for the shop
+            // this is rendered to a RenderTexture that can then be show on a raw image in this canvas
+            // this is so that i can scale things the way i want without fucking about with the GUI scaling systems
             var window = Instantiate(ShopWindowPrefab).GetComponent<ShopWindow>();
             window.PlayerIndex = i;
-            window.transform.SetParent(transform);
-            window.name = "PlayerHud" + i;
+            window.name = "ShopWindow" + i;
             window.GetComponent<CustomMenuInputController>().PlayerIndex = i;
-            var rect = window.GetComponent<RectTransform>();
+
+            var offsetRect = window.GetComponent<RectTransform>().rect;
+            window.transform.position = new Vector3(-offsetRect.width * 2 * (i + 1), -offsetRect.height * 2 * (i + 1), 0);
+
+            var image = Instantiate(ShopImagePrefab).GetComponent<RawImage>();
+            image.transform.SetParent(transform);
+            image.texture = window.renderTexture;
+
+            var rect = image.GetComponent<RectTransform>();
 
             if(GameState.Players.Count == 2)
             {
@@ -43,7 +54,7 @@ public class StoreCanvas: MonoBehaviour
                 switch(i)
                 {
                     case 0:
-                        rect.anchorMin = new Vector2(0,0.5f);
+                        rect.anchorMin = new Vector2(0,0f);
                         rect.anchorMax = new Vector2(0.5f,1);
                         break;
                     case 1:

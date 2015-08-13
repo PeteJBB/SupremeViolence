@@ -18,7 +18,7 @@ public class CustomMenuInputController: MonoBehaviour
     {
         selectables = transform.GetComponentsInChildren<Selectable>();
         if(CurrentSelectedObject != null)
-            HighlightSelectedObject();
+            CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
 	}
 	
 	// Update is called once per frame
@@ -92,10 +92,10 @@ public class CustomMenuInputController: MonoBehaviour
     public void SetSelectedGameObject(GameObject obj)
     {
         if(CurrentSelectedObject != null)
-            UnhighlightSelectedObject();
+            CurrentSelectedObject.SendMessage("OnDeselect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
 
         CurrentSelectedObject = obj;
-        HighlightSelectedObject();
+        CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
     }
 
     GamePadState lastGamepadState;
@@ -171,22 +171,22 @@ public class CustomMenuInputController: MonoBehaviour
                 return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
         }
     }
-
-    void HighlightSelectedObject()
-    {
-        foreach(var t in CurrentSelectedObject.GetComponentsInChildren<Text>())
-        {
-            t.color = Color.yellow;
-        }
-    }
-
-    void UnhighlightSelectedObject()
-    {
-        foreach(var t in CurrentSelectedObject.GetComponentsInChildren<Text>())
-        {
-            t.color = Color.white;
-        }
-    }
+//
+//    void HighlightSelectedObject()
+//    {
+//        foreach(var t in CurrentSelectedObject.GetComponentsInChildren<Text>())
+//        {
+//            t.color = Color.yellow;
+//        }
+//    }
+//
+//    void UnhighlightSelectedObject()
+//    {
+//        foreach(var t in CurrentSelectedObject.GetComponentsInChildren<Text>())
+//        {
+//            t.color = Color.white;
+//        }
+//    }
 }
 
 public enum MenuInputAction

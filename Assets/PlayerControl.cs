@@ -51,13 +51,15 @@ public class PlayerControl : MonoBehaviour {
         {
             isFirstUpdate = false;
 
-            // turn startweapon into actual pickup instance
+            // turn GameState pickups into actual pickup instances
             muteSounds = true;
-            var instance = Instantiate(GameSettings.StartWeapon);
-            var pickup = instance.GetComponent<Pickup>();
-            pickup.BaseStart();
-            pickup.PickupSound = null;
-            pickup.CollectPickup(this);
+            foreach(var prefab in GameState.Players[PlayerIndex].Pickups)
+            {
+                var pickup = Instantiate(prefab).GetComponent<Pickup>();
+                pickup.BaseStart();
+                pickup.PickupSound = null;
+                pickup.CollectPickup(this);
+            }
             muteSounds = false;
 
             SelectNextWeapon();
