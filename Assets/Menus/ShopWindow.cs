@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class ShopWindow: MonoBehaviour 
 {
     public GameObject ShopItemPrefab;
+    public int PlayerIndex;
+
     private Transform stockPanel;
     private Text itemDesc;
 

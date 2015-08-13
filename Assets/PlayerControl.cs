@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +66,7 @@ public class PlayerControl : MonoBehaviour {
             BroadcastMessage("SetAnimationSpeed", 0f);
         }
 
-        if(GameBrain.Instance.State == GameState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn)
         {
             var gamepadState = GetGamePadInput();
 

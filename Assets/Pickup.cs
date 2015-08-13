@@ -105,13 +105,13 @@ public class Pickup : MonoBehaviour
 
     public virtual void OnPlayerPickup(PlayerControl player)
     {
-        if(GameBrain.Instance.State == GameState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn)
             PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
     }
 
     public virtual void OnPickupDuplicate(PlayerControl player, Pickup duplicate)
     {
-        if(GameBrain.Instance.State == GameState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn)
             PlayerHudCanvas.Instance.ShowPickupText("+Ammo", player.gameObject, player.PlayerIndex);
 
         var ammo = GetAmmoCount();

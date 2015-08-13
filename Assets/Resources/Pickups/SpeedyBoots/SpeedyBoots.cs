@@ -49,7 +49,7 @@ public class SpeedyBoots : Pickup
         ownerPlayerBody = player.GetComponent<Rigidbody2D>();
         particles.enableEmission = true;
 
-        if(GameBrain.Instance.State == GameState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn)
             PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
     }
 }

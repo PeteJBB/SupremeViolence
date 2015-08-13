@@ -9,7 +9,7 @@ public class GameSettings
 {
     public static Pickup[] PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
 
-    public static int NumberOfPlayers = 2;
+    public static int NumberOfPlayers = 4;
     public static int NumberOfRounds = 10;
     public static int ScoreLimit = 5;
     public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Pistol");

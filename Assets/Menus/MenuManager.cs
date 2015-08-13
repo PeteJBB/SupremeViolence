@@ -69,16 +69,6 @@ public class MenuManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void SetNumberOfPlayers(int num)
-    {
-        Debug.Log("SetNumberOfPlayers " + num);
-        if(num < 2)
-            GameSettings.NumberOfPlayers = 2;
-        else if (num > 4)
-            GameSettings.NumberOfPlayers = 4;
-        else
-            GameSettings.NumberOfPlayers = num;
-        
-    }
+
 }
 

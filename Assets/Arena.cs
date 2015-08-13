@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +79,7 @@ public class Arena : MonoBehaviour
             isFirstUpdate = false;
         }
 
-        if (GameBrain.Instance.State == GameState.GameOn && Time.time - lastSpawnCheck > 1)
+        if (GameBrain.Instance.State == PlayState.GameOn && Time.time - lastSpawnCheck > 1)
         {
             if(Random.Range(0f,1f) < PickupSpawnRate)
             {

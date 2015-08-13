@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Game brain runs an individual game, controlling cameras, startup and end game sequences and the scoreboard
+/// </summary>
 public class GameBrain : MonoBehaviour 
 {
     public static GameBrain Instance
@@ -14,7 +17,7 @@ public class GameBrain : MonoBehaviour
         get { return FindObjectOfType<GameBrain>(); }
     }
 
-    public GameState State = GameState.Startup;
+    public PlayState State = PlayState.Startup;
     public bool EnableStartupSequence = true;
 
     public AudioClip StartupSound;
@@ -132,7 +135,7 @@ public class GameBrain : MonoBehaviour
     // Update is called once per frame
 	void Update () 
     {
-        if(State == GameState.GameOn)
+        if(State == PlayState.GameOn)
         {
             // check player scores, when limit reached, end the game
             if(players == null)
@@ -164,7 +167,7 @@ public class GameBrain : MonoBehaviour
         if(GameOnSound != null)
             AudioSource.PlayClipAtPoint(GameOnSound, Vector3.zero);
 
-        State = GameState.GameOn;
+        State = PlayState.GameOn;
     }
 
     private void GameOver()
@@ -215,7 +218,7 @@ public class GameBrain : MonoBehaviour
         iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3, "time", 0.5f));
         
 
-        State = GameState.GameOver;
+        State = PlayState.GameOver;
     }
 
     /// <summary>
@@ -253,7 +256,10 @@ public class GameBrain : MonoBehaviour
     }
 }
 
-public enum GameState
+/// <summary>
+/// The state of play during a match
+/// </summary>
+public enum PlayState
 {
     Startup,
     GameOn,

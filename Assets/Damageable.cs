@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Damageable : MonoBehaviour 
@@ -30,7 +30,7 @@ public class Damageable : MonoBehaviour
 
     public void Respawn() 
     {
-        if(GameBrain.Instance.State == GameState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn)
         {
             var arena = Transform.FindObjectOfType<Arena>();
             var emptySpots = arena.GetEmptyGridSpots();
