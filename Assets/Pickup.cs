@@ -3,43 +3,28 @@ using System.Collections;
 
 public class Pickup : MonoBehaviour
 {
-    private Transform background;
-    private Transform icon;
-
     public string PickupName = "Pickup";
-    public int Price = 0; // items with price 0 will not show up in the shop
-
+    public Sprite Icon;
     public PickupType PickupType;
+    public AudioClip PickupSound;
+
+    [Tooltip("Shop price - items with price 0 will not show up in the shop")]
+    public int Price = 0;
+
 
     [Tooltip("How much ammo this pickup starts with, -1 means unlimited ammo")]
-    public int Ammo;// -1 means unlimited ammo
+    public int Ammo;
 
     [Tooltip("max ammo you can buy / carry for this pickup")]
     public int MaxAmmo;
 
-    public AudioClip PickupSound;
 
     [HideInInspector]
     public PlayerControl Player;
     
-    void Awake()
-    {
-        background = transform.FindChild("Background");
-        icon = transform.FindChild("Icon");
-    }
-
     public virtual string GetPickupName()
     {
         return PickupName;
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.tag == "Player")
-        {
-            var player = other.GetComponent<PlayerControl>();
-            CollectPickup(player);
-        }
     }
 
     public virtual void CollectPickup(PlayerControl player)
@@ -52,7 +37,6 @@ public class Pickup : MonoBehaviour
             gameObject.SetOwner(player.gameObject);
             transform.SetParent(player.transform);
             transform.localPosition = Vector3.zero;
-            HidePickupIcons();
         }
         else
         {
@@ -74,7 +58,6 @@ public class Pickup : MonoBehaviour
                 gameObject.SetOwner(player.gameObject);
                 transform.SetParent(player.transform);
                 transform.localPosition = Vector3.zero;
-                HidePickupIcons();
             }
 
             // free up grid point in arena
@@ -84,16 +67,6 @@ public class Pickup : MonoBehaviour
             if(PickupSound != null)
                 AudioSource.PlayClipAtPoint(PickupSound, transform.position);
         }
-    }
-
-    private void HidePickupIcons()
-    {
-        if(icon != null)
-            icon.gameObject.SetActive(false);
-        if(background != null)
-            background.gameObject.SetActive(false);
-
-        this.GetComponent<CircleCollider2D>().enabled = false;
     }
 
     public virtual float GetLegStrengthMultiplier()
@@ -171,7 +144,6 @@ public class Pickup : MonoBehaviour
     {
         return this.GetPickupName();
     }
-
 }
 
 public enum PickupType

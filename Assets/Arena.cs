@@ -13,6 +13,7 @@ public class Arena : MonoBehaviour
     public float WallDensity = 0.25f;
 
     public GameObject PlayerPrefab;
+    public GameObject PickupIconPrefab;
 
     private List<GameObject>[,] GridMap;
     private List<GameObject> wallList;
@@ -40,12 +41,8 @@ public class Arena : MonoBehaviour
     private bool isFirstUpdate = true;
 
     // pickup spawning stuff
-    private Pickup[] PickupPrefabs;
     public float PickupSpawnRate = 0.05f; // chance that an item spawns every second
     private float lastSpawnCheck = 0;
-
-    // Decorations
-    private Decoration[] DecorationPrefabs;
 
     private MiniMap miniMap;
 
@@ -53,8 +50,6 @@ public class Arena : MonoBehaviour
     {
         generatedStuff = transform.FindChild("GeneratedStuff");
         miniMap = FindObjectOfType<MiniMap>();
-
-        LoadResources();
 
         RemovePreviouslyGeneratedArena();
         GenerateArena();
@@ -64,12 +59,6 @@ public class Arena : MonoBehaviour
         SpawnInitialPickups();
 
 	}
-
-    void LoadResources()
-    {
-        PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
-        DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
-    }
 
     void Update () 
     {
@@ -412,7 +401,7 @@ public class Arena : MonoBehaviour
     {
         // spawn one of each item at random free location
         var emptySpots = GetEmptyGridSpots();
-        for(var i = 0; i< PickupPrefabs.Length; i++)
+        for(var i = 0; i< GameSettings.PickupPrefabs.Length; i++)
         {
             if(emptySpots.Count == 0)
             {
@@ -421,30 +410,35 @@ public class Arena : MonoBehaviour
             }   
             
             var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-            var prefab = PickupPrefabs[i];
-            var instance = (Pickup)Instantiate(prefab, GridToWorldPosition(spot), Quaternion.identity);
-            instance.transform.parent = generatedStuff;
-            SetGridObject(spot, instance.gameObject);
+
+            var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
+            icon.transform.position = GridToWorldPosition(spot);
+            icon.transform.parent = generatedStuff;
+            icon.PickupPrefab = GameSettings.PickupPrefabs[i];
+
+            SetGridObject(spot, icon.gameObject);
             emptySpots.Remove(spot);
         }
     }
 
     private void SpawnOneRandomPickup()
     {
-        var pickup = PickupPrefabs[Random.Range(0, PickupPrefabs.Length)];
+        var pickup = GameSettings.PickupPrefabs[Random.Range(0, GameSettings.PickupPrefabs.Length)];
         var emptySpots = Arena.Instance.GetEmptyGridSpots();
         if(emptySpots.Count > 0)
         {
             var spot = emptySpots[Random.Range(0, emptySpots.Count)];
-            var instance = (Pickup)Instantiate(pickup, GridToWorldPosition(spot), Quaternion.identity);
-            instance.transform.parent = generatedStuff;
-            SetGridObject(spot, instance.gameObject);
+            var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
+            icon.transform.position = GridToWorldPosition(spot);
+            icon.transform.parent = generatedStuff;
+            icon.PickupPrefab = pickup;
+            SetGridObject(spot, icon.gameObject);
         }
     }
 
     private void SpawnDecorations()
     {
-        foreach(var prefab in DecorationPrefabs)
+        foreach(var prefab in GameSettings.DecorationPrefabs)
         {
             var deco = prefab.GetComponent<Decoration>();
             if(deco != null)

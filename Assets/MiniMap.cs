@@ -75,7 +75,7 @@ public class MiniMap : MonoBehaviour
                 img.color = Color.red;
                 break;
             }
-            else if(o.GetComponent<Pickup>() != null)
+            else if(o.GetComponent<PickupIcon>() != null)
             {
                 img.color = Color.yellow;
             }
