@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ public class ShopWindow: CustomMenuInputController
     private Text itemDesc;
     private Text yourCash;
 
+    private CanvasGroup shopGroup;
+    private CanvasGroup finishedGroup;
+
     [HideInInspector]
     public RenderTexture renderTexture;
 
@@ -20,6 +24,9 @@ public class ShopWindow: CustomMenuInputController
     private int itemsPerPage = 6;
     private int numPages;
     private int currentPage = 0;
+
+    [HideInInspector]
+    public bool HasFinishedShopping = false;
 
     void Awake()
     {
@@ -30,14 +37,17 @@ public class ShopWindow: CustomMenuInputController
         
         var camera = GetComponentInChildren<Camera>();
         camera.targetTexture = renderTexture;
+
+        shopGroup = transform.Find("Shop").GetComponent<CanvasGroup>();
+        finishedGroup = transform.Find("Finished").GetComponent<CanvasGroup>();
     }
 
 	// Use this for initialization
 	void Start () 
     {
-        stockPanel = transform.Find("StockPanel");
-        itemDesc = transform.Find("ItemDesc").GetComponent<Text>();
-        yourCash = transform.Find("YourCash").GetComponent<Text>();
+        stockPanel = transform.Find("Shop/StockPanel");
+        itemDesc = transform.Find("Shop/ItemDesc").GetComponent<Text>();
+        yourCash = transform.Find("Shop/YourCash").GetComponent<Text>();
 
         var orderedPickups = GameSettings.PickupPrefabs.Where(x => x.Price > 0).OrderBy(x => x.Price).ToList();
         for(var i=0; i<orderedPickups.Count; i++)
@@ -96,8 +106,8 @@ public class ShopWindow: CustomMenuInputController
         currentPage = index;
 
         var pageNoText = (currentPage + 1) + " / " + numPages;
-        transform.Find("PrevPage/PageNo").GetComponent<Text>().text = pageNoText;
-        transform.Find("NextPage/PageNo").GetComponent<Text>().text = pageNoText;
+        transform.Find("Shop/PrevPage/PageNo").GetComponent<Text>().text = pageNoText;
+        transform.Find("Shop/NextPage/PageNo").GetComponent<Text>().text = pageNoText;
     }
 
     public override void NextPage()
@@ -112,7 +122,20 @@ public class ShopWindow: CustomMenuInputController
 
     public void ExitStore()
     {
-        Application.LoadLevelAsync("Deathmatch");
+        shopGroup.interactable = false;
+        shopGroup.alpha = 0;
+        finishedGroup.alpha = 1;
+        HasFinishedShopping = true;
+
+        var allDone = GameObject.FindObjectsOfType<ShopWindow>().All(x => x.HasFinishedShopping);
+        if(allDone)
+        {
+            iTween.CameraFadeAdd();
+            iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 1, "time", 0.5f, "oncomplete", (Action)(() =>
+            { 
+                Application.LoadLevelAsync("Deathmatch");
+            })));
+        }
     }
 
     public void SetItemDesc(string val)

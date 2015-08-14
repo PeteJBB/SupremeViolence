@@ -7052,6 +7052,27 @@ public class iTween : MonoBehaviour{
 	
 	void CallBack(string callbackType){
 		if (tweenArguments.Contains(callbackType) && !tweenArguments.Contains("ischild")) {
+
+            // custom stuff for delegates!
+            //https://code.google.com/p/itween/issues/detail?id=133
+
+            // callback can be a delegate
+            object callback = tweenArguments[callbackType];
+            if (callback is Action<object>)
+            {
+                ((Action<object>)callback).Invoke((object)tweenArguments[callbackType + "params"]);
+                return;
+            }
+            else if (callback is Action) {
+                ((Action) callback)();
+                return;
+            } 
+            else if (callback is Delegate || typeof (Delegate).IsAssignableFrom(callback.GetType().BaseType)) {
+                ((Delegate) callback).DynamicInvoke();
+                return;
+            }
+            // ----
+
 			//establish target:
 			GameObject target;
 			if (tweenArguments.Contains(callbackType+"target")) {
@@ -7060,22 +7081,14 @@ public class iTween : MonoBehaviour{
 				target=gameObject;	
 			}
 
-            // added by PB - allow inline functions, from https://code.google.com/p/itween/issues/detail?id=62#c5
-            if (tweenArguments[callbackType] is Action<object>)
-            {
-                ((Action<object>)tweenArguments[callbackType]).Invoke((object)tweenArguments[callbackType + "params"]);
-            }
-            //----
-			else
-            {
-    			//throw an error if a string wasn't passed for callback:
-    			if (tweenArguments[callbackType].GetType() == typeof(System.String)) {
-    				target.SendMessage((string)tweenArguments[callbackType],(object)tweenArguments[callbackType+"params"],SendMessageOptions.DontRequireReceiver);
-    			}else{
-    				Debug.LogError("iTween Error: Callback method references must be passed as a String!");
-    				Destroy (this);
-    			}
-            }
+			//throw an error if a string wasn't passed for callback:
+			if (tweenArguments[callbackType].GetType() == typeof(System.String)) {
+				target.SendMessage((string)tweenArguments[callbackType],(object)tweenArguments[callbackType+"params"],SendMessageOptions.DontRequireReceiver);
+			}
+            else{
+				Debug.LogError("iTween Error: Callback method references must be passed as a String!");
+				Destroy (this);
+			}
 		}
 	}
 	
