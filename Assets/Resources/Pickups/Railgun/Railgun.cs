@@ -4,22 +4,18 @@ using System.Collections;
 public class Railgun : Pickup
 {
     public GameObject BulletPrefab;
+    public AudioClip Fire;
+
+    private AudioSource[] aSources;
     private float chargeTime;
     private bool charging = false;
     private float chargingTime = 2.6f;
-    public AudioClip Fire;
-    private AudioSource[] aSources;
     private AudioSource chargingSound;
     private AudioSource humming;
-    ParticleSystem particles;
+    private ParticleSystem particles;
    
-    public override string GetPickupName()
-    {
-        return "Railgun";
-    }
-
 	// Use this for initialization
-	void Start()
+    void Start()
     {
         //Initialise sounds
         aSources = this.GetComponents<AudioSource>();
@@ -29,10 +25,6 @@ public class Railgun : Pickup
         //Initialise particles
         particles = GetComponent<ParticleSystem>();
         particles.enableEmission = false;
-
-        Ammo = MaxAmmo = 10;
-
-        BaseStart();
 	}
 	
 	// Update is called once per frame
@@ -44,16 +36,6 @@ public class Railgun : Pickup
         }
 	}
 
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 600;
-    }
-    
     public override string GetDescription()
     {
         return "Hold down the trigger for a few seconds to charge this beastly contraption. Once charged release the trigger to hurl a hefty iron skewer at high velocity. Aim away from face.";

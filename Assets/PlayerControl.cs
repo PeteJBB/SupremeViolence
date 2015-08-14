@@ -56,7 +56,7 @@ public class PlayerControl : MonoBehaviour {
             foreach(var prefab in GameState.Players[PlayerIndex].Pickups)
             {
                 var pickup = Instantiate(prefab).GetComponent<Pickup>();
-                pickup.BaseStart();
+                pickup.Ammo = prefab.Ammo;
                 pickup.PickupSound = null;
                 pickup.CollectPickup(this);
             }
@@ -236,7 +236,7 @@ public class PlayerControl : MonoBehaviour {
             CurrentWeapon.OnFireUp(GetAimingOrigin());
         }
 
-        var weapons = Pickups.Where(x => x.IsWeapon()).ToList();
+        var weapons = Pickups.Where(x => x.PickupType == PickupType.Weapon).ToList();
         if(CurrentWeapon == null)
         {
             // just pick the first available weapon

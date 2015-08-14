@@ -4,25 +4,16 @@ using System.Collections;
 public class MachineGun : Pickup
 {
     public GameObject BulletPrefab;
+    public AudioClip FireSound;
+
     private float fireDelay = 0.1f;
     private bool isTriggerDown= false;
     private float lastFireTime = 0;
-
-    public AudioClip FireSound;
-
     private GameObject muzzleFlash;
 
-    public override string GetPickupName()
-    {
-        return "Machine Gun";
-    }
-
 	// Use this for initialization
-	void Start()
+    void Start()
     {
-        BaseStart();
-        Ammo = MaxAmmo = 30;
-
         muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
         HideMuzzleFlash();
 	}
@@ -37,16 +28,6 @@ public class MachineGun : Pickup
         }
 	}
 
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 350;
-    }
-    
     public override string GetDescription()
     {
         return "This here is your standard high rate of fire meat grinder. Hold down the trigger and watch the other guy turn to mush.";

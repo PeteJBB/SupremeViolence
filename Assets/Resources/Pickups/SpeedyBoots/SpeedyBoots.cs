@@ -6,18 +6,11 @@ public class SpeedyBoots : Pickup
     ParticleSystem particles;
     Rigidbody2D ownerPlayerBody;
 
-    public override string GetPickupName()
-    {
-        return "Speedy Boots";
-    }
-
 	// Use this for initialization
-	void Start()
+    void Start()
     {
         particles = GetComponent<ParticleSystem>();
         particles.enableEmission = false;
-
-        BaseStart();
 	}
 	
 	// Update is called once per frame
@@ -34,11 +27,6 @@ public class SpeedyBoots : Pickup
         return 1.3f;
     }
 
-    public override int GetPrice()
-    {
-        return 400;
-    }
-    
     public override string GetDescription()
     {
         return "This state-of-the-art footwear is surgically (and painfully) bonded to the feet and uses electric impulses to run your leg muscles at 130% power. That's gonna hurt tomorrow!";

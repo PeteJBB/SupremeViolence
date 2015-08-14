@@ -6,34 +6,6 @@ public class RocketLauncher : Pickup
     public GameObject RocketPrefab;
     public AudioClip FireSound;
 
-    public override string GetPickupName()
-    {
-        return "Rocket Launcher";
-    }
-
-	// Use this for initialization
-	void Start()
-    {
-        BaseStart();
-        Ammo = MaxAmmo = 5;
-	}
-	
-	// Update is called once per frame
-	void Update() 
-    {
-
-	}
-
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 900;
-    }
-    
     public override string GetDescription()
     {
         return "Rockets sure are fun aren't they? This is your high-explosive, point and shoot, no frills model favoured by terrorists, and action movie stars alike.";

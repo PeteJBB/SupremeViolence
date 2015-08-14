@@ -4,6 +4,7 @@ using System.Collections;
 public class Flamer : Pickup
 {
     public GameObject FlamePrefab;
+
     private float fireDelay = 0.04f;
     private bool isFiring = false;
     private float lastFireTime = 0;
@@ -11,15 +12,9 @@ public class Flamer : Pickup
     private AudioSource jetSound;
     private AudioSource flameSound;
 
-    public override string GetPickupName()
-    {
-        return "Flamer";
-    }
-
 	// Use this for initialization
 	void Start()
     {
-        BaseStart();
         jetSound = GetComponents<AudioSource>()[0];
         flameSound = GetComponents<AudioSource>()[1];
         flameSound.volume = 0;
@@ -44,16 +39,6 @@ public class Flamer : Pickup
         }
 	}
 
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 500;
-    }
-    
     public override string GetDescription()
     {
         return "Whether you're warding off extraterrestrial invaders or just kick-starting a barbecue, the flamer guarantees delivery of charred and smouldering heaps on time, every time.";

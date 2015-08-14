@@ -5,23 +5,18 @@ public class LaserRifle : Pickup
 {
 	public AudioClip FireSound;
     public AudioClip FireEmptySound;
-    public LineRenderer line;
+
     public GameObject LightPrefab;
     public GameObject ImpactPrefab;
 
-    public override string GetPickupName()
-    {
-        return "Laser Rifle";
-    }
+    private LineRenderer line;
 
 	// Use this for initialization
-	void Start()
+    void Start()
     {
-        BaseStart();
         line = GetComponent<LineRenderer>();
         line.enabled = false;
         line.sortingLayerName = "Mid_Front";
-        Ammo = MaxAmmo = 30;
 	}
 	
 	// Update is called once per frame
@@ -33,16 +28,6 @@ public class LaserRifle : Pickup
         }
 	}
 
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 250;
-    }
-    
     public override string GetDescription()
     {
         return "Fires a narrow but high-powered laser beam which can cut a watermelon clean in half. Protective goggles are recommended during use.";

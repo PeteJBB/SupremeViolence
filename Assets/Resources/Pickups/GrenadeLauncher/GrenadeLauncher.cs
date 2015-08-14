@@ -6,28 +6,6 @@ public class GrenadeLauncher : Pickup
     public GameObject GrenadePrefab;
     public AudioClip FireSound;
 
-    public override string GetPickupName()
-    {
-        return "Grenade Launcher";
-    }
-
-	// Use this for initialization
-	void Start()
-    {
-        BaseStart();
-        Ammo = MaxAmmo = 8;
-	}
-	
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
-    public override int GetPrice()
-    {
-        return 400;
-    }
-    
     public override string GetDescription()
     {
         return "Launches explosive grenades with a 3 second fuse and which can bounce off walls. Available now in time for mothers' day.";

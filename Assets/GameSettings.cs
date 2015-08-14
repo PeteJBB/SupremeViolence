@@ -23,7 +23,7 @@ public class GameSettings
         { "NumberOfPlayers", new GameSetting(2, 3, 4) },
         { "NumberOfRounds", new GameSetting(1, 2, 3, 4, 5, 10, 15, 20) },
         { "ScoreLimit", new GameSetting(1, 2, 3, 4, 5, 10, 15, 20, 50, 100) },
-        { "StartWeapon", new GameSetting(PickupPrefabs.Where(x => x.IsWeapon()).ToArray()) },
+        { "StartWeapon", new GameSetting(PickupPrefabs.Where(x => x.PickupType == PickupType.Weapon).ToArray()) },
         { "AmmoLevel", new GameSetting(AmmoLevel) },
         { "SpawnPickups", new GameSetting(YesNo.Yes) },
         { "StartingCash", new GameSetting(0, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000) },

@@ -18,11 +18,20 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
 
     private bool isSelected = false;
 
-    void Start()
+    void Awake()
     {
         nameElem = transform.Find("Name").GetComponent<Text>();
         ammoElem = transform.Find("Ammo").GetComponent<Text>();
         priceElem = transform.Find("Price").GetComponent<Text>();
+    }
+
+    void Start()
+    {
+        if(pickup != null)
+        {
+            nameElem.text = pickup.PickupName;
+            priceElem.text = string.Format("{0:C0}", pickup.Price);
+        }
 
         if(GameState.Players != null)
         {
@@ -42,13 +51,31 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
         // make purchase
         Debug.Log("Player " + (PlayerIndex + 1) + " bought " + nameElem.text);
 
-        var price = pickup.GetPrice();
-        if(player.Cash >= price)
+        if(player.Cash >= pickup.Price)
         {
-            player.Cash -= price;
-            player.Pickups.Add(pickup);
-            ammoElem.text = string.Format("{0} / {1}", pickup.GetAmmoCount(), pickup.MaxAmmo);
-            priceElem.text = "Full";
+            // does player already own one of these
+            var p = player.Pickups.FirstOrDefault(x => x.PickupName == pickup.PickupName);
+            if(p == null)
+            {
+                // add to list
+                p = GameObject.Instantiate(pickup).GetComponent<Pickup>();
+                p.Ammo = 0;
+                player.Pickups.Add(p);
+
+            }
+
+            if(p.Ammo < p.MaxAmmo)
+            {
+                // add ammo
+                p.Ammo += pickup.StartAmmo;
+
+                // set labels
+                ammoElem.text = string.Format("{0} / {1}", p.Ammo, p.MaxAmmo);
+                if(pickup.Ammo >= pickup.MaxAmmo)
+                    priceElem.text = "Full";
+
+                player.Cash -= pickup.Price;
+            }
         }
     }
 
@@ -64,7 +91,7 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
         UnhighlightItem();
     }
 
-    private void HighlightItem()
+    public void HighlightItem()
     {
         nameElem.color = Color.yellow;
         ammoElem.color = Color.yellow;
@@ -72,7 +99,7 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
         shopWindow.SetItemDesc(pickup.GetDescription());
     }
 
-    private void UnhighlightItem()
+    public void UnhighlightItem()
     {
         nameElem.color = Color.white;
         ammoElem.color = Color.white;

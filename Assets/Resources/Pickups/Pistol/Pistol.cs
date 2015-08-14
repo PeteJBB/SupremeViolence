@@ -8,32 +8,13 @@ public class Pistol : Pickup
 
     private GameObject muzzleFlash;
 
-    public override string GetPickupName()
-    {
-        return "Pistol";
-    }
-
 	// Use this for initialization
-	void Start()
+    void Start()
     {
-        BaseStart();
-        Ammo = int.MaxValue;
-
         muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
         HideMuzzleFlash();
 	}
 	
-	// Update is called once per frame
-	void Update() 
-    {
-	
-	}
-
-    public override bool IsWeapon()
-    {
-        return true;
-    }
-
     public override void OnFireDown(Vector3 origin)
     {
         var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);

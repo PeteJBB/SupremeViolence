@@ -6,6 +6,7 @@ public class GameState
 {
     public static List<PlayerState> Players;
     public static int CurrentRound;
+    public static bool IsGameStarted = false;
 
     public static void StartNewGame()
     {
@@ -16,6 +17,8 @@ public class GameState
             var pState = new PlayerState(i);
             Players.Add(pState);
         }
+
+        IsGameStarted = true;
     }
 }
 

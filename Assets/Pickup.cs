@@ -3,31 +3,36 @@ using System.Collections;
 
 public class Pickup : MonoBehaviour
 {
-
-    public PlayerControl Player;
-    public AudioClip PickupSound;
-
     private Transform background;
     private Transform icon;
-    private bool isPickedUp = false;
 
-    public int Ammo;
-    public int MaxAmmo;
+    public string PickupName = "Pickup";
+    public int Price = 0; // items with price 0 will not show up in the shop
 
-    void Start()
+    public PickupType PickupType;
+
+    [HideInInspector]
+    public int Ammo;    // this is how much ammo this instance has left
+                        // -1 means unlimited ammo
+
+    public int StartAmmo; // how much ammo you get when buying this or when you pick one up
+    public int MaxAmmo; // max ammo you can buy / carry for this pickup
+
+    public AudioClip PickupSound;
+
+    [HideInInspector]
+    public PlayerControl Player;
+    
+    void Awake()
     {
-        BaseStart();
-    }
-
-    public void BaseStart()
-    {
+        Ammo = StartAmmo;
         background = transform.FindChild("Background");
         icon = transform.FindChild("Icon");
     }
 
     public virtual string GetPickupName()
     {
-        return "Default Pickup";
+        return PickupName;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -61,9 +66,7 @@ public class Pickup : MonoBehaviour
                 icon.gameObject.SetActive(false);
             if(background != null)
                 background.gameObject.SetActive(false);
-            
-            isPickedUp = true;
-            
+
             this.GetComponent<CircleCollider2D>().enabled = false;
             
             transform.parent = player.transform;
@@ -78,11 +81,6 @@ public class Pickup : MonoBehaviour
             AudioSource.PlayClipAtPoint(PickupSound, transform.position);
     }
 
-    public virtual bool IsWeapon()
-    {
-        return false;
-    }
-
     public virtual float GetLegStrengthMultiplier()
     {
         return 1;
@@ -93,14 +91,9 @@ public class Pickup : MonoBehaviour
         return 0;
     }
 
-    public virtual int GetPrice()
-    {
-        return 200;
-    }
-
     public virtual string GetDescription()
     {
-        return GetPickupName();
+        return "";
     }
 
     public virtual void OnPlayerPickup(PlayerControl player)
@@ -128,7 +121,7 @@ public class Pickup : MonoBehaviour
 
     public virtual void AddAmmo(int amount)
     {
-        if(Ammo < int.MaxValue)
+        if(Ammo > -1)
         {
             Ammo += amount;
             if(Ammo > MaxAmmo)
@@ -164,4 +157,11 @@ public class Pickup : MonoBehaviour
         return this.GetPickupName();
     }
 
+}
+
+public enum PickupType
+{
+    Weapon,
+    Equipment, 
+    Passive
 }

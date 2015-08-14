@@ -14,7 +14,7 @@ public class CustomMenuInputController: MonoBehaviour
     private Selectable[] selectables;
 
 	// Use this for initialization
-	void Start () 
+	public void Start () 
     {
         selectables = transform.GetComponentsInChildren<Selectable>();
         if(CurrentSelectedObject != null)
@@ -22,7 +22,7 @@ public class CustomMenuInputController: MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	public void Update () 
     {
         if(CurrentSelectedObject == null)
             SelectFirstVisibleItem();
@@ -53,7 +53,6 @@ public class CustomMenuInputController: MonoBehaviour
             if(sel != null && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
-
         else if(action == MenuInputAction.Submit)
         {
             var ev = new BaseEventData(null);
@@ -63,7 +62,25 @@ public class CustomMenuInputController: MonoBehaviour
         {
             
         }
+        else if(action == MenuInputAction.PrevPage)
+        {
+            PrevPage();
+        }
+        else if(action == MenuInputAction.NextPage)
+        {
+            NextPage();
+        }
 	}
+
+    public virtual void NextPage()
+    {
+
+    }
+
+    public virtual void PrevPage()
+    {
+        
+    }
 
     public void TestAction()
     {
@@ -94,8 +111,11 @@ public class CustomMenuInputController: MonoBehaviour
         if(CurrentSelectedObject != null)
             CurrentSelectedObject.SendMessage("OnDeselect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
 
-        CurrentSelectedObject = obj;
-        CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
+        if(obj != null)
+        {
+            CurrentSelectedObject = obj;
+            CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
+        }
     }
 
     GamePadState lastGamepadState;
@@ -132,6 +152,14 @@ public class CustomMenuInputController: MonoBehaviour
         else if(state.Buttons.B == ButtonState.Pressed && lastGamepadState.Buttons.B == ButtonState.Released)
         {
             action = MenuInputAction.Cancel;
+        }
+        else if(state.Buttons.LeftShoulder == ButtonState.Pressed && lastGamepadState.Buttons.LeftShoulder == ButtonState.Released)
+        {
+            action = MenuInputAction.PrevPage;
+        }
+        else if(state.Buttons.RightShoulder == ButtonState.Pressed && lastGamepadState.Buttons.RightShoulder == ButtonState.Released)
+        {
+            action = MenuInputAction.NextPage;
         }
 
         lastGamepadState = state;
@@ -197,5 +225,8 @@ public enum MenuInputAction
     MoveLeft,
     MoveRight,
     Submit,
-    Cancel
+    Cancel,
+    PrevPage,
+    NextPage
+
 }

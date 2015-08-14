@@ -31,7 +31,8 @@ public class GameBrain : MonoBehaviour
 
 	void Awake () 
     {
-
+        if(!GameState.IsGameStarted)
+            GameState.StartNewGame();
 	}
 
     void Start()
