@@ -4,15 +4,15 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Linq;
 
-public class ShopItem: MonoBehaviour, IDeselectHandler, ISelectHandler, IPointerEnterHandler, IPointerExitHandler, ISubmitHandler
+public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHandler
 {
     public ShopWindow shopWindow;
     public Pickup pickup;
     public int PlayerIndex;
 
     private Text nameElem;
+    private Text ammoElem;
     private Text priceElem;
-    private Text itemDesc;
 
     private PlayerState player;
 
@@ -21,12 +21,19 @@ public class ShopItem: MonoBehaviour, IDeselectHandler, ISelectHandler, IPointer
     void Start()
     {
         nameElem = transform.Find("Name").GetComponent<Text>();
+        ammoElem = transform.Find("Ammo").GetComponent<Text>();
         priceElem = transform.Find("Price").GetComponent<Text>();
 
-        player = GameState.Players[PlayerIndex];
-        if(player.Pickups.Any(x => x == pickup))
+        if(GameState.Players != null)
         {
-            priceElem.text = "Purchased";
+            player = GameState.Players[PlayerIndex];
+            var p = player.Pickups.FirstOrDefault(x => x == pickup);
+            if(p != null)
+            {
+                ammoElem.text = string.Format("{0} / {1}", p.GetAmmoCount(), p.MaxAmmo);
+                if(p.Ammo == p.MaxAmmo)
+                    priceElem.text = "Full";
+            }
         }
     }
 
@@ -40,7 +47,8 @@ public class ShopItem: MonoBehaviour, IDeselectHandler, ISelectHandler, IPointer
         {
             player.Cash -= price;
             player.Pickups.Add(pickup);
-            priceElem.text = "Purchased";
+            ammoElem.text = string.Format("{0} / {1}", pickup.GetAmmoCount(), pickup.MaxAmmo);
+            priceElem.text = "Full";
         }
     }
 
@@ -56,22 +64,10 @@ public class ShopItem: MonoBehaviour, IDeselectHandler, ISelectHandler, IPointer
         UnhighlightItem();
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        HighlightItem();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        if(!isSelected)
-        {
-            UnhighlightItem();
-        }
-    }
-
     private void HighlightItem()
     {
         nameElem.color = Color.yellow;
+        ammoElem.color = Color.yellow;
         priceElem.color = Color.yellow;
         shopWindow.SetItemDesc(pickup.GetDescription());
     }
@@ -79,6 +75,7 @@ public class ShopItem: MonoBehaviour, IDeselectHandler, ISelectHandler, IPointer
     private void UnhighlightItem()
     {
         nameElem.color = Color.white;
+        ammoElem.color = Color.white;
         priceElem.color = Color.white;
         shopWindow.SetItemDesc(string.Empty);
     }

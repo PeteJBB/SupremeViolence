@@ -11,7 +11,7 @@ public class ShopWindow: MonoBehaviour
 
     private Transform stockPanel;
     private Text itemDesc;
-    private Text cashValElem;
+    private Text yourCash;
 
     private GridLayoutGroup gridLayout;
 
@@ -32,8 +32,8 @@ public class ShopWindow: MonoBehaviour
 	void Start () 
     {
         stockPanel = transform.Find("StockPanel");
-        //itemDesc = transform.Find("ItemDesc").GetComponent<Text>();
-        //cashValElem = transform.Find("CashVal").GetComponent<Text>();
+        itemDesc = transform.Find("ItemDesc").GetComponent<Text>();
+        yourCash = transform.Find("YourCash").GetComponent<Text>();
 
         var orderedPickups = GameSettings.PickupPrefabs.OrderBy(x => x.GetPrice()).ToList();
         for(var i=0; i<orderedPickups.Count; i++)
@@ -67,6 +67,6 @@ public class ShopWindow: MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        //cashValElem.text = string.Format("{0:C0}", GameState.Players[PlayerIndex].Cash);
+        yourCash.text = string.Format("Your Cash: {0:C0}", GameState.Players[PlayerIndex].Cash);
 	}
 }

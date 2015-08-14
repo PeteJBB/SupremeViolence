@@ -32,6 +32,7 @@ public class ShopCanvas: MonoBehaviour
             var image = Instantiate(ShopImagePrefab).GetComponent<RawImage>();
             image.transform.SetParent(transform);
             image.texture = window.renderTexture;
+            image.name = "ShopImage" + i;
 
             var rect = image.GetComponent<RectTransform>();
 
@@ -54,7 +55,7 @@ public class ShopCanvas: MonoBehaviour
                 switch(i)
                 {
                     case 0:
-                        rect.anchorMin = new Vector2(0,0f);
+                        rect.anchorMin = new Vector2(0,0.5f);
                         rect.anchorMax = new Vector2(0.5f,1);
                         break;
                     case 1:

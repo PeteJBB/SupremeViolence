@@ -148,7 +148,7 @@ public class CustomMenuInputController: MonoBehaviour
             action = MenuInputAction.MoveLeft;
         else if(Input.GetKeyDown(KeyCode.RightArrow))
             action = MenuInputAction.MoveRight;
-        else if(Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
+        else if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
             action = MenuInputAction.Submit;
         else if(Input.GetKeyDown(KeyCode.Escape))
             action = MenuInputAction.Cancel;
