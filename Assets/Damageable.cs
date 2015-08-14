@@ -84,7 +84,7 @@ public class Damageable : MonoBehaviour
             if(RespawnOnDeath)
             {
                 gameObject.SetActive(false);
-                GameBrain.Instance.WaitAndThenCall(RespawnDelaySeconds, () => Respawn());
+                Helper.Instance.WaitAndThenCall(RespawnDelaySeconds, () => Respawn());
             }
             else
             {

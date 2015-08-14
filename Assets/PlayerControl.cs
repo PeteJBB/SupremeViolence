@@ -51,12 +51,12 @@ public class PlayerControl : MonoBehaviour {
         {
             isFirstUpdate = false;
 
-            // turn GameState pickups into actual pickup instances
+            // setup my pickups
             muteSounds = true;
-            foreach(var prefab in GameState.Players[PlayerIndex].Pickups)
+            Pickups = new List<Pickup>();
+            foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
             {
-                var pickup = Instantiate(prefab).GetComponent<Pickup>();
-                pickup.Ammo = prefab.Ammo;
+                var pickup = ps.Instantiate();
                 pickup.PickupSound = null;
                 pickup.CollectPickup(this);
             }
@@ -151,6 +151,18 @@ public class PlayerControl : MonoBehaviour {
 
         BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 	}
+
+    public void OnGameOver()
+    {
+        if(triggerDown)
+        {
+            triggerDown = false;
+            if(CurrentWeapon != null)
+            {
+                CurrentWeapon.OnFireUp(GetAimingOrigin());
+            }
+        }
+    }
 
     private GamePadState GetGamePadInput()
     {

@@ -26,7 +26,7 @@ public class Pistol : Pickup
 
         ShowMuzzleFlash();
 
-        GameBrain.Instance.WaitAndThenCall(0.1f, HideMuzzleFlash);
+        Helper.Instance.WaitAndThenCall(0.1f, HideMuzzleFlash);
     }
 
     private void ShowMuzzleFlash()

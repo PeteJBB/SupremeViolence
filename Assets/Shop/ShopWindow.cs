@@ -56,7 +56,7 @@ public class ShopWindow: CustomMenuInputController
 
             var item = Instantiate(ShopItemPrefab).GetComponent<ShopItem>();
             item.transform.SetParent(stockPanel);
-            item.pickup = p;
+            item.PickupPrefab = p;
             item.shopWindow = this;
             item.PlayerIndex = PlayerIndex;
 

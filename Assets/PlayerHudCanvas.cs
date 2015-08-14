@@ -98,7 +98,7 @@ public class PlayerHudCanvas : MonoBehaviour
 
         if(seconds > 0)
         {
-            GameBrain.Instance.WaitAndThenCall(seconds, () => 
+            Helper.Instance.WaitAndThenCall(seconds, () => 
             {
                 Destroy(text.gameObject);
             });

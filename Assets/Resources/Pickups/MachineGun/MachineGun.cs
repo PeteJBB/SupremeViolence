@@ -52,7 +52,7 @@ public class MachineGun : Pickup
 
             ShowMuzzleFlash();
             
-            GameBrain.Instance.WaitAndThenCall(fireDelay / 1.5f, HideMuzzleFlash);
+            Helper.Instance.WaitAndThenCall(fireDelay / 1.5f, HideMuzzleFlash);
         }
     }
 

@@ -11,12 +11,11 @@ public class Pickup : MonoBehaviour
 
     public PickupType PickupType;
 
-    [HideInInspector]
-    public int Ammo;    // this is how much ammo this instance has left
-                        // -1 means unlimited ammo
+    [Tooltip("How much ammo this pickup starts with, -1 means unlimited ammo")]
+    public int Ammo;// -1 means unlimited ammo
 
-    public int StartAmmo; // how much ammo you get when buying this or when you pick one up
-    public int MaxAmmo; // max ammo you can buy / carry for this pickup
+    [Tooltip("max ammo you can buy / carry for this pickup")]
+    public int MaxAmmo;
 
     public AudioClip PickupSound;
 
@@ -25,7 +24,6 @@ public class Pickup : MonoBehaviour
     
     void Awake()
     {
-        Ammo = StartAmmo;
         background = transform.FindChild("Background");
         icon = transform.FindChild("Icon");
     }
@@ -46,39 +44,56 @@ public class Pickup : MonoBehaviour
 
     public virtual void CollectPickup(PlayerControl player)
     {
-        // check if player already has one of these
-        var duplicate = player.Pickups.Find(x => x.GetPickupName() == this.GetPickupName());
-        if(duplicate != null)
+        // does player already own me?
+        if(player.Pickups.Contains(this))
         {
-            // already got one, take ammo etc and destroy
-            OnPickupDuplicate(player, duplicate);
-            Destroy(gameObject);
+            // just update my state
+            this.Player = player;
+            gameObject.SetOwner(player.gameObject);
+            transform.SetParent(player.transform);
+            transform.localPosition = Vector3.zero;
+            HidePickupIcons();
         }
         else
         {
-            // pick it up
-            OnPlayerPickup(player);
-            player.AddPickup(this);
-            this.Player = player;
-            gameObject.SetOwner(player.gameObject);
+            // check if player already has one of these
+            var duplicate = player.Pickups.Find(x => x.GetPickupName() == this.GetPickupName() && x != this);
+            if(duplicate != null)
+            {
+                // already got one, take ammo etc and destroy
+                OnPickupDuplicate(player, duplicate);
+                Destroy(gameObject);
+            }
+            else
+            {
+                // pick it up
+                OnPlayerPickup(player);
+                player.AddPickup(this);
 
-            if(icon != null)
-                icon.gameObject.SetActive(false);
-            if(background != null)
-                background.gameObject.SetActive(false);
+                this.Player = player;
+                gameObject.SetOwner(player.gameObject);
+                transform.SetParent(player.transform);
+                transform.localPosition = Vector3.zero;
+                HidePickupIcons();
+            }
 
-            this.GetComponent<CircleCollider2D>().enabled = false;
-            
-            transform.parent = player.transform;
-            transform.localPosition = Vector3.zero;
+            // free up grid point in arena
+            Arena.Instance.RemoveGridObject(gameObject);
+
+            // play pickup sound
+            if(PickupSound != null)
+                AudioSource.PlayClipAtPoint(PickupSound, transform.position);
         }
+    }
 
-        // free up grid point in arena
-        Arena.Instance.RemoveGridObject(gameObject);
+    private void HidePickupIcons()
+    {
+        if(icon != null)
+            icon.gameObject.SetActive(false);
+        if(background != null)
+            background.gameObject.SetActive(false);
 
-        // play pickup sound
-        if(PickupSound != null)
-            AudioSource.PlayClipAtPoint(PickupSound, transform.position);
+        this.GetComponent<CircleCollider2D>().enabled = false;
     }
 
     public virtual float GetLegStrengthMultiplier()

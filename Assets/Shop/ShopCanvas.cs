@@ -7,11 +7,15 @@ public class ShopCanvas: MonoBehaviour
     public GameObject ShopWindowPrefab;
     public GameObject ShopImagePrefab;
 
+    void Awake()
+    {
+        if(!GameState.IsGameStarted)
+            GameState.StartNewGame();
+    }
+
 	// Use this for initialization
 	void Start () 
     {
-        GameState.StartNewGame(); //<-- this should happen on the main menu, really
-
         // clean up dev scene
         Destroy(GameObject.Find("ShopWindow").gameObject);
         Destroy(GetComponentInChildren<RawImage>().gameObject);

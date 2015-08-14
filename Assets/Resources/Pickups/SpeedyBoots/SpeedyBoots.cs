@@ -7,7 +7,7 @@ public class SpeedyBoots : Pickup
     Rigidbody2D ownerPlayerBody;
 
 	// Use this for initialization
-    void Start()
+    void Awake()
     {
         particles = GetComponent<ParticleSystem>();
         particles.enableEmission = false;

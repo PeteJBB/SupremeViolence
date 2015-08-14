@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,7 +7,7 @@ using System.Linq;
 public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHandler
 {
     public ShopWindow shopWindow;
-    public Pickup pickup;
+    public Pickup PickupPrefab;
     public int PlayerIndex;
 
     private Text nameElem;
@@ -27,20 +27,37 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
 
     void Start()
     {
-        if(pickup != null)
-        {
-            nameElem.text = pickup.PickupName;
-            priceElem.text = string.Format("{0:C0}", pickup.Price);
-        }
+        player = GameState.Players[PlayerIndex];
+//        var p = player.Pickups.FirstOrDefault(x => x == PickupPrefab);
+//        if(p != null)
+//        {
+//            ammoElem.text = string.Format("{0} / {1}", p.GetAmmoCount(), p.MaxAmmo);
+//            if(p.Ammo == p.MaxAmmo)
+//                priceElem.text = "Full";
+//        }
 
-        if(GameState.Players != null)
+        UpdateItemText();
+    }
+
+    private void UpdateItemText()
+    {
+        if(PickupPrefab != null && player != null)
         {
-            player = GameState.Players[PlayerIndex];
-            var p = player.Pickups.FirstOrDefault(x => x == pickup);
-            if(p != null)
+            nameElem.text = PickupPrefab.PickupName;
+            priceElem.text = string.Format("{0:C0}", PickupPrefab.Price);
+
+            // does player already own one of these
+            var p = player.PickupStates.FirstOrDefault(x => x.Name == PickupPrefab.PickupName);
+            if(p == null)
             {
-                ammoElem.text = string.Format("{0} / {1}", p.GetAmmoCount(), p.MaxAmmo);
-                if(p.Ammo == p.MaxAmmo)
+                // not owned by player
+                ammoElem.text = "-";
+            }
+            else
+            {
+                // owned already
+                ammoElem.text = string.Format("{0} / {1}", p.Ammo, PickupPrefab.MaxAmmo);
+                if(p.Ammo >= PickupPrefab.MaxAmmo)
                     priceElem.text = "Full";
             }
         }
@@ -51,31 +68,28 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
         // make purchase
         Debug.Log("Player " + (PlayerIndex + 1) + " bought " + nameElem.text);
 
-        if(player.Cash >= pickup.Price)
+        if(player.Cash >= PickupPrefab.Price)
         {
             // does player already own one of these
-            var p = player.Pickups.FirstOrDefault(x => x.PickupName == pickup.PickupName);
+            var p = player.PickupStates.FirstOrDefault(x => x.Name == PickupPrefab.PickupName);
             if(p == null)
             {
-                // add to list
-                p = GameObject.Instantiate(pickup).GetComponent<Pickup>();
-                p.Ammo = 0;
-                player.Pickups.Add(p);
-
+                // add pickup to playerstate
+                p = PickupState.FromPrefab(PickupPrefab);
+                p.Ammo = 0; //<-- ammo gets set in a minute down
+                player.PickupStates.Add(p);
             }
 
-            if(p.Ammo < p.MaxAmmo)
+            if(p.Ammo < PickupPrefab.MaxAmmo)
             {
                 // add ammo
-                p.Ammo += pickup.StartAmmo;
+                p.Ammo = Mathf.Clamp(p.Ammo + PickupPrefab.Ammo, 0, PickupPrefab.MaxAmmo);
 
-                // set labels
-                ammoElem.text = string.Format("{0} / {1}", p.Ammo, p.MaxAmmo);
-                if(pickup.Ammo >= pickup.MaxAmmo)
-                    priceElem.text = "Full";
-
-                player.Cash -= pickup.Price;
+                // pay!
+                player.Cash -= PickupPrefab.Price;
             }
+
+            UpdateItemText();
         }
     }
 
@@ -96,7 +110,7 @@ public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHand
         nameElem.color = Color.yellow;
         ammoElem.color = Color.yellow;
         priceElem.color = Color.yellow;
-        shopWindow.SetItemDesc(pickup.GetDescription());
+        shopWindow.SetItemDesc(PickupPrefab.GetDescription());
     }
 
     public void UnhighlightItem()

@@ -40,7 +40,7 @@ public class Explosion : MonoBehaviour
                 rb.AddForce(v * actForce, ForceMode2D.Impulse);
 
                 //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
-                GameBrain.Instance.WaitAndThenCall(0.1f, () => 
+                Helper.Instance.WaitAndThenCall(0.1f, () => 
                 {
                     if(rb != null)
                         rb.drag = dragOrig;

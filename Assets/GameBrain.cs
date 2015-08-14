@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEditor;
@@ -110,7 +110,7 @@ public class GameBrain : MonoBehaviour
         })));
 
         // Get ready!
-        WaitAndThenCall(3, () =>
+        Helper.Instance.WaitAndThenCall(3, () =>
         {
             PlayerHudCanvas.Instance.ShowMessage("Get Ready!", 2);
             if(GetReadySound != null)
@@ -127,7 +127,7 @@ public class GameBrain : MonoBehaviour
         // fade to game view
         iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3.5, "time", 0.5f));
 
-        WaitAndThenCall(5, () =>
+        Helper.Instance.WaitAndThenCall(5, () =>
         {
             GameOn();
         });
@@ -152,17 +152,6 @@ public class GameBrain : MonoBehaviour
         }
 	}
 
-    public void WaitAndThenCall(float waitSeconds, Action funcToRun)
-    {
-        StartCoroutine(CoWaitAndThenCall(waitSeconds, funcToRun));
-    }
-
-    public IEnumerator CoWaitAndThenCall(float waitSeconds, Action funcToRun)
-    {
-        yield return new WaitForSeconds(waitSeconds);
-        funcToRun();
-    }
-
     private void GameOn()
     {
         if(GameOnSound != null)
@@ -173,13 +162,18 @@ public class GameBrain : MonoBehaviour
 
     private void GameOver()
     {
+        foreach(var player in players)
+        {
+            player.OnGameOver();
+        }
+
         PlayerHudCanvas.Instance.ShowMessage("Game Over!", 2);
 
         // slow mo!
         Time.timeScale = 0.05f;
         var physicsTimeDefault = Time.fixedDeltaTime;
         Time.fixedDeltaTime = physicsTimeDefault * Time.timeScale;
-        WaitAndThenCall(0.25f, () => { Time.timeScale = 1; Time.fixedDeltaTime = physicsTimeDefault ; });
+        Helper.Instance.WaitAndThenCall(0.25f, () => { Time.timeScale = 1; Time.fixedDeltaTime = physicsTimeDefault ; });
 
         // fade to black
         iTween.CameraFadeAdd();
@@ -215,9 +209,8 @@ public class GameBrain : MonoBehaviour
         cam.depth = 1;
 
         // fade in arena cam
-        WaitAndThenCall(3, () => { cam.enabled = true; });
+        Helper.Instance.WaitAndThenCall(3, () => { cam.enabled = true; });
         iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3, "time", 0.5f));
-        
 
         State = PlayState.GameOver;
     }
@@ -249,6 +242,18 @@ public class GameBrain : MonoBehaviour
                 row.SetActive(false);
             }
         }
+    }
+
+    public void GameOverContinue()
+    {
+        // update player weapons for the shop
+        foreach(var p in players)
+        {
+            var playerInfo = GameState.Players[p.PlayerIndex];
+            playerInfo.PickupStates.Clear();
+            playerInfo.PickupStates = p.Pickups.Select(x => PickupState.FromPickupInstance(x)).ToList();
+        }
+        Application.LoadLevelAsync("Shop");
     }
 
     public static bool IsEditMode()
