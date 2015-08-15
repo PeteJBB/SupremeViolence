@@ -8,18 +8,56 @@ using XInputDotNetPure;
 
 public class CustomMenuInputController: MonoBehaviour 
 {
-    public int PlayerIndex = 0;
+    [Tooltip("-1 means take input from all players")]
+    public int PlayerIndex = -1;
     public GameObject CurrentSelectedObject;
 
-    private Selectable[] selectables;
+    private Stack<Canvas> navStack = new Stack<Canvas>();
+    public Canvas ActiveCanvas;
+    public bool ToggleScreenSpaceOnActivateCanvas = false;
 
 	// Use this for initialization
 	public void Start () 
     {
-        selectables = transform.GetComponentsInChildren<Selectable>();
+        if(ActiveCanvas != null)
+            NavigateForwards(ActiveCanvas);
+
         if(CurrentSelectedObject != null)
             CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
 	}
+
+    public virtual void NavigateForwards(Canvas canvas)
+    {
+        Debug.Log("NavigateForwards to " + canvas.name);
+        if(ActiveCanvas != null)
+            navStack.Push(ActiveCanvas);
+
+        if(ToggleScreenSpaceOnActivateCanvas)
+            ActiveCanvas.renderMode = RenderMode.WorldSpace;
+        ActiveCanvas = canvas;
+
+        if(ToggleScreenSpaceOnActivateCanvas)
+            ActiveCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        SelectFirstVisibleItem();
+    }
+    
+    public virtual void GoBack()
+    {
+        Debug.Log("GoBack");
+        if(navStack.Count > 0)
+        {
+            if(ToggleScreenSpaceOnActivateCanvas)
+                ActiveCanvas.renderMode = RenderMode.WorldSpace;
+
+            ActiveCanvas = navStack.Pop();
+
+            if(ToggleScreenSpaceOnActivateCanvas)
+                ActiveCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            SelectFirstVisibleItem();
+        }
+    }
 	
 	// Update is called once per frame
 	public void Update () 
@@ -28,29 +66,28 @@ public class CustomMenuInputController: MonoBehaviour
             SelectFirstVisibleItem();
 
         var action = GetMenuInputAction();
-
         if(action == MenuInputAction.MoveUp)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnUp();
-            if(sel != null && IsObjectInMyScope(sel.gameObject))
+            if(sel != null)// && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveDown)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnDown();
-            if(sel != null && IsObjectInMyScope(sel.gameObject))
+            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveLeft)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnLeft();
-            if(sel != null && IsObjectInMyScope(sel.gameObject))
+            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveRight)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnRight();
-            if(sel != null && IsObjectInMyScope(sel.gameObject))
+            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.Submit)
@@ -82,27 +119,10 @@ public class CustomMenuInputController: MonoBehaviour
         
     }
 
-    public void TestAction()
-    {
-        Debug.Log("Test Action");
-    }
-
-    bool IsObjectInMyScope(GameObject go)
-    {
-        var parent = go.transform.parent;
-        while(parent != null)
-        {
-            if(parent == transform)
-                return true;
-            parent = parent.parent;
-        }
-
-        return false;
-    }
-
     private void SelectFirstVisibleItem()
     {
-        var first = selectables.OrderByDescending(x => x.GetComponent<RectTransform>().position.y).FirstOrDefault();
+        var selectables = ActiveCanvas.GetComponentsInChildren<Selectable>();
+        var first = selectables.OrderByDescending(x => x.transform.position.y).FirstOrDefault();
         SetSelectedGameObject(first.gameObject);
     }
 

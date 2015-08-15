@@ -12,8 +12,8 @@ public class GameSettings
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
-    public static int ScoreLimit = 1;
-    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Flamer");
+    public static int ScoreLimit = 10;
+    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Pistol");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
     public static int StartingCash = 2000;
@@ -68,7 +68,7 @@ public class GameSettings
         }
         else
         {
-            newIndex = Mathf.Clamp(currentIndex + dir, 0, setting.AllowedValues.Length);
+            newIndex = Mathf.Clamp(currentIndex + dir, 0, setting.AllowedValues.Length - 1);
         }
 
         var val = setting.AllowedValues[newIndex];

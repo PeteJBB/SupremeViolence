@@ -39,7 +39,10 @@ public class PlayerState
         Cash = GameSettings.StartingCash;
 
         PickupStates = new List<PickupState>();
-        PickupStates.Add(PickupState.FromPrefab(GameSettings.StartWeapon));
+        PickupStates.Add(PickupState.FromPrefab(GameSettings.PickupPrefabs.First(x => x.PickupName == "Pistol")));
+
+        if(GameSettings.StartWeapon.PickupName != "Pistol")
+            PickupStates.Add(PickupState.FromPrefab(GameSettings.StartWeapon));
     }
 }
 

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Linq;
 
-public class ShopItem: Selectable, IDeselectHandler, ISelectHandler, ISubmitHandler
+public class ShopItem: CustomSelectable, IDeselectHandler, ISelectHandler, ISubmitHandler
 {
     public ShopWindow shopWindow;
     public Pickup PickupPrefab;

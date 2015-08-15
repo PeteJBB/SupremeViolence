@@ -5,7 +5,7 @@ using System.Collections;
 using System;
 using System.Linq;
 
-public class OptionCycler: MonoBehaviour, ISubmitHandler, IMoveHandler, IPointerClickHandler
+public class OptionCycler: CustomSelectable, ISubmitHandler, IMoveHandler
 {
     Text valText;
     public string SettingName;
@@ -33,21 +33,15 @@ public class OptionCycler: MonoBehaviour, ISubmitHandler, IMoveHandler, IPointer
         GameSettings.IncrementValue(SettingName, 1, true).ToString();
     }
 
-    public void OnPointerClick (PointerEventData eventData)
+    public override Selectable FindSelectableOnLeft()
     {
-        var dir = eventData.button == PointerEventData.InputButton.Left ? 1 : -1;
-        GameSettings.IncrementValue(SettingName, dir, true).ToString();
+        GameSettings.IncrementValue(SettingName, -1).ToString();
+        return this;
     }
 
-    public void OnMove(AxisEventData eventData)
+    public override Selectable FindSelectableOnRight()
     {
-        if(eventData.moveDir == MoveDirection.Left)
-        {
-            GameSettings.IncrementValue(SettingName, -1).ToString();
-        }
-        if(eventData.moveDir == MoveDirection.Right)
-        {
-            GameSettings.IncrementValue(SettingName).ToString();
-        }
+        GameSettings.IncrementValue(SettingName).ToString();
+        return this;
     }
 }
