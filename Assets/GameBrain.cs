@@ -235,7 +235,7 @@ public class GameBrain : MonoBehaviour
                 row.transform.Find("Color").GetComponent<Image>().color = pl.transform.Find("Torso").GetComponent<SpriteRenderer>().color;
                 row.transform.Find("Name").GetComponent<Text>().text = "Player " + (pl.PlayerIndex+1);
                 row.transform.Find("Kills").GetComponent<Text>().text = pl.Score.ToString();
-                row.transform.Find("Winnings").GetComponent<Text>().text = "$" + (pl.Score * 200);
+                row.transform.Find("Winnings").GetComponent<Text>().text = "$" + (pl.Score * GameSettings.CashForKill);
             }
             else
             {
@@ -253,7 +253,7 @@ public class GameBrain : MonoBehaviour
             playerInfo.PickupStates.Clear();
             playerInfo.PickupStates = p.Pickups.Select(x => PickupState.FromPickupInstance(x)).ToList();
 
-            playerInfo.Cash += p.Score * 200;
+            playerInfo.Cash += p.Score * GameSettings.CashForKill;
         }
         Application.LoadLevelAsync("Shop");
     }

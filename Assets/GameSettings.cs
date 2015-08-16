@@ -17,7 +17,9 @@ public class GameSettings
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
     public static int StartingCash = 2000;
+    public static int CashForKill = 400;
     public static WinningsLevel WinningsLevel = WinningsLevel.Normal;
+
 
     public static Dictionary<string, GameSetting> Settings = new Dictionary<string, GameSetting>()
     {
