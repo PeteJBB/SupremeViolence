@@ -5,7 +5,7 @@ public class Grenade : MonoBehaviour
 {
     public GameObject ExplosionPrefab;
 
-    private float fuseTime = 3;
+    private float fuseTime = 2;
     private float birthday;
 
 	// Use this for initialization
@@ -22,8 +22,11 @@ public class Grenade : MonoBehaviour
             // explode!
             if(ExplosionPrefab != null)
             {
-                var exp = (GameObject)Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-                exp.SetOwner(gameObject.GetOwner());
+                var exp = Instantiate<GameObject>(ExplosionPrefab).GetComponent<Explosion>();
+                exp.transform.position = transform.position;
+                exp.gameObject.SetOwner(gameObject.GetOwner());
+                exp.DamageRadius = 1f;
+                exp.MaxDamage = 100;
             }
 
             // detach particle sys

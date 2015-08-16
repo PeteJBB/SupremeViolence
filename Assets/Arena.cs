@@ -93,7 +93,10 @@ public class Arena : MonoBehaviour
 
             if (GameBrain.Instance.State == PlayState.GameOn && Time.time - lastSpawnCheck > 1)
             {
-                if(Random.Range(0f,1f) < PickupSpawnRate)
+                // how many pickups are waiting on the map right now
+                var numpickups = GameObject.FindObjectsOfType<PickupIcon>().Length;
+                var chanceToSpawn = Mathf.Lerp(PickupSpawnRate, 0, numpickups / 5f);
+                if(Random.Range(0f,1f) < chanceToSpawn)
                 {
                     SpawnOneRandomPickup();
                 }

@@ -75,8 +75,8 @@ public class PlayerControl : MonoBehaviour {
             // move
             var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
             var moveForce = moveInput * baseLegStrength * GetLegStrengthMultiplier();
-            if(gamepadState.Buttons.A == ButtonState.Pressed)
-                moveForce *= 1.3f;
+            //if(gamepadState.Buttons.A == ButtonState.Pressed)
+            //    moveForce *= 1.3f;
             rbody.AddForce(moveForce * Time.deltaTime);
 
             // aim

@@ -6,7 +6,8 @@ public class Explosion : MonoBehaviour
     public AudioClip explosionSound;
 
     private Animator anim;
-    private float DamageRadius = 0.5f;
+    public float DamageRadius = 0.5f;
+    public float MaxDamage = 100;
 
 	// Use this for initialization
 	void Start () 
@@ -15,8 +16,11 @@ public class Explosion : MonoBehaviour
 
         AudioSource.PlayClipAtPoint(explosionSound, transform.position);
 
-        var colliders = Physics2D.OverlapCircleAll(transform.position, DamageRadius);
+        var layerMask = 1 << LayerMask.NameToLayer("Default");
+        var colliders = Physics2D.OverlapCircleAll(transform.position, DamageRadius, layerMask);
 	
+        transform.localScale = new Vector3(DamageRadius, DamageRadius, 1);
+
         foreach(var other in colliders)
         {
             var v = other.transform.position - transform.position;
@@ -24,8 +28,9 @@ public class Explosion : MonoBehaviour
             var dam = other.GetComponent<Damageable>();
             if(dam != null)
             {
-                var maxDamage = 100;
-                var actualDamage = Mathf.Lerp(maxDamage, 0, v.magnitude / DamageRadius);
+                var amt = v.magnitude / DamageRadius;
+                var actualDamage = Mathf.Lerp(MaxDamage, 0, amt * amt);
+                Debug.Log("Damage amt " + amt * amt);
                 dam.Damage(actualDamage, gameObject);
             }
 
@@ -35,12 +40,13 @@ public class Explosion : MonoBehaviour
                 var dragOrig = rb.drag;
                 rb.drag = 0f;
 
-                var maxForce = 100;
-                var actForce = Mathf.Lerp(maxForce, 0, v.magnitude / DamageRadius);
+                var maxForce = MaxDamage / 5;
+                var amt = v.magnitude / DamageRadius;
+                var actForce = Mathf.Lerp(maxForce, 0, amt * amt);
                 rb.AddForce(v * actForce, ForceMode2D.Impulse);
 
                 //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
-                Helper.Instance.WaitAndThenCall(0.1f, () => 
+                Helper.Instance.WaitAndThenCall(0.03f, () => 
                 {
                     if(rb != null)
                         rb.drag = dragOrig;

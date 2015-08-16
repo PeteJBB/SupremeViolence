@@ -13,7 +13,7 @@ public class GameSettings
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
     public static int ScoreLimit = 10;
-    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Railgun");
+    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Pistol");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
     public static int StartingCash = 2000;

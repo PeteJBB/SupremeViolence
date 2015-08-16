@@ -69,25 +69,25 @@ public class CustomMenuInputController: MonoBehaviour
         if(action == MenuInputAction.MoveUp)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnUp();
-            if(sel != null)// && IsObjectInMyScope(sel.gameObject))
+            if(sel != null && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveDown)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnDown();
-            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
+            if(sel != null && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveLeft)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnLeft();
-            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
+            if(sel != null && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.MoveRight)
         {
             var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnRight();
-            if(sel != null)//  && IsObjectInMyScope(sel.gameObject))
+            if(sel != null && IsObjectInMyScope(sel.gameObject))
                 SetSelectedGameObject(sel.gameObject);
         }
         else if(action == MenuInputAction.Submit)
@@ -136,6 +136,23 @@ public class CustomMenuInputController: MonoBehaviour
             CurrentSelectedObject = obj;
             CurrentSelectedObject.SendMessage("OnSelect", new BaseEventData(null), SendMessageOptions.DontRequireReceiver);
         }
+    }
+
+    private bool IsObjectInMyScope(GameObject obj)
+    {
+        if(ActiveCanvas != null)
+        {
+            var parent = obj.transform.parent;
+            while(parent != null)
+            {
+                if(parent == ActiveCanvas.transform)
+                    return true;
+
+                parent = parent.parent;
+            }
+        }
+
+        return false;
     }
 
     GamePadState lastGamepadState;

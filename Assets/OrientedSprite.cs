@@ -18,6 +18,9 @@ public class OrientedSprite : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
+
+    public bool AdjustSortingLayer = false;
+
 	// Use this for initialization
 	void Awake () 
     {
@@ -42,15 +45,23 @@ public class OrientedSprite : MonoBehaviour
             {
                 case Orientation.Up:
                     spriteRenderer.sprite = SpriteUp;
+                    if(AdjustSortingLayer)
+                        spriteRenderer.sortingLayerName = "Bg_Front";
                     break;
                 case Orientation.Down:
                     spriteRenderer.sprite = SpriteDown;
+                    if(AdjustSortingLayer)
+                        spriteRenderer.sortingLayerName = "Fore_Back";
                     break;
                 case Orientation.Left:
                     spriteRenderer.sprite = SpriteLeft;
+                    if(AdjustSortingLayer)
+                        spriteRenderer.sortingLayerName = "Fore_Back";
                     break;
                 case Orientation.Right:
                     spriteRenderer.sprite = SpriteRight;
+                    if(AdjustSortingLayer)
+                        spriteRenderer.sortingLayerName = "Fore_Back";
                     break;
             }
             

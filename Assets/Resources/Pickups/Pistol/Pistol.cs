@@ -25,7 +25,6 @@ public class Pistol : Pickup
         AudioSource.PlayClipAtPoint(FireSound, transform.position);
 
         ShowMuzzleFlash();
-
         Helper.Instance.WaitAndThenCall(0.1f, HideMuzzleFlash);
     }
 

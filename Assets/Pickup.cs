@@ -20,7 +20,7 @@ public class Pickup : MonoBehaviour
 
 
     [HideInInspector]
-    public PlayerControl Player;
+    public PlayerControl Player = null;
     
     public virtual string GetPickupName()
     {

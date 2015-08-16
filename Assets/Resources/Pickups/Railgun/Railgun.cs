@@ -16,6 +16,9 @@ public class Railgun : Pickup
     private AudioSource humming;
     private ParticleSystem particles;
 
+    private GameObject muzzleFlash;
+
+
 	// Use this for initialization
     void Start()
     {
@@ -27,6 +30,9 @@ public class Railgun : Pickup
         // particles
         particles = GetComponent<ParticleSystem>();
         particles.enableEmission = false;
+
+        muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
+        HideMuzzleFlash();
 	}
 	
 	// Update is called once per frame
@@ -106,7 +112,7 @@ public class Railgun : Pickup
                     var dam = hit.collider.GetComponent<Damageable>();
                     if(dam != null)
                     {
-                        dam.Damage(20, gameObject);
+                        dam.Damage(100, gameObject);
                     }
                 }
 
@@ -133,6 +139,10 @@ public class Railgun : Pickup
                 beamParticles.transform.localPosition = new Vector3(0, beamLength / 2, 0);
 
                 beamParticles.enableEmission = true;
+
+                // muzzle flash
+                muzzleFlash.transform.rotation = rotation;
+                ShowMuzzleFlash();
 
                 // create impact sprite
                 var impactAngle = Mathf.Atan2(-hit.normal.x, hit.normal.y) * Mathf.Rad2Deg;
@@ -172,5 +182,23 @@ public class Railgun : Pickup
         {
             return base.GetLegStrengthMultiplier();
         }
+    }
+
+    private void ShowMuzzleFlash()
+    {
+        muzzleFlash.GetComponent<Light>().enabled = true;
+        muzzleFlash.GetComponent<SpriteRenderer>().enabled = true;
+        muzzleFlash.transform.position = Player.GetAimingOrigin().ToVector3();
+
+        var anim = muzzleFlash.GetComponent<Animator>();
+        anim.Play(null);
+        var animLength = anim.GetCurrentAnimatorStateInfo(0).length;
+        Helper.Instance.WaitAndThenCall(animLength, HideMuzzleFlash);
+    }
+    
+    private void HideMuzzleFlash()
+    {
+        muzzleFlash.GetComponent<Light>().enabled = false;
+        muzzleFlash.GetComponent<SpriteRenderer>().enabled = false;
     }
 }
