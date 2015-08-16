@@ -6,7 +6,7 @@ using XInputDotNetPure;
 
 public class PlayerControl : MonoBehaviour {
 
-    private float baseLegStrength = 4f;
+    private float baseLegStrength = 30f;
     private float baseMass = 1;
 
     public int PlayerIndex;
@@ -74,7 +74,10 @@ public class PlayerControl : MonoBehaviour {
 
             // move
             var moveInput = new Vector2(gamepadState.ThumbSticks.Left.X, gamepadState.ThumbSticks.Left.Y);
-            rbody.AddForce(moveInput * baseLegStrength * GetLegStrengthMultiplier());
+            var moveForce = moveInput * baseLegStrength * GetLegStrengthMultiplier();
+            if(gamepadState.Buttons.A == ButtonState.Pressed)
+                moveForce *= 1.3f;
+            rbody.AddForce(moveForce * Time.deltaTime);
 
             // aim
             var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);

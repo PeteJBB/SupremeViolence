@@ -124,7 +124,7 @@ public class Pickup : MonoBehaviour
 
     public virtual void OnDeselectWeapon()
     {
-        if(GetAmmoCount() <= 0 && Player != null)
+        if(MaxAmmo > 0 && Ammo <= 0 && Player != null)
             Player.RemovePickup(this);
     }
 

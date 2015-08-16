@@ -11,6 +11,7 @@ public class Arena : MonoBehaviour
     public GameObject FloorPrefab;
     public GameObject WallPrefab;
     public float WallDensity = 0.25f;
+    public bool GenerateInEditMode = false;
 
     public GameObject PlayerPrefab;
     public GameObject PickupIconPrefab;
@@ -34,6 +35,8 @@ public class Arena : MonoBehaviour
     public int Seed = 0;
     private int lastGeneratedSeed;
     private bool regenerateOnNextUpdate = false;
+    private bool isGenerated = false;
+
     private Transform generatedStuff;
 
     public Texture2D WallSkin;
@@ -51,40 +54,51 @@ public class Arena : MonoBehaviour
         generatedStuff = transform.FindChild("GeneratedStuff");
         miniMap = FindObjectOfType<MiniMap>();
 
-        RemovePreviouslyGeneratedArena();
-        GenerateArena();
-        SpawnPlayers();
+        if(!GameBrain.IsEditMode() || GenerateInEditMode)
+        {
+            RemovePreviouslyGeneratedArena();
+            GenerateArena();
+            SpawnPlayers();
 
-        SpawnDecorations();
-        SpawnInitialPickups();
-
+            SpawnDecorations();
+            SpawnInitialPickups();
+        }
 	}
 
     void Update () 
     {
-        if(!GameBrain.IsEditMode() && isFirstUpdate)
+        if(GameBrain.IsEditMode())
         {
-            NotifyAllGridContentsChanged();
-            isFirstUpdate = false;
-        }
-
-        if (GameBrain.Instance.State == PlayState.GameOn && Time.time - lastSpawnCheck > 1)
-        {
-            if(Random.Range(0f,1f) < PickupSpawnRate)
+            if(GenerateInEditMode && (!isGenerated || regenerateOnNextUpdate))
             {
-                SpawnOneRandomPickup();
+                regenerateOnNextUpdate = false;
+                RemovePreviouslyGeneratedArena();
+                GenerateArena();
+                SpawnPlayers();
+                SpawnDecorations();
+                SpawnInitialPickups();
             }
-            lastSpawnCheck = Time.time;
+            else if(!GenerateInEditMode && isGenerated)
+            {
+                RemovePreviouslyGeneratedArena();
+            }
         }
-        
-        if(GameBrain.IsEditMode() && regenerateOnNextUpdate)
+        else
         {
-            regenerateOnNextUpdate = false;
-            RemovePreviouslyGeneratedArena();
-            GenerateArena();
-            SpawnPlayers();
-            SpawnDecorations();
-            SpawnInitialPickups();
+            if(isFirstUpdate)
+            {
+                NotifyAllGridContentsChanged();
+                isFirstUpdate = false;
+            }
+
+            if (GameBrain.Instance.State == PlayState.GameOn && Time.time - lastSpawnCheck > 1)
+            {
+                if(Random.Range(0f,1f) < PickupSpawnRate)
+                {
+                    SpawnOneRandomPickup();
+                }
+                lastSpawnCheck = Time.time;
+            }
         }
 
         transform.position = new Vector3(0,0,0.1f);
@@ -137,6 +151,8 @@ public class Arena : MonoBehaviour
         childList.ForEach(child => SafeDestroyRecursive(child));
 
         wallList = new List<GameObject>();
+
+        isGenerated = false;
     }
 
     private void SafeDestroyRecursive(GameObject obj)
@@ -240,6 +256,8 @@ public class Arena : MonoBehaviour
             if(IsThereAWallAt(x-1, y) && IsThereAWallAt(x, y-1) && !IsThereAWallAt(x-1, y-1))
                 wall.transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>().enabled = true;
         }
+
+        isGenerated = true;
     }
 
     public bool IsThereAWallAt(int x, int y)
