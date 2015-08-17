@@ -1,0 +1,154 @@
+fileFormatVersion: 2
+guid: f706ff6b2e9e23648850e4a78a0e3075
+timeCreated: 1439816968
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: wallSprite2_topleft
+    21300002: wallSprite2_top
+    21300004: wallSprite2_topright
+    21300006: wallsprite2_left
+    21300008: wallSprite2_center
+    21300010: wallSprite2_right
+    21300012: wallSprite2_bottomleft
+    21300014: wallSprite2_bottom
+    21300016: wallSprite2_bottomright
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: wallSprite2_topleft
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 433
+        width: 5
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_top
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 433
+        width: 128
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_topright
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 433
+        width: 5
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallsprite2_left
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 5
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_center
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_right
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 192
+        width: 5
+        height: 145
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_bottomleft
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 5
+        height: 19
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_bottom
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 51
+        width: 128
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wallSprite2_bottomright
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 64
+        width: 5
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
