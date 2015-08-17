@@ -9,6 +9,7 @@ public class GameSettings
 {
     public static Pickup[] PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
     public static Decoration[] DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
+    public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;

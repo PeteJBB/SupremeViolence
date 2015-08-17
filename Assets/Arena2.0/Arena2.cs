@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Arena2: MonoBehaviour 
 {
@@ -8,16 +9,57 @@ public class Arena2: MonoBehaviour
     public GameObject HallwayFloorPrefab;
     public GameObject RoomFloorPrefab;
 
+    private int RoomSize = 5; //  rooms are 5x5 grid squares
+
     public int ArenaSizeX = 10;
     public int ArenaSizeY = 10;
-    private GridSquareInfo[,] GridStates;
+    private GridSquareInfo[,] GridMap;
 
 	// Use this for initialization
 	void Start () 
     {
-        // init gridmap
-        GridStates = new GridSquareInfo[ArenaSizeX, ArenaSizeY];
+        GenerateGridMap();
 
+        // create rooms
+        for(var x = 0; x<ArenaSizeX; x+= RoomSize)
+        {
+            for(var y = 0; y<ArenaSizeY; y+=RoomSize)
+            {
+                // work out which map position this is
+                MapPosition mapPos;
+                if(x < RoomSize)
+                {
+                    // left
+                    if(y < RoomSize) mapPos = MapPosition.BottomLeft;
+                    else if(y > ArenaSizeY - RoomSize) mapPos = MapPosition.TopLeft;
+                    else mapPos = MapPosition.MiddleLeft;
+                }
+                else if(x >= ArenaSizeX - RoomSize)
+                {
+                    // right
+                    if(y < RoomSize) mapPos = MapPosition.BottomRight;
+                    else if(y > ArenaSizeY - RoomSize) mapPos = MapPosition.TopRight;
+                    else mapPos = MapPosition.MiddleRight;
+                }
+                else
+                {
+                    // middle
+                    mapPos = MapPosition.Center;
+                }
+                CreateRoom(x, y, mapPos);
+            }
+        }
+
+	}
+
+    [ContextMenu("Re-GenerateGridMap")]
+    private void GenerateGridMap()
+    {
+        Debug.Log("GenerateGridMap");
+
+        // init gridmap
+        GridMap = new GridSquareInfo[ArenaSizeX, ArenaSizeY];
+        
         // set up squares
         for(var x=0; x<ArenaSizeX; x++)
         {
@@ -25,58 +67,48 @@ public class Arena2: MonoBehaviour
             {
                 var info = new GridSquareInfo();
                 info.State = GridSquareState.Empty;
-                GridStates[x,y] = info;
+                GridMap[x,y] = info;
             }
         }
+    }
 
-        // create rooms
-        var numRooms = 6;
-        for(var i=0; i<numRooms; i++)
+    private void CreateRoom(int posx, int posy, MapPosition mapPos)
+    {
+        var roomsList = GameSettings.RoomPrefabs.Where(r => r.MapPosition == mapPos).ToList();
+        if(roomsList.Any())
         {
-            CreateRoom();
-        }
+            var prefab = roomsList[Random.Range(0,roomsList.Count)];
+            var room = Instantiate<Room>(prefab);
 
-        // create square tiles
+            var pos = GridToWorldPosition(posx, posy);
+            room.transform.position = pos;
+
+            // update gridsquare infos
+            foreach(var sq in room.GetGridSquares())
+            {
+                var gpos = WorldToGridPosition(sq.transform.position);
+                var info = GridMap[(int)gpos.x, (int)gpos.y];
+                info.State = sq.State;
+                info.DoorPosition = sq.DoorPosition;
+            }
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+
+        if(GridMap == null)
+            GenerateGridMap();
+
         for(var x=0; x<ArenaSizeX; x++)
         {
             for(var y=0; y<ArenaSizeY; y++)
             {
-                var info = GridStates[x,y];
-                if(info.State == GridSquareState.Empty)
-                {
-                    var tile = Instantiate(GridSquarePrefab);
-                    tile.transform.position = GridToWorldPosition(x,y);
-                }
-                else if(info.State == GridSquareState.Hallway)
-                {
-                    var tile = Instantiate(HallwayFloorPrefab);
-                    tile.transform.position = GridToWorldPosition(x,y);
-                }
-                else if(info.State == GridSquareState.Room)
-                {
-                    var tile = Instantiate(RoomFloorPrefab);
-                    tile.transform.position = GridToWorldPosition(x,y);
-                }
-            }
-        }
-	}
+                var info = GridMap[x,y];
+                var pos = GridToWorldPosition(x,y);
 
-    private void CreateRoom()
-    {
-        var sizex = 5;
-        var sizey = 3;
-        var posx = Random.Range(0, ArenaSizeX-sizex);
-        var posy = Random.Range(0, ArenaSizeY-sizey);
-
-        for(var x=posx; x<posx + sizex; x++)
-        {
-            for(var y=posy; y<posy + sizey; y++)
-            {
-                var info = GridStates[x,y];
-                info.State = GridSquareState.Room;
-
-                // pick random square to be a door
-
+                Helper.DrawGridSquareGizmos(pos, info.State, info.DoorPosition);
             }
         }
     }
@@ -102,13 +134,6 @@ public class Arena2: MonoBehaviour
 public class GridSquareInfo
 {
     public GridSquareState State;
-    public GameObject Tile;
-}
-
-public enum GridSquareState
-{
-    Empty,  // nothing here, available space
-    Void,   // nothing here but dont allow anything to be put here
-    Room,   // space is part of a room
-    Hallway // space is part of a hallway
+    public GridSquare Square;
+    public DoorPosition DoorPosition;
 }

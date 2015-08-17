@@ -8,13 +8,31 @@ using System.Linq;
 [ExecuteInEditMode]
 public class Room: MonoBehaviour
 {
+    public MapPosition MapPosition;
     private Transform gridContainer;
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
         gridContainer = transform.Find("grid");
 	}
+
+    public int GetGridSizeX()
+    {
+        var squares = gridContainer.GetComponentsInChildren<GridSquare>();
+        return (int)squares.Max(sq => sq.transform.localPosition.x) - (int)squares.Min(sq => sq.transform.localPosition.y);
+    }
+
+    public int GetGridSizeY()
+    {
+        var squares = gridContainer.GetComponentsInChildren<GridSquare>();
+        return (int)squares.Max(sq => sq.transform.localPosition.y) - (int)squares.Min(sq => sq.transform.localPosition.y);
+    }
+
+    public GridSquare[] GetGridSquares()
+    {
+        return gridContainer.GetComponentsInChildren<GridSquare>();
+    }
 
 //    [ContextMenu ("Rebuild grid")]
 //	void RebuildGrid()
@@ -34,4 +52,17 @@ public class Room: MonoBehaviour
 //            }
 //        }
 //    }
+}
+
+public enum MapPosition
+{
+    Center,
+    TopLeft,
+    TopMiddle,
+    TopRight,
+    MiddleRight,
+    BottomRight,
+    BottomMiddle,
+    BottomLeft,
+    MiddleLeft
 }
