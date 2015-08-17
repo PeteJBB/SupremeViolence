@@ -61,7 +61,10 @@ public class Damageable : MonoBehaviour
                 var player = owner.GetComponent<PlayerControl>();
                 if(player != null)
                 {
-                    player.Score += PointsValue;
+                    var plInfo = GameState.Players[player.PlayerIndex];
+                    plInfo.RoundScore += PointsValue;
+                    plInfo.TotalScore += PointsValue;
+                    plInfo.Cash += PointsValue * GameSettings.CashForKill;
                 }
             }
             

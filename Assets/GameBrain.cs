@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 /// <summary>
 /// Game brain runs an individual game, controlling cameras, startup and end game sequences and the scoreboard
@@ -29,6 +30,8 @@ public class GameBrain : MonoBehaviour
     private List<Camera> cameras = new List<Camera>();
     private PlayerControl[] players;
 
+    public UnityEvent OnGameOver;
+
 	void Awake () 
     {
         if(!GameState.IsGameStarted)
@@ -44,6 +47,8 @@ public class GameBrain : MonoBehaviour
 
         var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
         resultsCanvas.alpha = 0;
+
+        GameState.StartNewRound();
 
         if (EnableStartupSequence)
         {
@@ -144,7 +149,8 @@ public class GameBrain : MonoBehaviour
 
             foreach(var p in players)
             {
-                if(p.Score >= GameSettings.ScoreLimit)
+                var score = GameState.Players[p.PlayerIndex].RoundScore;
+                if(score >= GameSettings.ScoreLimit)
                 {
                     GameOver();
                 }
@@ -162,11 +168,6 @@ public class GameBrain : MonoBehaviour
 
     private void GameOver()
     {
-        foreach(var player in players)
-        {
-            player.OnGameOver();
-        }
-
         PlayerHudCanvas.Instance.ShowMessage("Game Over!", 2);
 
         // slow mo!
@@ -187,15 +188,17 @@ public class GameBrain : MonoBehaviour
         })));
 
         // show results table
-        SetResultsValues();
         var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
-        var eventSys = FindObjectOfType<EventSystem>();
-        eventSys.SetSelectedGameObject(resultsCanvas.transform.Find("Panel/Continue").gameObject);
-
-        // fade in results
+        resultsCanvas.alpha = 0;
         iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "delay", 2, "time", 0.5f, "onupdate", (Action<object>) (newVal =>                                                                                                           { 
             resultsCanvas.alpha = (float)newVal;
         })));
+
+        var menuController = GetComponent<CustomMenuInputController>();
+        Helper.Instance.WaitAndThenCall(2, () =>
+        {
+            menuController.NavigateForwards(resultsCanvas.GetComponent<Canvas>());
+        });
 
 
         // create a new camera which will display the entire play area
@@ -213,6 +216,7 @@ public class GameBrain : MonoBehaviour
         iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3, "time", 0.5f));
 
         State = PlayState.GameOver;
+        OnGameOver.Invoke();
     }
 
     /// <summary>
@@ -223,7 +227,7 @@ public class GameBrain : MonoBehaviour
         var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
 
         // rank players by score
-        var playersRanked = players.OrderByDescending(x => x.Score).ToList();
+        var playersRanked = GameState.Players.OrderByDescending(x => x.RoundScore).ToList();
         for(var i=0; i<4; i++)
         {
             var row = resultsCanvas.transform.Find("Panel/PlayerResults/PlayerResult" + i).gameObject;
@@ -232,10 +236,10 @@ public class GameBrain : MonoBehaviour
                 var pl = playersRanked[i];
 
                 row.SetActive(true);
-                row.transform.Find("Color").GetComponent<Image>().color = pl.transform.Find("Torso").GetComponent<SpriteRenderer>().color;
+                row.transform.Find("Color").GetComponent<Image>().color = pl.Color;
                 row.transform.Find("Name").GetComponent<Text>().text = "Player " + (pl.PlayerIndex+1);
-                row.transform.Find("Kills").GetComponent<Text>().text = pl.Score.ToString();
-                row.transform.Find("Winnings").GetComponent<Text>().text = "$" + (pl.Score * GameSettings.CashForKill);
+                row.transform.Find("Kills").GetComponent<Text>().text = pl.RoundScore.ToString();
+                row.transform.Find("Winnings").GetComponent<Text>().text = "$" + (pl.RoundScore * GameSettings.CashForKill);
             }
             else
             {
@@ -246,15 +250,6 @@ public class GameBrain : MonoBehaviour
 
     public void GameOverContinue()
     {
-        // update player weapons for the shop
-        foreach(var p in players)
-        {
-            var playerInfo = GameState.Players[p.PlayerIndex];
-            playerInfo.PickupStates.Clear();
-            playerInfo.PickupStates = p.Pickups.Select(x => PickupState.FromPickupInstance(x)).ToList();
-
-            playerInfo.Cash += p.Score * GameSettings.CashForKill;
-        }
         Application.LoadLevelAsync("Shop");
     }
 

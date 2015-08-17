@@ -15,7 +15,6 @@ public class PlayerControl : MonoBehaviour {
     public Pickup CurrentWeapon;
     public AudioClip[] CollectPickupSounds; // one sound is chosen at random when collecting a pickup
 
-
     public float AimingAngle = 90;
     private bool triggerDown = false;
 
@@ -25,7 +24,7 @@ public class PlayerControl : MonoBehaviour {
     private Orientation orientation = Orientation.Down;
 
     public Vector2 CurrentGridPos;
-    public int Score = 0;
+    //public int Score = 0;
 
     public Vector2 AimingOffsetUp;
     public Vector2 AimingOffsetDown;
@@ -42,6 +41,8 @@ public class PlayerControl : MonoBehaviour {
         // make sure mass is right
         rbody = this.GetComponent<Rigidbody2D>();
         rbody.mass = baseMass;
+
+        GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
 	}
 	
 	// Update is called once per frame
@@ -165,6 +166,11 @@ public class PlayerControl : MonoBehaviour {
                 CurrentWeapon.OnFireUp(GetAimingOrigin());
             }
         }
+
+        // update weapons on playerinfo object
+        var info = GameState.Players[PlayerIndex];
+        info.PickupStates.Clear();
+        info.PickupStates = Pickups.Select(x => PickupState.FromPickupInstance(x)).ToList();
     }
 
     private GamePadState GetGamePadInput()

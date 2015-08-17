@@ -48,7 +48,7 @@ public class PlayerHud : MonoBehaviour
                     weaponLabel.text += " " + ammo;
             }
 
-            score.text = player.Score.ToString();
+            score.text = GameState.Players[player.PlayerIndex].RoundScore.ToString();
         }
 	}
 }

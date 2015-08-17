@@ -12,31 +12,66 @@ public static class GameState
     public static void StartNewGame()
     {
         Debug.Log("GameState StartNewGame");
+
         CurrentRound = 0;
         Players = new List<PlayerState>();
         for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {
             var pState = new PlayerState(i);
+            switch(i)
+            {
+                case 0:
+                default:
+                    pState.Color = new Color(.2f, .4f, 1); // blue
+                    break;
+                case 1:
+                    pState.Color = Color.red;
+                    break;
+                case 2:
+                    pState.Color = Color.green;
+                    break;
+                case 3:
+                    pState.Color = new Color(1,0,1); // purple
+                    break;
+            }
             Players.Add(pState);
         }
 
+        AudioListener.volume = GameSettings.SoundVolume;
+
         IsGameStarted = true;
+    }
+
+    public static void StartNewRound()
+    {
+        foreach(var p in Players)
+        {
+            p.RoundScore = 0;
+        }
+
+        CurrentRound++;
     }
 }
 
 public class PlayerState
 {
+    public int PlayerIndex;
     public string Name;
-    public int Score;
+    public int TotalScore;
+    public int RoundScore;
     public int Cash;
+    public Color Color;
 
     public List<PickupState> PickupStates;
 
     public PlayerState(int playerIndex)
     {
+        PlayerIndex = playerIndex;
         Name = "Player " + (playerIndex + 1);
-        Score = 0;
         Cash = GameSettings.StartingCash;
+        Color = Color.white;
+        TotalScore = 0;
+        RoundScore = 0;
 
         PickupStates = new List<PickupState>();
         PickupStates.Add(PickupState.FromPrefab(GameSettings.PickupPrefabs.First(x => x.PickupName == "Pistol")));

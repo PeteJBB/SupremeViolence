@@ -314,21 +314,7 @@ public class Arena : MonoBehaviour
 
                 // set color
                 var torso = player.transform.Find("Torso").GetComponent<SpriteRenderer>();
-                switch(i)
-                {
-                    case 0:
-                        torso.color = new Color(.2f, .4f, 1);
-                        break;
-                    case 1:
-                        torso.color = Color.red;
-                        break;
-                    case 2:
-                        torso.color = Color.green;
-                        break;
-                    case 3:
-                        torso.color = Color.yellow;
-                        break;
-                }
+                torso.color = GameState.Players[i].Color;
             }
         }
     }
