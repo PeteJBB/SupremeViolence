@@ -21,7 +21,7 @@ public class GridSquare: MonoBehaviour
 public enum GridSquareState
 {
     Empty,  // nothing here, available space
-    Void,   // nothing here but dont allow anything to be put here
+    Void,   // unusable space - nothing will be spawned here
     Room,   // space is part of a room
     Hallway // space is part of a hallway
 }

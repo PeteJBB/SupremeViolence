@@ -8,7 +8,8 @@ using System.Linq;
 [ExecuteInEditMode]
 public class Room: MonoBehaviour
 {
-    public MapPosition MapPosition;
+    public RoomPosition RoomPosition;
+
     private Transform gridContainer;
 
 	// Use this for initialization
@@ -54,7 +55,7 @@ public class Room: MonoBehaviour
 //    }
 }
 
-public enum MapPosition
+public enum RoomPosition
 {
     Center,
     TopLeft,

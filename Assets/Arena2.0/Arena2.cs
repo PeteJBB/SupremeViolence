@@ -26,25 +26,25 @@ public class Arena2: MonoBehaviour
             for(var y = 0; y<ArenaSizeY; y+=RoomSize)
             {
                 // work out which map position this is
-                MapPosition mapPos;
+                RoomPosition mapPos;
                 if(x < RoomSize)
                 {
                     // left
-                    if(y < RoomSize) mapPos = MapPosition.BottomLeft;
-                    else if(y > ArenaSizeY - RoomSize) mapPos = MapPosition.TopLeft;
-                    else mapPos = MapPosition.MiddleLeft;
+                    if(y < RoomSize) mapPos = RoomPosition.BottomLeft;
+                    else if(y >= ArenaSizeY - RoomSize) mapPos = RoomPosition.TopLeft;
+                    else mapPos = RoomPosition.MiddleLeft;
                 }
                 else if(x >= ArenaSizeX - RoomSize)
                 {
                     // right
-                    if(y < RoomSize) mapPos = MapPosition.BottomRight;
-                    else if(y > ArenaSizeY - RoomSize) mapPos = MapPosition.TopRight;
-                    else mapPos = MapPosition.MiddleRight;
+                    if(y < RoomSize) mapPos = RoomPosition.BottomRight;
+                    else if(y >= ArenaSizeY - RoomSize) mapPos = RoomPosition.TopRight;
+                    else mapPos = RoomPosition.MiddleRight;
                 }
                 else
                 {
                     // middle
-                    mapPos = MapPosition.Center;
+                    mapPos = RoomPosition.Center;
                 }
                 CreateRoom(x, y, mapPos);
             }
@@ -66,15 +66,15 @@ public class Arena2: MonoBehaviour
             for(var y=0; y<ArenaSizeY; y++)
             {
                 var info = new GridSquareInfo();
-                info.State = GridSquareState.Empty;
+                info.State = GridSquareState.Void;
                 GridMap[x,y] = info;
             }
         }
     }
 
-    private void CreateRoom(int posx, int posy, MapPosition mapPos)
+    private void CreateRoom(int posx, int posy, RoomPosition mapPos)
     {
-        var roomsList = GameSettings.RoomPrefabs.Where(r => r.MapPosition == mapPos).ToList();
+        var roomsList = GameSettings.RoomPrefabs.Where(r => r.RoomPosition == mapPos).ToList();
         if(roomsList.Any())
         {
             var prefab = roomsList[Random.Range(0,roomsList.Count)];

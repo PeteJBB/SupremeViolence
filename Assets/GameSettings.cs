@@ -13,14 +13,14 @@ public class GameSettings
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
-    public static int ScoreLimit = 1;
+    public static int ScoreLimit = 10;
     public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Pistol");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
     public static int StartingCash = 2000;
     public static int CashForKill = 400;
     public static WinningsLevel WinningsLevel = WinningsLevel.Normal;
-    public static float SoundVolume = 0;
+    public static float SoundVolume = 1;
 
     public static Dictionary<string, GameSetting> Settings = new Dictionary<string, GameSetting>()
     {

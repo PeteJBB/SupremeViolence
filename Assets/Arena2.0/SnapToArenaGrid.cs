@@ -10,7 +10,7 @@ public class SnapToArenaGrid: MonoBehaviour
     {
         // snap position
         var gpos = Arena2.WorldToGridPosition(transform.localPosition);
-        var wpos = Arena2.GridToWorldPosition(gpos);
+        var wpos = Arena2.GridToWorldPosition(gpos, transform.localPosition.z);
 
         switch(SnapPlacement)
         {
