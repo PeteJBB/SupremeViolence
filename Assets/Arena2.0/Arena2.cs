@@ -11,9 +11,21 @@ public class Arena2: MonoBehaviour
 
     private int RoomSize = 5; //  rooms are 5x5 grid squares
 
-    public int ArenaSizeX = 10;
-    public int ArenaSizeY = 10;
+    public int RoomsAcross = 3;
+    public int RoomsDown = 3;
+
+    [HideInInspector]
+    public int ArenaSizeX;
+    [HideInInspector]
+    public int ArenaSizeY;
+
     private GridSquareInfo[,] GridMap;
+
+    void Awake()
+    {
+        ArenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1);
+        ArenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1);
+    }
 
 	// Use this for initialization
 	void Start () 
@@ -21,35 +33,63 @@ public class Arena2: MonoBehaviour
         GenerateGridMap();
 
         // create rooms
-        for(var x = 0; x<ArenaSizeX; x+= RoomSize)
+        for(var col = 0; col<RoomsAcross; col++)
         {
-            for(var y = 0; y<ArenaSizeY; y+=RoomSize)
+            for(var row = 0; row<RoomsDown; row++)
             {
                 // work out which map position this is
                 RoomPosition mapPos;
-                if(x < RoomSize)
+                if(col < 1)
                 {
                     // left
-                    if(y < RoomSize) mapPos = RoomPosition.BottomLeft;
-                    else if(y >= ArenaSizeY - RoomSize) mapPos = RoomPosition.TopLeft;
+                    if(row < 1) mapPos = RoomPosition.BottomLeft;
+                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopLeft;
                     else mapPos = RoomPosition.MiddleLeft;
                 }
-                else if(x >= ArenaSizeX - RoomSize)
+                else if(col >= RoomsAcross - 1)
                 {
                     // right
-                    if(y < RoomSize) mapPos = RoomPosition.BottomRight;
-                    else if(y >= ArenaSizeY - RoomSize) mapPos = RoomPosition.TopRight;
+                    if(row < 1) mapPos = RoomPosition.BottomRight;
+                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopRight;
                     else mapPos = RoomPosition.MiddleRight;
                 }
                 else
                 {
                     // middle
-                    mapPos = RoomPosition.Center;
+                    if(row < 1) mapPos = RoomPosition.BottomMiddle;
+                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopMiddle;
+                    else mapPos = RoomPosition.Center;
                 }
+
+                var x = (col * RoomSize) + col;
+                var y = (row * RoomSize) + row;
                 CreateRoom(x, y, mapPos);
             }
         }
 
+        // create doorways
+        for(var col = 1; col<=RoomsAcross; col++)
+        {
+            for(var row = 1; row<=RoomsDown; row++)
+            {
+                if(col < RoomsAcross)
+                {
+                    var x = (col * RoomSize) + (col - 1);
+                    var y = (row * RoomSize) + (row - 1) - ((int)Mathf.Ceil(RoomSize / 2f));
+                    CreateRoom(x,y, RoomPosition.DoorwayHorizontal);
+                }
+                if(row < RoomsDown)
+                {
+                    var x = (col * RoomSize) + (col - 1) - ((int)Mathf.Ceil(RoomSize / 2f));
+                    var y = (row * RoomSize) + (row - 1);
+                    CreateRoom(x,y, RoomPosition.DoorwayVertical);
+                }
+            }
+        }
+//        CreateRoom(5,2, RoomPosition.DoorwayHorizontal);
+//        CreateRoom(11,2, RoomPosition.DoorwayHorizontal);
+//        CreateRoom(5,8, RoomPosition.DoorwayHorizontal);
+//        CreateRoom(11,8, RoomPosition.DoorwayHorizontal);
 	}
 
     [ContextMenu("Re-GenerateGridMap")]
@@ -89,7 +129,6 @@ public class Arena2: MonoBehaviour
                 var gpos = WorldToGridPosition(sq.transform.position);
                 var info = GridMap[(int)gpos.x, (int)gpos.y];
                 info.State = sq.State;
-                info.DoorPosition = sq.DoorPosition;
             }
         }
     }
@@ -107,15 +146,14 @@ public class Arena2: MonoBehaviour
             {
                 var info = GridMap[x,y];
                 var pos = GridToWorldPosition(x,y);
-
-                Helper.DrawGridSquareGizmos(pos, info.State, info.DoorPosition);
+                Helper.DrawGridSquareGizmos(pos, info.State);
             }
         }
     }
 
     public static Vector3 GridToWorldPosition(int gridx, int gridy, float z = 0)
     {
-        return new Vector3(gridx + 0.5f, gridy + 0.5f, z);
+        return new Vector3(gridx, gridy, z);
     }
     
     public static Vector3 GridToWorldPosition(Vector2 gridPoint, float z = 0)
@@ -135,5 +173,4 @@ public class GridSquareInfo
 {
     public GridSquareState State;
     public GridSquare Square;
-    public DoorPosition DoorPosition;
 }

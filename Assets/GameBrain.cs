@@ -99,7 +99,7 @@ public class GameBrain : MonoBehaviour
         cam.backgroundColor = Color.black;
         cam.transform.position = new Vector3(0,0,-10);
         cam.orthographic = true;
-        cam.orthographicSize = Arena.Instance.ArenaSizeY / 2f;
+        cam.orthographicSize = Arena.Instance == null ? 5 : Arena.Instance.ArenaSizeY / 2f;
         cam.gameObject.AddComponent<GUILayer>();
         cam.depth = 1;
 

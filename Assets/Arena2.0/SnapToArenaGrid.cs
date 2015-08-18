@@ -15,21 +15,21 @@ public class SnapToArenaGrid: MonoBehaviour
             var gpos = Arena2.WorldToGridPosition(transform.localPosition);
             var wpos = Arena2.GridToWorldPosition(gpos, transform.localPosition.z);
 
-            switch(SnapPlacement)
-            {
-                case SnapToGridPlacement.Center:
-                default:
-                    wpos -= new Vector3(0.5f, 0.5f, 0);
-                    break;
-                case SnapToGridPlacement.BottomLeft:
-                    break;
-                case SnapToGridPlacement.LeftCenter:
-                    wpos -= new Vector3(0, 0.5f, 0);
-                    break;
-                case SnapToGridPlacement.BottomCenter:
-                    wpos -= new Vector3(0.5f, 0, 0);
-                    break;
-            }
+//            switch(SnapPlacement)
+//            {
+//                case SnapToGridPlacement.Center:
+//                default:
+//                    wpos -= new Vector3(0.5f, 0.5f, 0);
+//                    break;
+//                case SnapToGridPlacement.BottomLeft:
+//                    break;
+//                case SnapToGridPlacement.LeftCenter:
+//                    wpos -= new Vector3(0, 0.5f, 0);
+//                    break;
+//                case SnapToGridPlacement.BottomCenter:
+//                    wpos -= new Vector3(0.5f, 0, 0);
+//                    break;
+//            }
 
             transform.localPosition = wpos;
         }

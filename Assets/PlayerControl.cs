@@ -112,11 +112,14 @@ public class PlayerControl : MonoBehaviour {
             }
 
             // update grid pos
-            var gridpos = Arena.Instance.WorldToGridPosition(transform.position);
-            if(gridpos != CurrentGridPos)
+            if(Arena.Instance != null)
             {
-                CurrentGridPos = gridpos;
-                Arena.Instance.SetGridObject(CurrentGridPos, gameObject);
+                var gridpos = Arena.Instance.WorldToGridPosition(transform.position);
+                if(gridpos != CurrentGridPos)
+                {
+                    CurrentGridPos = gridpos;
+                    Arena.Instance.SetGridObject(CurrentGridPos, gameObject);
+                }
             }
 
             // change weapon

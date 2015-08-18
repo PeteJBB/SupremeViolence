@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 78caac35462dfb04bbe39f27346160ca
-timeCreated: 1439909952
+timeCreated: 1439912425
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -306,7 +306,7 @@ TextureImporter:
         width: 128
         height: 64
       alignment: 9
-      pivot: {x: 0, y: .25}
+      pivot: {x: 0, y: .75}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: room1_cap_bottomleft
       rect:
@@ -316,7 +316,7 @@ TextureImporter:
         width: 128
         height: 64
       alignment: 9
-      pivot: {x: 1, y: .25}
+      pivot: {x: 1, y: .75}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

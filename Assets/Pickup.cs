@@ -61,7 +61,8 @@ public class Pickup : MonoBehaviour
             }
 
             // free up grid point in arena
-            Arena.Instance.RemoveGridObject(gameObject);
+            if(Arena.Instance != null)
+                Arena.Instance.RemoveGridObject(gameObject);
 
             // play pickup sound
             if(PickupSound != null)

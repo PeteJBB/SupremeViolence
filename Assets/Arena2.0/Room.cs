@@ -35,24 +35,68 @@ public class Room: MonoBehaviour
         return gridContainer.GetComponentsInChildren<GridSquare>();
     }
 
-//    [ContextMenu ("Rebuild grid")]
-//	void RebuildGrid()
-//    {
-//        Debug.Log("Rebuilding grid");
-//
-//        Helper.DestroyAllChildren(gridContainer, true);
-//
-//        // set up squares
-//        for(var x=0; x<SizeX; x++)
-//        {
-//            for(var y=0; y<SizeY; y++)
-//            {
-//                var tile = Instantiate(GridSquarePrefab);
-//                tile.transform.SetParent(gridContainer);
-//                tile.transform.localPosition = new Vector3(x, y, 0);
-//            }
-//        }
-//    }
+    void OnDrawGizmos()
+    {
+        switch(RoomPosition)
+        {
+            case RoomPosition.TopLeft:
+                DrawDoorGizmo("right");
+                DrawDoorGizmo("bottom");
+                break;
+            case RoomPosition.TopMiddle:
+                DrawDoorGizmo("right");
+                DrawDoorGizmo("bottom");
+                DrawDoorGizmo("left");
+                break;
+            case RoomPosition.TopRight:
+                DrawDoorGizmo("bottom");
+                DrawDoorGizmo("left");
+                break;
+            case RoomPosition.MiddleLeft:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("right");
+                DrawDoorGizmo("bottom");
+                break;
+            case RoomPosition.Center:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("right");
+                DrawDoorGizmo("bottom");
+                DrawDoorGizmo("left");
+                break;
+            case RoomPosition.MiddleRight:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("bottom");
+                DrawDoorGizmo("left");
+                break;
+            case RoomPosition.BottomLeft:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("right");
+                break;
+            case RoomPosition.BottomMiddle:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("right");
+                DrawDoorGizmo("left");
+                break;
+            case RoomPosition.BottomRight:
+                DrawDoorGizmo("top");
+                DrawDoorGizmo("left");
+                break;
+        }
+    }
+
+    void DrawDoorGizmo(string pos)
+    {
+        var roomSize = 5f;
+        if(pos == "top")
+            Gizmos.DrawCube(transform.position + new Vector3(2.5f, 5f, 0), new Vector3(1, 0.1f, 1));
+        else if(pos == "right")
+            Gizmos.DrawCube(transform.position + new Vector3(5f, 2.5f, 0), new Vector3(0.1f, 1, 1));
+        else if(pos == "bottom")
+            Gizmos.DrawCube(transform.position + new Vector3(2.5f, 0, 0), new Vector3(1, 0.1f, 1));
+        else if(pos == "left")
+            Gizmos.DrawCube(transform.position + new Vector3(0f, 2.5f, 0), new Vector3(0.1f, 1, 1));
+    }
+
 }
 
 public enum RoomPosition
@@ -65,5 +109,7 @@ public enum RoomPosition
     BottomRight,
     BottomMiddle,
     BottomLeft,
-    MiddleLeft
+    MiddleLeft,
+    DoorwayVertical,
+    DoorwayHorizontal
 }

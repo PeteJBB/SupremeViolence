@@ -76,7 +76,7 @@ public class Helper : MonoBehaviour
         }
     }
 
-    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state, DoorPosition doorPos)
+    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state)
     {
         Color c = Color.white;
         switch(state)
@@ -93,26 +93,11 @@ public class Helper : MonoBehaviour
         }
         
         Gizmos.color = c;
-        Helper.DrawGizmoSquare(pos, 1);
-
-        switch(doorPos)
-        {
-            case DoorPosition.Top:
-                Gizmos.DrawCube(pos + new Vector3(0, 0.45f, 0), new Vector3(1, 0.1f, 1));
-                break;
-            case DoorPosition.Right:
-                Gizmos.DrawCube(pos + new Vector3(0.45f, 0, 0), new Vector3(0.1f, 1, 1));
-                break;
-            case DoorPosition.Bottom:
-                Gizmos.DrawCube(pos + new Vector3(0, -0.45f, 0), new Vector3(1, 0.1f, 1));
-                break;
-            case DoorPosition.Left:
-                Gizmos.DrawCube(pos + new Vector3(-0.45f, 0, 0), new Vector3(0.1f, 1, 1));
-                break;
-        }
+        var center = pos + new Vector3(0.5f, 0.5f, 0);
+        Helper.DrawGizmoSquare(center, 1);
 
         Gizmos.color = new Color(c.r, c.g, c.b, 0.1f);
-        Gizmos.DrawCube(pos, new Vector3(1, 1, 0.01f));
+        Gizmos.DrawCube(center, new Vector3(1, 1, 0.01f));
         
 
     }
