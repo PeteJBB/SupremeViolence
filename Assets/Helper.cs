@@ -66,7 +66,6 @@ public class Helper : MonoBehaviour
         for(var i=0; i<t.childCount; i++)
             children.Add(t.GetChild(i).gameObject);
 
-        t.DetachChildren();
         foreach(var g in children)
         {
             g.hideFlags = HideFlags.None;

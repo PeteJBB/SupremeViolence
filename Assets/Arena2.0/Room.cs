@@ -162,7 +162,6 @@ public class Room: MonoBehaviour
         var wall = Instantiate(GameSettings.WallPrefab);
         wall.transform.SetParent(wallsContainer);
         wall.transform.localPosition = new Vector3(x,y,0);
-        wall.hideFlags = HideFlags.DontSaveInEditor & HideFlags.NotEditable;
         return wall;
     }
 
@@ -171,7 +170,6 @@ public class Room: MonoBehaviour
         var floor = Instantiate(GameSettings.FloorPrefab);
         floor.transform.SetParent(wallsContainer);
         floor.transform.localPosition = new Vector3(x,y,0);
-        floor.hideFlags = HideFlags.DontSaveInEditor & HideFlags.NotEditable;
 
         if(FloorSprite != null)
             floor.GetComponent<SpriteRenderer>().sprite = FloorSprite;
@@ -201,7 +199,7 @@ public class Room: MonoBehaviour
         var top = new Vector2(2, 5);
         var right = new Vector2(5, 2);
         var bottom = new Vector2(2, -1);
-        var left = new Vector2(0, 2);
+        var left = new Vector2(-1, 2);
 
         var list = new List<Vector2>();
         switch(RoomPosition)
