@@ -23,8 +23,8 @@ public class Arena2: MonoBehaviour
 
     void Awake()
     {
-        ArenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1);
-        ArenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1);
+        ArenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
+        ArenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
     }
 
 	// Use this for initialization
@@ -61,8 +61,8 @@ public class Arena2: MonoBehaviour
                     else mapPos = RoomPosition.Center;
                 }
 
-                var x = (col * RoomSize) + col;
-                var y = (row * RoomSize) + row;
+                var x = (col * RoomSize) + col + 1;
+                var y = (row * RoomSize) + row + 1;
                 CreateRoom(x, y, mapPos);
             }
         }
@@ -74,22 +74,45 @@ public class Arena2: MonoBehaviour
             {
                 if(col < RoomsAcross)
                 {
-                    var x = (col * RoomSize) + (col - 1);
-                    var y = (row * RoomSize) + (row - 1) - ((int)Mathf.Ceil(RoomSize / 2f));
+                    var x = (col * RoomSize) + (col - 1) + 1;
+                    var y = (row * RoomSize) + (row - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
                     CreateRoom(x,y, RoomPosition.DoorwayHorizontal);
                 }
                 if(row < RoomsDown)
                 {
-                    var x = (col * RoomSize) + (col - 1) - ((int)Mathf.Ceil(RoomSize / 2f));
-                    var y = (row * RoomSize) + (row - 1);
+                    var x = (col * RoomSize) + (col - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
+                    var y = (row * RoomSize) + (row - 1) + 1;
                     CreateRoom(x,y, RoomPosition.DoorwayVertical);
                 }
             }
         }
-//        CreateRoom(5,2, RoomPosition.DoorwayHorizontal);
-//        CreateRoom(11,2, RoomPosition.DoorwayHorizontal);
-//        CreateRoom(5,8, RoomPosition.DoorwayHorizontal);
-//        CreateRoom(11,8, RoomPosition.DoorwayHorizontal);
+
+        // loop through remaining grid squares and create walls
+        var wallPrefab = Resources.Load<Wall>("Arena/Wall");
+        var wallContainer = new GameObject();
+        wallContainer.name = "walls";
+        wallContainer.transform.SetParent(transform);
+
+        var wallList = new List<Wall>();
+        for(var x =0; x<ArenaSizeX; x++)
+        {
+            for(var y =0; y<ArenaSizeY; y++)
+            {
+                var sq = GridMap[x,y];
+                if(sq.State == GridSquareState.Wall)
+                {
+                    var wall = Instantiate(wallPrefab).GetComponent<Wall>();
+                    wall.transform.SetParent(wallContainer.transform);
+                    wall.transform.localPosition = new Vector3(x,y,0);
+                    wallList.Add(wall);
+                }
+            }
+        }
+
+        foreach(var wall in wallList)
+        {
+            wall.UpdateEdges();
+        }
 	}
 
     [ContextMenu("Re-GenerateGridMap")]
@@ -118,6 +141,8 @@ public class Arena2: MonoBehaviour
             var prefab = roomsList[Random.Range(0,roomsList.Count)];
             var room = Instantiate<Room>(prefab);
 
+            room.ClearGeneratedWallsAndFloors();
+            room.GenerateWallsAndFloors(false);
             var pos = GridToWorldPosition(posx, posy);
             room.transform.position = pos;
 

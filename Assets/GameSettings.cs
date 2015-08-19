@@ -11,6 +11,10 @@ public class GameSettings
     public static Decoration[] DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
     public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
 
+    public static Wall WallPrefab = Resources.Load<Wall>("Arena/Wall");
+    public static GameObject FloorPrefab = Resources.Load<GameObject>("Arena/Floor");
+
+
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
     public static int ScoreLimit = 10;

@@ -69,6 +69,7 @@ public class Helper : MonoBehaviour
         t.DetachChildren();
         foreach(var g in children)
         {
+            g.hideFlags = HideFlags.None;
             if(immediate)
                 DestroyImmediate(g);
             else
