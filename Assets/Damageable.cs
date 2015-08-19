@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class Damageable : MonoBehaviour 
 {
@@ -77,7 +78,10 @@ public class Damageable : MonoBehaviour
             // corpse
             if(CorpsePrefab != null)
             {
-                Instantiate(CorpsePrefab, transform.position, transform.rotation);
+                var corpse = (GameObject)Instantiate(CorpsePrefab, transform.position, transform.rotation);
+                var oriented = Helper.GetComponentsInChildrenRecursive<OrientedSprite>(transform);
+                if(oriented.Any())
+                    corpse.BroadcastMessage("SetOrientation", oriented.First().orientation, SendMessageOptions.DontRequireReceiver);
             }
             
             // play sound

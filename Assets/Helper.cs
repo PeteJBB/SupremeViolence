@@ -76,20 +76,40 @@ public class Helper : MonoBehaviour
         }
     }
 
-    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state)
+    public static List<T> GetComponentsInChildrenRecursive<T>(Transform root)
+    {
+        var list = new List<T>();
+        if(root.childCount > 0)
+        {
+            list.AddRange(root.GetComponentsInChildren<T>());
+
+            for(var i=0; i<root.childCount; i++)
+            {
+                list.AddRange(GetComponentsInChildrenRecursive<T>(root.GetChild(i)));
+            }
+        }
+
+        return list;
+    }
+
+    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state, bool isSelected = false)
     {
         Color c;
-        switch(state)
+        if(isSelected)
+            c = Color.green;
+        else
         {
-            case GridSquareState.Wall:
-                c = Color.red;
-                break;
-            case GridSquareState.Empty:
-            default:
-                c = Color.white;
-                break;
+            switch(state)
+            {
+                case GridSquareState.Wall:
+                    c = Color.red;
+                    break;
+                case GridSquareState.Empty:
+                default:
+                    c = Color.white;
+                    break;
+            }
         }
-        
         Gizmos.color = c;
         var center = pos;// + new Vector3(0.5f, 0.5f, 0);
         Helper.DrawGizmoSquare(center, 1);
@@ -98,5 +118,14 @@ public class Helper : MonoBehaviour
         Gizmos.DrawCube(center, new Vector3(1, 1, 0.01f));
         
 
+    }
+
+    public static void SetHideFlags(GameObject go, HideFlags flags)
+    {
+        go.hideFlags = flags;
+        foreach(Transform t in go.transform)
+        {
+            SetHideFlags(t.gameObject, flags);
+        }
     }
 }

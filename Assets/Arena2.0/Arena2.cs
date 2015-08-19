@@ -14,22 +14,15 @@ public class Arena2: MonoBehaviour
     public int RoomsAcross = 3;
     public int RoomsDown = 3;
 
-    [HideInInspector]
-    public int ArenaSizeX;
-    [HideInInspector]
-    public int ArenaSizeY;
+    private int arenaSizeX;
+    private int arenaSizeY;
 
     private GridSquareInfo[,] GridMap;
-
-    void Awake()
-    {
-        ArenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
-        ArenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
-    }
 
 	// Use this for initialization
 	void Start () 
     {
+        SetArenaSize();
         GenerateGridMap();
 
         // create rooms
@@ -94,9 +87,9 @@ public class Arena2: MonoBehaviour
         wallContainer.transform.SetParent(transform);
 
         var wallList = new List<Wall>();
-        for(var x =0; x<ArenaSizeX; x++)
+        for(var x =0; x<arenaSizeX; x++)
         {
-            for(var y =0; y<ArenaSizeY; y++)
+            for(var y =0; y<arenaSizeY; y++)
             {
                 var sq = GridMap[x,y];
                 if(sq.State == GridSquareState.Wall)
@@ -104,6 +97,8 @@ public class Arena2: MonoBehaviour
                     var wall = Instantiate(wallPrefab).GetComponent<Wall>();
                     wall.transform.SetParent(wallContainer.transform);
                     wall.transform.localPosition = new Vector3(x,y,0);
+                    wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+
                     wallList.Add(wall);
                 }
             }
@@ -115,16 +110,22 @@ public class Arena2: MonoBehaviour
         }
 	}
 
+    private void SetArenaSize()
+    {
+        arenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
+        arenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
+    }
+
     [ContextMenu("Re-GenerateGridMap")]
     private void GenerateGridMap()
     {
         // init gridmap
-        GridMap = new GridSquareInfo[ArenaSizeX, ArenaSizeY];
+        GridMap = new GridSquareInfo[arenaSizeX, arenaSizeY];
         
         // set up squares
-        for(var x=0; x<ArenaSizeX; x++)
+        for(var x=0; x<arenaSizeX; x++)
         {
-            for(var y=0; y<ArenaSizeY; y++)
+            for(var y=0; y<arenaSizeY; y++)
             {
                 var info = new GridSquareInfo();
                 info.State = GridSquareState.Wall;
@@ -135,7 +136,14 @@ public class Arena2: MonoBehaviour
 
     private void CreateRoom(int posx, int posy, RoomPosition mapPos)
     {
+
         var roomsList = GameSettings.RoomPrefabs.Where(r => r.RoomPosition == mapPos).ToList();
+
+        if(mapPos == RoomPosition.BottomLeft)
+        {
+            Debug.Log("BL count " + roomsList.Count);
+        }
+
         if(roomsList.Any())
         {
             var prefab = roomsList[Random.Range(0,roomsList.Count)];
@@ -158,14 +166,40 @@ public class Arena2: MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.white;
+        Gizmos.color = new Color(0,0,0,0.3f);
 
+        SetArenaSize();
+
+        var asize = new Vector3(arenaSizeX, arenaSizeY, 0.1f);
+        var offset = new Vector3(-0.5f, -0.5f, 0);
+        Gizmos.DrawCube(transform.position + (asize/2) + offset, asize);
+
+        // draw rooms outline
+        Gizmos.color = new Color(0,0,0,0.5f);
+        for(var row = 0; row<RoomsAcross; row++)
+        {
+            for(var col = 0; col<RoomsDown; col++)
+            {
+                var x = 1 + (row * RoomSize) + row;
+                var y = 1 + (col * RoomSize) + col;
+                var pos = new Vector3(x,y,0);
+                var size = new Vector3(RoomSize, RoomSize, 0.1f);
+                Gizmos.DrawCube(transform.position + pos + (size/2) + offset, size);
+            }
+        }
+
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.white;
+        
         if(GridMap == null)
             GenerateGridMap();
-
-        for(var x=0; x<ArenaSizeX; x++)
+        
+        for(var x=0; x<GridMap.GetLength(0); x++)
         {
-            for(var y=0; y<ArenaSizeY; y++)
+            for(var y=0; y<GridMap.GetLength(1); y++)
             {
                 var info = GridMap[x,y];
                 var pos = GridToWorldPosition(x,y);

@@ -6,20 +6,23 @@ using UnityEditor;
 [RequireComponent (typeof (SpriteRenderer))]
 public class OrientedSprite : MonoBehaviour 
 {
+    public Orientation orientation = Orientation.Down;
+
     public Sprite SpriteUp;
     public Sprite SpriteDown;
     public Sprite SpriteLeft;
     public Sprite SpriteRight;
 
-    private Animator anim;
+    public SortingLayerSubstitute SortingLayerUp;
+    public SortingLayerSubstitute SortingLayerDown;
+    public SortingLayerSubstitute SortingLayerLeft;
+    public SortingLayerSubstitute SortingLayerRight;
 
-    public Orientation orientation = Orientation.Down;
     private Orientation lastOrientation = Orientation.Unknown;
-
-    SpriteRenderer spriteRenderer;
-
-
-    public bool AdjustSortingLayer = false;
+    private Animator anim;
+    private SpriteRenderer spriteRenderer;
+    private string defaultSortingLayer;
+    private Sprite defaultSprite;
 
 	// Use this for initialization
 	void Awake () 
@@ -27,6 +30,8 @@ public class OrientedSprite : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         lastOrientation = orientation;
+
+        defaultSortingLayer = spriteRenderer.sortingLayerName;
 	}
 
     public void SetAnimationSpeed(float speed)
@@ -44,24 +49,20 @@ public class OrientedSprite : MonoBehaviour
             switch(orientation)
             {
                 case Orientation.Up:
-                    spriteRenderer.sprite = SpriteUp;
-                    if(AdjustSortingLayer)
-                        spriteRenderer.sortingLayerName = "Bg_Front";
+                    spriteRenderer.sprite = SpriteUp == null ? defaultSprite : SpriteUp;
+                    spriteRenderer.sortingLayerName = (SortingLayerUp == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerUp.ToString();
                     break;
                 case Orientation.Down:
-                    spriteRenderer.sprite = SpriteDown;
-                    if(AdjustSortingLayer)
-                        spriteRenderer.sortingLayerName = "Fore_Back";
+                    spriteRenderer.sprite = SpriteDown == null ? defaultSprite : SpriteDown;
+                    spriteRenderer.sortingLayerName = (SortingLayerDown == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerDown.ToString();
                     break;
                 case Orientation.Left:
-                    spriteRenderer.sprite = SpriteLeft;
-                    if(AdjustSortingLayer)
-                        spriteRenderer.sortingLayerName = "Fore_Back";
+                    spriteRenderer.sprite = SpriteLeft == null ? defaultSprite : SpriteLeft;
+                    spriteRenderer.sortingLayerName = (SortingLayerLeft == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerLeft.ToString();
                     break;
                 case Orientation.Right:
-                    spriteRenderer.sprite = SpriteRight;
-                    if(AdjustSortingLayer)
-                        spriteRenderer.sortingLayerName = "Fore_Back";
+                    spriteRenderer.sprite = SpriteRight == null ? defaultSprite : SpriteRight;
+                    spriteRenderer.sortingLayerName = (SortingLayerRight == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerRight.ToString();
                     break;
             }
             
@@ -77,6 +78,21 @@ public class OrientedSprite : MonoBehaviour
     {
         orientation = o;
     }
+}
+
+public enum SortingLayerSubstitute
+{
+    NotSet,
+    Default,
+    Bg_Back,
+    Bg_Mid,
+    Bg_Front,
+    Mid_Back,
+    Mid_Mid,
+    Mid_Front,
+    Fore_Back,
+    Fore_Mid,
+    Fore_Front
 }
 
 public enum Orientation

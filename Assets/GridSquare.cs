@@ -7,7 +7,12 @@ public class GridSquare: MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Helper.DrawGridSquareGizmos(transform.position, State);
+        Helper.DrawGridSquareGizmos(transform.position, State, false);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Helper.DrawGridSquareGizmos(transform.position, State, true);
     }
 }
 

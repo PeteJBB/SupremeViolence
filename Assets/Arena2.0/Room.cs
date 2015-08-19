@@ -92,7 +92,11 @@ public class Room: MonoBehaviour
     }
 
     [ContextMenu("Re-generate walls and floor from grid")]
-    public void GenerateWallsAndFloors(bool generateExternalWalls = true) // external walls surround the room, in edit mode these are useful for setting up decorations but you dont want them in play mode as the arena will generate these for you
+    public void GenerateWallsAndFloors()
+    {
+        GenerateWallsAndFloors(true);
+    }
+    public void GenerateWallsAndFloors(bool generateExternalWalls) // external walls surround the room, in edit mode these are useful for setting up decorations but you dont want them in play mode as the arena will generate these for you
     {
         ResolveContainers();
         ClearGeneratedWallsAndFloors();
@@ -155,6 +159,9 @@ public class Room: MonoBehaviour
         {
             wall.GetComponent<Wall>().UpdateEdges();
         }
+
+        gridContainer.hideFlags = HideFlags.HideInHierarchy;
+        Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.HideInHierarchy);
     }
 
     private Wall CreateWall(int x, int y)
@@ -175,6 +182,16 @@ public class Room: MonoBehaviour
             floor.GetComponent<SpriteRenderer>().sprite = FloorSprite;
 
         return floor;
+    }
+
+    [ContextMenu("Reload all prefabs")]
+    public void ReloadPrefabs()
+    {
+        var prefabs = Helper.GetComponentsInChildrenRecursive<PrefabLoader>(transform);
+        foreach(var p in prefabs)
+        {
+            p.LoadPrefab();
+        }
     }
 
     public int GetGridSizeX()

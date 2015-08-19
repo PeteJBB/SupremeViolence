@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class SnapToOrigin: MonoBehaviour 
 {
 	// Update is called once per frame
