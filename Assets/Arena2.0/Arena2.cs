@@ -95,8 +95,6 @@ public class Arena2: MonoBehaviour
     [ContextMenu("Re-GenerateGridMap")]
     private void GenerateGridMap()
     {
-        Debug.Log("GenerateGridMap");
-
         // init gridmap
         GridMap = new GridSquareInfo[ArenaSizeX, ArenaSizeY];
         
@@ -106,7 +104,7 @@ public class Arena2: MonoBehaviour
             for(var y=0; y<ArenaSizeY; y++)
             {
                 var info = new GridSquareInfo();
-                info.State = GridSquareState.Void;
+                info.State = GridSquareState.Wall;
                 GridMap[x,y] = info;
             }
         }

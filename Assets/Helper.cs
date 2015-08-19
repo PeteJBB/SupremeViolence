@@ -78,22 +78,20 @@ public class Helper : MonoBehaviour
 
     public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state)
     {
-        Color c = Color.white;
+        Color c;
         switch(state)
         {
-            case GridSquareState.Void:
+            case GridSquareState.Wall:
                 c = Color.red;
                 break;
-            case GridSquareState.Room:
-                c = Color.green;
-                break;
-            case GridSquareState.Hallway:
-                c = Color.cyan;
+            case GridSquareState.Empty:
+            default:
+                c = Color.white;
                 break;
         }
         
         Gizmos.color = c;
-        var center = pos + new Vector3(0.5f, 0.5f, 0);
+        var center = pos;// + new Vector3(0.5f, 0.5f, 0);
         Helper.DrawGizmoSquare(center, 1);
 
         Gizmos.color = new Color(c.r, c.g, c.b, 0.1f);
