@@ -14,7 +14,9 @@ public class PixelPerfectObject : MonoBehaviour {
 	public bool runContinously=true;
 	public bool useParentTransform=false;
 	public bool displayGrid=false;
-	
+    public int sortOrderOffset=0;
+    //public bool useParentPositionForSorting;
+
 	Vector2 spriteOrigin;
 	Vector2 fixedSpriteOrigin;
 	Vector2 fixedSpriteCenter;

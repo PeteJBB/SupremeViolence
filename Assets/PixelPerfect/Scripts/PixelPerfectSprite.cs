@@ -9,16 +9,23 @@ public class PixelPerfectSprite : PixelPerfectObject {
 	
 	SpriteRenderer spriteRenderer {get { if (spriteRenderer_==null) {spriteRenderer_=GetComponent<SpriteRenderer>();} return spriteRenderer_;}}
 	SpriteRenderer spriteRenderer_;
-	
+
 	new protected void LateUpdate() {
 		base.LateUpdate();
 		//spriteRenderer.sortingOrder=-parallaxLayer;
         
+        //int pos = useParentPositionForSorting
+        //    ? Mathf.RoundToInt(transform.parent.position.y * -50)
+        //    : Mathf.RoundToInt(transform.position.y * -50);
+
         int pos = Mathf.RoundToInt(transform.position.y * -100);
-        spriteRenderer.sortingOrder = pos;
+        spriteRenderer.sortingOrder = pos + sortOrderOffset;
 	}
 	
 	override protected float GetTransformScaleFactor() {
+        if (spriteRenderer.sprite == null)
+            return 1;
+
 		float parallaxScale;
 		if (pixelPerfectCamera!=null && !pixelPerfectCamera.normalCamera.orthographic) {
 			parallaxScale=pixelPerfectCamera.GetParallaxLayerScale(parallaxLayer);
@@ -29,11 +36,16 @@ public class PixelPerfectSprite : PixelPerfectObject {
 	}
 	
 	override protected Vector2 GetPivotToCenter() {
+        if (spriteRenderer.sprite == null)
+            return Vector2.zero;
+
 		Vector2 normalizedPivot=new Vector2(spriteRenderer.sprite.rect.width*0.5f-spriteRenderer.sprite.pivot.x, spriteRenderer.sprite.rect.height*0.5f-spriteRenderer.sprite.pivot.y);
 		return (new Vector2(normalizedPivot.x, normalizedPivot.y))*pixelScale*PixelPerfect.worldPixelSize;
 	}
 	
 	override protected Vector2 GetCenterToOrigin() {
+        if (spriteRenderer.sprite == null)
+            return Vector2.zero;
 		return (new Vector2(-(float)spriteRenderer.sprite.rect.width*0.5f, (float)spriteRenderer.sprite.rect.height*0.5f))*pixelScale*PixelPerfect.worldPixelSize;
 	}
 }
@@ -49,6 +61,9 @@ public class PixelPerfectSpriteEditor : Editor {
 	SerializedProperty useParentTransform;
 	SerializedProperty displayGrid;
 	
+    SerializedProperty sortOrderOffset;
+	SerializedProperty useParentPositionForSorting;
+	
 	override public void OnInspectorGUI() {
 		FindSerializedProperties();
 		DrawInspector();
@@ -58,17 +73,33 @@ public class PixelPerfectSpriteEditor : Editor {
 		pixelPerfectCamera	=serializedObject.FindProperty("pixelPerfectCamera");
 		pixelPerfectFitType	=serializedObject.FindProperty("fitType");
 		parallaxLayer		=serializedObject.FindProperty("parallaxLayer");
-		pixelScale			=serializedObject.FindProperty("pixelScale");
+        pixelScale			=serializedObject.FindProperty("pixelScale");
 		runContinously		=serializedObject.FindProperty("runContinously");
 		useParentTransform	=serializedObject.FindProperty("useParentTransform");
 		displayGrid			=serializedObject.FindProperty("displayGrid");
+        sortOrderOffset		=serializedObject.FindProperty("sortOrderOffset");
+		//useParentPositionForSorting		=serializedObject.FindProperty("useParentPositionForSorting");
+		
 	}
 	
 	void DrawInspector() {
 		EditorGUILayout.PropertyField(pixelPerfectFitType);
-		EditorGUILayout.PropertyField(pixelScale);
+		
+        EditorGUILayout.PropertyField(pixelScale);
 		pixelScale.intValue=Mathf.Max(pixelScale.intValue, 0, pixelScale.intValue);
-		DrawParallaxField();
+        
+
+        EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.PrefixLabel("Sort Order Offset");
+		sortOrderOffset.intValue=EditorGUILayout.IntSlider(sortOrderOffset.intValue, -10, 10);
+        EditorGUILayout.EndHorizontal();
+        
+        //EditorGUILayout.BeginHorizontal();
+        //EditorGUILayout.PrefixLabel("Use Parent Position for sorting");
+        //useParentPositionForSorting.boolValue=EditorGUILayout.Toggle(useParentPositionForSorting.boolValue);
+        //EditorGUILayout.EndHorizontal();
+        
+        DrawParallaxField();
 		DrawButtons();
 		
 		serializedObject.ApplyModifiedProperties();

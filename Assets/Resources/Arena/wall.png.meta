@@ -1,0 +1,198 @@
+fileFormatVersion: 2
+guid: ef63909df1c06dc448508c1dc7c5171f
+timeCreated: 1440088374
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: wall_bg
+    21300002: wall_topleft
+    21300004: wall_top
+    21300006: wall_topright
+    21300008: wall_right
+    21300010: wall_bottomright
+    21300012: wall_bottom
+    21300014: wall_bottomleft
+    21300016: wall_left
+    21300018: wall_topright_inner
+    21300020: wall_topleft_inner
+    21300022: wall_bottomright_inner
+    21300024: wall_bottomleft_inner
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: wall_bg
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 224
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_topleft
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 416
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 1, y: -.666666687}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_top
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 352
+        width: 128
+        height: 160
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_topright
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 352
+        width: 96
+        height: 160
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_right
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 224
+        width: 96
+        height: 128
+      alignment: 4
+      pivot: {x: 0, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottomright
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 48
+        width: 96
+        height: 160
+      alignment: 9
+      pivot: {x: 0, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottom
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 48
+        width: 128
+        height: 160
+      alignment: 9
+      pivot: {x: .5, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottomleft
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 48
+        width: 96
+        height: 160
+      alignment: 9
+      pivot: {x: 1, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_left
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 96
+        height: 128
+      alignment: 5
+      pivot: {x: 1, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_topright_inner
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 352
+        width: 96
+        height: 160
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_topleft_inner
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 352
+        width: 96
+        height: 160
+      alignment: 8
+      pivot: {x: 1, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottomright_inner
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 48
+        width: 96
+        height: 160
+      alignment: 9
+      pivot: {x: 0, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottomleft_inner
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 48
+        width: 96
+        height: 160
+      alignment: 9
+      pivot: {x: 1, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -16,6 +16,7 @@ public class Room: MonoBehaviour
     private GameObject gridSquarePrefab;
 
     private Transform wallsContainer;
+    private Transform floorsContainer;
 
     private GridSquare[,] squares;
 
@@ -33,6 +34,12 @@ public class Room: MonoBehaviour
     {
         GenerateGrid();
         GenerateWallsAndFloors();
+    }
+
+    [ContextMenu("Show walls and floors in heirarchy")]
+    public void ShowWallsInHeirarchy()
+    {
+        Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.None);
     }
 
     [ContextMenu("Clear generated walls and floors")]
@@ -90,56 +97,69 @@ public class Room: MonoBehaviour
             wallsContainer.localPosition = Vector3.zero;
         }
 
-        Helper.SetHideFlags(gridContainer.gameObject, HideFlags.HideInHierarchy);
+        floorsContainer = transform.Find("floors");
+        if(floorsContainer == null)
+        {
+            var obj = new GameObject();
+            obj.name = "floors";
+            floorsContainer = obj.transform;
+            floorsContainer.SetParent(transform);
+            floorsContainer.localPosition = Vector3.zero;
+        }
+
+        gridContainer.gameObject.hideFlags = HideFlags.HideInHierarchy;
         Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.HideInHierarchy);
+        Helper.SetHideFlags(floorsContainer.gameObject, HideFlags.HideInHierarchy);
     }
 
     [ContextMenu("Re-generate walls and floor from grid")]
     public void GenerateWallsAndFloors()
     {
-        GenerateWallsAndFloors(true);
+        GenerateWalls();
+        GenerateFloors();
     }
-    public void GenerateWallsAndFloors(bool generateExternalWalls) // external walls surround the room, in edit mode these are useful for setting up decorations but you dont want them in play mode as the arena will generate these for you
+
+    // this is really just for edit mode, at runtime arena generates the walls
+    public void GenerateWalls()
     {
         ResolveContainers();
         ClearGeneratedWallsAndFloors();
 
         var walls = new List<Wall>();
 
-        if(generateExternalWalls)
+
+        // create external walls
+        if(RoomPosition == RoomPosition.DoorwayHorizontal)
         {
-            // create external walls
-            if(RoomPosition == RoomPosition.DoorwayHorizontal)
+            walls.Add(CreateWall(0,1));
+            walls.Add(CreateWall(0,-1));
+        }
+        else if(RoomPosition == RoomPosition.DoorwayVertical)
+        {
+            walls.Add(CreateWall(1,0));
+            walls.Add(CreateWall(-1,0));
+        }
+        else
+        {
+            for(var x = -1; x<=roomSize; x++)
             {
-                walls.Add(CreateWall(0,1));
-                walls.Add(CreateWall(0,-1));
-            }
-            else if(RoomPosition == RoomPosition.DoorwayVertical)
-            {
-                walls.Add(CreateWall(1,0));
-                walls.Add(CreateWall(-1,0));
-            }
-            else
-            {
-                for(var x = -1; x<=roomSize; x++)
+                for(var y = -1; y<=roomSize; y++)
                 {
-                    for(var y = -1; y<=roomSize; y++)
+                    if(x <0 || x == roomSize || y < 0 || y == roomSize)
                     {
-                        if(x <0 || x == roomSize || y < 0 || y == roomSize)
+                        // is there a door here?
+                        var doors = GetDoorPositions();
+                        if(doors.Any(d => d.x == x && d.y == y))
+                            CreateFloor(x,y);
+                        else
                         {
-                            // is there a door here?
-                            var doors = GetDoorPositions();
-                            if(doors.Any(d => d.x == x && d.y == y))
-                                CreateFloor(x,y);
-                            else
-                            {
-                                walls.Add(CreateWall(x,y));
-                            }
+                            walls.Add(CreateWall(x,y));
                         }
                     }
                 }
             }
         }
+        
         // interior walls if there are any
         foreach(var sq in gridContainer.GetComponentsInChildren<GridSquare>())
         {
@@ -147,14 +167,7 @@ public class Room: MonoBehaviour
             var y = Mathf.RoundToInt(sq.transform.localPosition.y);
 
             if(sq.State == GridSquareState.Wall)
-            {
                 walls.Add(CreateWall(x,y));
-            }
-            else
-            {
-                // floor
-                CreateFloor(x,y);
-            }
         }
 
         // update wall edges
@@ -165,6 +178,18 @@ public class Room: MonoBehaviour
 
         gridContainer.hideFlags = HideFlags.HideInHierarchy;
         Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.HideInHierarchy);
+    }
+
+    public void GenerateFloors()
+    {
+        foreach(var sq in gridContainer.GetComponentsInChildren<GridSquare>())
+        {
+            var x = Mathf.RoundToInt(sq.transform.localPosition.x);
+            var y = Mathf.RoundToInt(sq.transform.localPosition.y);
+
+            if(sq.State == GridSquareState.Empty)
+                CreateFloor(x,y);
+        }
     }
 
     private Wall CreateWall(int x, int y)

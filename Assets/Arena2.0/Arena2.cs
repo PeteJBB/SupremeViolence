@@ -24,7 +24,7 @@ public class Arena2: MonoBehaviour
     {
         GenerateGridMap();
 
-        Helper.DebugLogTime("Generating rooms");
+        //Helper.DebugLogTime("Generating rooms");
 
         // create rooms
         for(var col = 0; col<RoomsAcross; col++)
@@ -111,7 +111,7 @@ public class Arena2: MonoBehaviour
             wall.UpdateEdges();
         }
 
-        Helper.DebugLogTime("Rooms generated");
+        //Helper.DebugLogTime("Rooms generated");
 	}
 
     private Vector2 GetArenaSize()
@@ -124,7 +124,7 @@ public class Arena2: MonoBehaviour
     [ContextMenu("Re-GenerateGridMap")]
     private void GenerateGridMap()
     {
-        Helper.DebugLogTime("Generating arena grid map...");
+        //Helper.DebugLogTime("Generating arena grid map...");
 
         // init gridmap
         var arenaSize = GetArenaSize();
@@ -141,17 +141,12 @@ public class Arena2: MonoBehaviour
             }
         }
 
-        Helper.DebugLogTime("Grid map done.");
+        //Helper.DebugLogTime("Grid map done.");
     }
 
     private void CreateRoom(int posx, int posy, RoomPosition mapPos)
     {
         var roomsList = GameSettings.RoomPrefabs.Where(r => r.RoomPosition == mapPos).ToList();
-
-        if(mapPos == RoomPosition.BottomLeft)
-        {
-            Debug.Log("BL count " + roomsList.Count);
-        }
 
         if(roomsList.Any())
         {
@@ -159,7 +154,7 @@ public class Arena2: MonoBehaviour
             var room = Instantiate<Room>(prefab);
 
             room.ClearGeneratedWallsAndFloors();
-            room.GenerateWallsAndFloors(false);
+            room.GenerateFloors();
             var pos = GridToWorldPosition(posx, posy);
             room.transform.position = pos;
 

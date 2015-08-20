@@ -13,32 +13,29 @@ public class Wall: MonoBehaviour
         var x = Mathf.RoundToInt(transform.position.x);
         var y = Mathf.RoundToInt(transform.position.y);
 
-        var left = !IsThereAWallAt(x - 1, y, walls);
-        transform.FindChild("LeftTop").GetComponent<SpriteRenderer>().enabled = left;
-        transform.FindChild("LeftBottom").GetComponent<SpriteRenderer>().enabled = left;
+        // where are other walls
+        var isWallAbove = IsThereAWallAt(x, y+1, walls);
+        var isWallBelow = IsThereAWallAt(x, y-1, walls);
+        var isWallLeft = IsThereAWallAt(x-1, y, walls);
+        var isWallRight = IsThereAWallAt(x+1, y, walls);
 
-        var right = !IsThereAWallAt(x + 1, y, walls);
-        transform.FindChild("RightTop").GetComponent<SpriteRenderer>().enabled = right;
-        transform.FindChild("RightBottom").GetComponent<SpriteRenderer>().enabled = right;
-
-        var top = !IsThereAWallAt(x, y + 1, walls);
-        transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = top;
-
-        var bottom = !IsThereAWallAt(x, y - 1, walls);
-        transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = bottom;
+        // sides
+        transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = !isWallLeft;
+        transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = !isWallRight;
+        transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = !isWallAbove;
+        transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = !isWallBelow;
         
-        // now do inside corners
-        var topLeft = IsThereAWallAt(x-1, y, walls) && IsThereAWallAt(x, y+1, walls) && !IsThereAWallAt(x-1, y+1, walls);
-        transform.FindChild("TopLeft").GetComponent<SpriteRenderer>().enabled = topLeft;
+        // outside corners
+        transform.FindChild("TopLeft").GetComponent<SpriteRenderer>().enabled = !isWallAbove && !isWallLeft;
+        transform.FindChild("TopRight").GetComponent<SpriteRenderer>().enabled = !isWallAbove && !isWallRight;
+        transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>().enabled = !isWallBelow && !isWallLeft;
+        transform.FindChild("BottomRight").GetComponent<SpriteRenderer>().enabled = !isWallBelow && !isWallRight;
 
-        var topRight = IsThereAWallAt(x+1, y, walls) && IsThereAWallAt(x, y+1, walls) && !IsThereAWallAt(x+1, y+1, walls);
-        transform.FindChild("TopRight").GetComponent<SpriteRenderer>().enabled = topRight;
-
-        var bottomRight = IsThereAWallAt(x+1, y, walls) && IsThereAWallAt(x, y-1, walls) && !IsThereAWallAt(x+1, y-1, walls);
-        transform.FindChild("BottomRight").GetComponent<SpriteRenderer>().enabled = bottomRight;
-
-        var bottomLeft = IsThereAWallAt(x-1, y, walls) && IsThereAWallAt(x, y-1, walls) && !IsThereAWallAt(x-1, y-1, walls);
-        transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>().enabled = bottomLeft;
+        // inside corners
+        transform.FindChild("TopLeftInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
+        transform.FindChild("TopRightInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
+        transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x+1, y-1, walls);
+        transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallRight && !IsThereAWallAt(x-1, y-1, walls);
     }
 
     private bool IsThereAWallAt(int x, int y, Wall[] walls)
