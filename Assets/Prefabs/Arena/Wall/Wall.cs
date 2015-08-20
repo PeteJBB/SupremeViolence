@@ -5,6 +5,20 @@ using System.Linq;
 
 public class Wall: MonoBehaviour 
 {
+    void Start()
+    {
+        // is there another wall here already?
+        //var walls = GameObject.FindObjectsOfType<Wall>();
+        //var x = Mathf.RoundToInt(transform.position.x);
+        //var y = Mathf.RoundToInt(transform.position.y);
+        //if (IsThereAWallAt(x, y, walls))
+        //{
+        //    Destroy(gameObject);
+        //}
+        //else
+            UpdateEdges();
+    }
+
     [ContextMenu("Update Edges")]
 	public void UpdateEdges()
     {
@@ -34,8 +48,8 @@ public class Wall: MonoBehaviour
         // inside corners
         transform.FindChild("TopLeftInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
         transform.FindChild("TopRightInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
-        transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x+1, y-1, walls);
-        transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallRight && !IsThereAWallAt(x-1, y-1, walls);
+        transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
+        transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
     }
 
     private bool IsThereAWallAt(int x, int y, Wall[] walls)

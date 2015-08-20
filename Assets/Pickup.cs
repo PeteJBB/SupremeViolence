@@ -87,7 +87,7 @@ public class Pickup : MonoBehaviour
 
     public virtual void OnPlayerPickup(PlayerControl player)
     {
-        if(GameBrain.Instance.State == PlayState.GameOn)
+        if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)
             PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
     }
 

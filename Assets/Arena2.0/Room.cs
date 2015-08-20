@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-[ExecuteInEditMode]
 public class Room: MonoBehaviour
 {
     public RoomPosition RoomPosition;
@@ -20,13 +19,11 @@ public class Room: MonoBehaviour
 
     private GridSquare[,] squares;
 
-    private int roomSize;
-    private bool isDoorway;
-
 	// Use this for initialization
-	void Awake () 
+	void Start () 
     {
-        ResolveContainers();
+        GenerateWallsAndFloors();
+
 	}
 
     [ContextMenu("Re-generate from scratch")]
@@ -51,8 +48,8 @@ public class Room: MonoBehaviour
 
     void GenerateGrid()
     {
-        isDoorway = RoomPosition == RoomPosition.DoorwayHorizontal || RoomPosition == RoomPosition.DoorwayVertical;
-        roomSize = isDoorway ? 1 : 5;
+        var isDoorway = RoomPosition == RoomPosition.DoorwayHorizontal || RoomPosition == RoomPosition.DoorwayVertical;
+        var roomSize = isDoorway ? 1 : 5;
 
         ResolveContainers();
 
@@ -115,18 +112,13 @@ public class Room: MonoBehaviour
     [ContextMenu("Re-generate walls and floor from grid")]
     public void GenerateWallsAndFloors()
     {
-        GenerateWalls();
-        GenerateFloors();
-    }
+        var isDoorway = RoomPosition == RoomPosition.DoorwayHorizontal || RoomPosition == RoomPosition.DoorwayVertical;
+        var roomSize = isDoorway ? 1 : 5;
 
-    // this is really just for edit mode, at runtime arena generates the walls
-    public void GenerateWalls()
-    {
         ResolveContainers();
         ClearGeneratedWallsAndFloors();
 
         var walls = new List<Wall>();
-
 
         // create external walls
         if(RoomPosition == RoomPosition.DoorwayHorizontal)
@@ -149,18 +141,18 @@ public class Room: MonoBehaviour
                     {
                         // is there a door here?
                         var doors = GetDoorPositions();
-                        if(doors.Any(d => d.x == x && d.y == y))
-                            CreateFloor(x,y);
-                        else
+                        if(!doors.Any(d => d.x == x && d.y == y))
                         {
                             walls.Add(CreateWall(x,y));
                         }
+                        //else
+                        //    CreateFloor(x,y);
                     }
                 }
             }
         }
         
-        // interior walls if there are any
+        // interior walls and floors
         foreach(var sq in gridContainer.GetComponentsInChildren<GridSquare>())
         {
             var x = Mathf.RoundToInt(sq.transform.localPosition.x);
@@ -168,29 +160,31 @@ public class Room: MonoBehaviour
 
             if(sq.State == GridSquareState.Wall)
                 walls.Add(CreateWall(x,y));
+            else 
+                CreateFloor(x,y);
         }
 
         // update wall edges
-        foreach(var wall in walls)
-        {
-            wall.GetComponent<Wall>().UpdateEdges();
-        }
+        //foreach(var wall in walls)
+        //{
+        //    wall.GetComponent<Wall>().UpdateEdges();
+        //}
 
         gridContainer.hideFlags = HideFlags.HideInHierarchy;
         Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.HideInHierarchy);
     }
 
-    public void GenerateFloors()
-    {
-        foreach(var sq in gridContainer.GetComponentsInChildren<GridSquare>())
-        {
-            var x = Mathf.RoundToInt(sq.transform.localPosition.x);
-            var y = Mathf.RoundToInt(sq.transform.localPosition.y);
+    //public void GenerateFloors()
+    //{
+    //    foreach(var sq in gridContainer.GetComponentsInChildren<GridSquare>())
+    //    {
+    //        var x = Mathf.RoundToInt(sq.transform.localPosition.x);
+    //        var y = Mathf.RoundToInt(sq.transform.localPosition.y);
 
-            if(sq.State == GridSquareState.Empty)
-                CreateFloor(x,y);
-        }
-    }
+    //        if(sq.State == GridSquareState.Empty)
+    //            CreateFloor(x,y);
+    //    }
+    //}
 
     private Wall CreateWall(int x, int y)
     {
@@ -236,6 +230,7 @@ public class Room: MonoBehaviour
 
     public GridSquare[] GetGridSquares()
     {
+        ResolveContainers();
         return gridContainer.GetComponentsInChildren<GridSquare>();
     }
 

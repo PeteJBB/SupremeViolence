@@ -42,7 +42,8 @@ public class PlayerControl : MonoBehaviour {
         rbody = this.GetComponent<Rigidbody2D>();
         rbody.mass = baseMass;
 
-        GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
+        if(GameBrain.Instance != null)
+            GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
 	}
 	
 	// Update is called once per frame
@@ -55,6 +56,10 @@ public class PlayerControl : MonoBehaviour {
             // setup my pickups
             muteSounds = true;
             Pickups = new List<Pickup>();
+
+            if (!GameState.IsGameStarted)
+                GameState.StartNewGame();
+
             foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
             {
                 var pickup = ps.Instantiate();
@@ -69,7 +74,7 @@ public class PlayerControl : MonoBehaviour {
             BroadcastMessage("SetAnimationSpeed", 0f);
         }
 
-        if(GameBrain.Instance.State == PlayState.GameOn)
+        if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)
         {
             var gamepadState = GetGamePadInput();
 

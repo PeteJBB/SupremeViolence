@@ -9,13 +9,10 @@ public class Arena2: MonoBehaviour
     public GameObject HallwayFloorPrefab;
     public GameObject RoomFloorPrefab;
 
-    private int RoomSize = 5; //  rooms are 5x5 grid squares
+    private const int RoomSize = 5; //  rooms are 5x5 grid squares
 
     public int RoomsAcross = 3;
     public int RoomsDown = 3;
-
-    //private int arenaSizeX;
-    //private int arenaSizeY;
 
     private GridSquareInfo[,] GridMap;
 
@@ -62,54 +59,54 @@ public class Arena2: MonoBehaviour
         }
 
         // create doorways
-        for(var col = 1; col<=RoomsAcross; col++)
-        {
-            for(var row = 1; row<=RoomsDown; row++)
-            {
-                if(col < RoomsAcross)
-                {
-                    var x = (col * RoomSize) + (col - 1) + 1;
-                    var y = (row * RoomSize) + (row - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
-                    CreateRoom(x,y, RoomPosition.DoorwayHorizontal);
-                }
-                if(row < RoomsDown)
-                {
-                    var x = (col * RoomSize) + (col - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
-                    var y = (row * RoomSize) + (row - 1) + 1;
-                    CreateRoom(x,y, RoomPosition.DoorwayVertical);
-                }
-            }
-        }
+        //for(var col = 1; col<=RoomsAcross; col++)
+        //{
+        //    for(var row = 1; row<=RoomsDown; row++)
+        //    {
+        //        if(col < RoomsAcross)
+        //        {
+        //            var x = (col * RoomSize) + (col - 1) + 1;
+        //            var y = (row * RoomSize) + (row - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
+        //            CreateRoom(x,y, RoomPosition.DoorwayHorizontal);
+        //        }
+        //        if(row < RoomsDown)
+        //        {
+        //            var x = (col * RoomSize) + (col - 1) - ((int)Mathf.Ceil(RoomSize / 2f)) + 1;
+        //            var y = (row * RoomSize) + (row - 1) + 1;
+        //            CreateRoom(x,y, RoomPosition.DoorwayVertical);
+        //        }
+        //    }
+        //}
 
         // loop through remaining grid squares and create walls
-        var wallPrefab = Resources.Load<Wall>("Arena/Wall");
-        var wallContainer = new GameObject();
-        wallContainer.name = "walls";
-        wallContainer.transform.SetParent(transform);
+        //var wallPrefab = Resources.Load<Wall>("Arena/Wall");
+        //var wallContainer = new GameObject();
+        //wallContainer.name = "walls";
+        //wallContainer.transform.SetParent(transform);
 
-        var wallList = new List<Wall>();
-        var arenaSize = GetArenaSize();
-        for(var x =0; x<arenaSize.x; x++)
-        {
-            for(var y =0; y<arenaSize.y; y++)
-            {
-                var sq = GridMap[x,y];
-                if(sq.State == GridSquareState.Wall)
-                {
-                    var wall = Instantiate(wallPrefab).GetComponent<Wall>();
-                    wall.transform.SetParent(wallContainer.transform);
-                    wall.transform.localPosition = new Vector3(x,y,0);
-                    wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+        //var wallList = new List<Wall>();
+        //var arenaSize = GetArenaSize();
+        //for(var x =0; x<arenaSize.x; x++)
+        //{
+        //    for(var y =0; y<arenaSize.y; y++)
+        //    {
+        //        var sq = GridMap[x,y];
+        //        if(sq.State == GridSquareState.Wall)
+        //        {
+        //            var wall = Instantiate(wallPrefab).GetComponent<Wall>();
+        //            wall.transform.SetParent(wallContainer.transform);
+        //            wall.transform.localPosition = new Vector3(x,y,0);
+        //            wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
 
-                    wallList.Add(wall);
-                }
-            }
-        }
+        //            wallList.Add(wall);
+        //        }
+        //    }
+        //}
 
-        foreach(var wall in wallList)
-        {
-            wall.UpdateEdges();
-        }
+        //foreach(var wall in wallList)
+        //{
+        //    wall.UpdateEdges();
+        //}
 
         //Helper.DebugLogTime("Rooms generated");
 	}
@@ -153,8 +150,10 @@ public class Arena2: MonoBehaviour
             var prefab = roomsList[Random.Range(0,roomsList.Count)];
             var room = Instantiate<Room>(prefab);
 
-            room.ClearGeneratedWallsAndFloors();
-            room.GenerateFloors();
+            // generate stuff
+            // this will happen automatically when the room Start() method happens
+            //room.GenerateWallsAndFloors();
+
             var pos = GridToWorldPosition(posx, posy);
             room.transform.position = pos;
 
