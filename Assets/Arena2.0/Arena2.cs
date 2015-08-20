@@ -14,16 +14,17 @@ public class Arena2: MonoBehaviour
     public int RoomsAcross = 3;
     public int RoomsDown = 3;
 
-    private int arenaSizeX;
-    private int arenaSizeY;
+    //private int arenaSizeX;
+    //private int arenaSizeY;
 
     private GridSquareInfo[,] GridMap;
 
 	// Use this for initialization
 	void Start () 
     {
-        SetArenaSize();
         GenerateGridMap();
+
+        Helper.DebugLogTime("Generating rooms");
 
         // create rooms
         for(var col = 0; col<RoomsAcross; col++)
@@ -87,9 +88,10 @@ public class Arena2: MonoBehaviour
         wallContainer.transform.SetParent(transform);
 
         var wallList = new List<Wall>();
-        for(var x =0; x<arenaSizeX; x++)
+        var arenaSize = GetArenaSize();
+        for(var x =0; x<arenaSize.x; x++)
         {
-            for(var y =0; y<arenaSizeY; y++)
+            for(var y =0; y<arenaSize.y; y++)
             {
                 var sq = GridMap[x,y];
                 if(sq.State == GridSquareState.Wall)
@@ -108,35 +110,42 @@ public class Arena2: MonoBehaviour
         {
             wall.UpdateEdges();
         }
+
+        Helper.DebugLogTime("Rooms generated");
 	}
 
-    private void SetArenaSize()
+    private Vector2 GetArenaSize()
     {
-        arenaSizeX = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
-        arenaSizeY = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
+        var x = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
+        var y = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
+        return new Vector2(x, y);
     }
 
     [ContextMenu("Re-GenerateGridMap")]
     private void GenerateGridMap()
     {
+        Helper.DebugLogTime("Generating arena grid map...");
+
         // init gridmap
-        GridMap = new GridSquareInfo[arenaSizeX, arenaSizeY];
+        var arenaSize = GetArenaSize();
+        GridMap = new GridSquareInfo[(int)arenaSize.x, (int)arenaSize.y];
         
         // set up squares
-        for(var x=0; x<arenaSizeX; x++)
+        for(var x=0; x<arenaSize.x; x++)
         {
-            for(var y=0; y<arenaSizeY; y++)
+            for(var y=0; y<arenaSize.y; y++)
             {
                 var info = new GridSquareInfo();
                 info.State = GridSquareState.Wall;
                 GridMap[x,y] = info;
             }
         }
+
+        Helper.DebugLogTime("Grid map done.");
     }
 
     private void CreateRoom(int posx, int posy, RoomPosition mapPos)
     {
-
         var roomsList = GameSettings.RoomPrefabs.Where(r => r.RoomPosition == mapPos).ToList();
 
         if(mapPos == RoomPosition.BottomLeft)
@@ -168,9 +177,7 @@ public class Arena2: MonoBehaviour
     {
         Gizmos.color = new Color(0,0,0,0.3f);
 
-        SetArenaSize();
-
-        var asize = new Vector3(arenaSizeX, arenaSizeY, 0.1f);
+        var asize = GetArenaSize().ToVector3(0.1f);
         var offset = new Vector3(-0.5f, -0.5f, 0);
         Gizmos.DrawCube(transform.position + (asize/2) + offset, asize);
 

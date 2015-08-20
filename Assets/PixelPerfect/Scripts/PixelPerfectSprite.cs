@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEditor;
 #endif
 
+[ExecuteInEditMode]
 public class PixelPerfectSprite : PixelPerfectObject {
 	
 	SpriteRenderer spriteRenderer {get { if (spriteRenderer_==null) {spriteRenderer_=GetComponent<SpriteRenderer>();} return spriteRenderer_;}}
@@ -11,7 +12,10 @@ public class PixelPerfectSprite : PixelPerfectObject {
 	
 	new protected void LateUpdate() {
 		base.LateUpdate();
-		spriteRenderer.sortingOrder=-parallaxLayer;
+		//spriteRenderer.sortingOrder=-parallaxLayer;
+        
+        int pos = Mathf.RoundToInt(transform.position.y * -100);
+        spriteRenderer.sortingOrder = pos;
 	}
 	
 	override protected float GetTransformScaleFactor() {

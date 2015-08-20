@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
+[ExecuteInEditMode]
 public class Room: MonoBehaviour
 {
     public RoomPosition RoomPosition;
@@ -24,8 +25,7 @@ public class Room: MonoBehaviour
 	// Use this for initialization
 	void Awake () 
     {
-        gridContainer = transform.Find("grid");
-        wallsContainer = transform.Find("walls");
+        ResolveContainers();
 	}
 
     [ContextMenu("Re-generate from scratch")]
@@ -89,6 +89,9 @@ public class Room: MonoBehaviour
             wallsContainer.SetParent(transform);
             wallsContainer.localPosition = Vector3.zero;
         }
+
+        Helper.SetHideFlags(gridContainer.gameObject, HideFlags.HideInHierarchy);
+        Helper.SetHideFlags(wallsContainer.gameObject, HideFlags.HideInHierarchy);
     }
 
     [ContextMenu("Re-generate walls and floor from grid")]

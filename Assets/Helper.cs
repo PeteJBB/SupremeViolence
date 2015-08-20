@@ -128,4 +128,13 @@ public class Helper : MonoBehaviour
             SetHideFlags(t.gameObject, flags);
         }
     }
+
+    public static void DebugLogTime(string msg)
+    {
+        Debug.Log(Time.realtimeSinceStartup + ": " + msg);
+    }
+    public static void DebugLogTime(string format, params object[] args )
+    {
+        Debug.LogFormat(Time.realtimeSinceStartup + ": " + format, args);
+    }
 }
