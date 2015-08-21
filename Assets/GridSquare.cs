@@ -3,20 +3,20 @@ using System.Collections;
 
 public class GridSquare: MonoBehaviour 
 {
-    public GridSquareState State;
+    public GridSquareType SquareType;
 
     void OnDrawGizmos()
     {
-        Helper.DrawGridSquareGizmos(transform.position, State, false);
+        Helper.DrawGridSquareGizmos(transform.position, SquareType, false);
     }
 
     void OnDrawGizmosSelected()
     {
-        Helper.DrawGridSquareGizmos(transform.position, State, true);
+        Helper.DrawGridSquareGizmos(transform.position, SquareType, true);
     }
 }
 
-public enum GridSquareState
+public enum GridSquareType
 {
     Empty,
     Wall,

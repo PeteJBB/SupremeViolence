@@ -92,23 +92,19 @@ public class Helper : MonoBehaviour
         return list;
     }
 
-    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareState state, bool isSelected = false)
+    public static void DrawGridSquareGizmos(Vector3 pos, GridSquareType state, bool isSelected = false)
     {
         Color c;
-        if(isSelected)
-            c = Color.green;
-        else
+
+        switch (state)
         {
-            switch(state)
-            {
-                case GridSquareState.Wall:
-                    c = Color.red;
-                    break;
-                case GridSquareState.Empty:
-                default:
-                    c = Color.white;
-                    break;
-            }
+            case GridSquareType.Wall:
+                c = isSelected ? Color.green : Color.red;
+                break;
+            case GridSquareType.Empty:
+            default:
+                c = isSelected ? Color.green : Color.white;
+                break;
         }
         Gizmos.color = new Color(c.r, c.g, c.b, 0.5f);
         var center = pos;// + new Vector3(0.5f, 0.5f, 0);
@@ -137,4 +133,7 @@ public class Helper : MonoBehaviour
     {
         Debug.LogFormat(Time.realtimeSinceStartup + ": " + format, args);
     }
+
+
+
 }

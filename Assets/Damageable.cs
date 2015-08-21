@@ -31,14 +31,13 @@ public class Damageable : MonoBehaviour
 
     public void Respawn() 
     {
-        if(GameBrain.Instance.State == PlayState.GameOn)
+        if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)
         {
-            var arena = Transform.FindObjectOfType<Arena>();
-            var emptySpots = arena.GetEmptyGridSpots();
+            var emptySquares = Arena2.Instance.GetEmptyGridSquares();
 
             // choose a random spot
-            var spot = emptySpots[Random.Range(0,emptySpots.Count)];
-            transform.position = arena.GridToWorldPosition(spot);
+            var spot = emptySquares[Random.Range(0,emptySquares.Count)];
+            transform.position = Arena2.GridToWorldPosition(spot.x, spot.y);
 
             IsDead = false;
             Health = StartingHealth;

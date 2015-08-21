@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
 public class SkinableSprite : MonoBehaviour 
 {
     public Texture2D Skin;
@@ -21,21 +20,32 @@ public class SkinableSprite : MonoBehaviour
         }
 	}
 	
-	// Update is called once per frame
-	void Update () 
-    {
-	    
-	}
-
+    [ContextMenu("Apply Skin")]
     public void SetSkin(Texture2D skin)
     {
-        if(originalSprite != null)
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if(originalSprite == null)
+            originalSprite = spriteRenderer.sprite;
+
+        if (skin == originalSprite)
+                return;
+
+        if (originalSprite != null)
         {
-            Skin = skin;
-            var rect = originalSprite.rect;
-            var pivot = new Vector2(originalSprite.pivot.x / originalSprite.rect.width, originalSprite.pivot.y / originalSprite.rect.height);
-            var newSprite = SpriteCache.GetOrCreateSprite(skin, rect, pivot);
-            spriteRenderer.sprite = newSprite;
+            if (skin != null)
+            {
+                Skin = skin;
+                var rect = originalSprite.rect;
+                var pivot = new Vector2(originalSprite.pivot.x / originalSprite.rect.width, originalSprite.pivot.y / originalSprite.rect.height);
+                var newSprite = SpriteCache.GetOrCreateSprite(skin, rect, pivot);
+                spriteRenderer.sprite = newSprite;
+            }
+            else
+            {
+                // restore original
+                spriteRenderer.sprite = originalSprite;
+            }
         }
     }
 }
