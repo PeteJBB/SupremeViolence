@@ -29,32 +29,29 @@ public class Arena2: MonoBehaviour
             for(var row = 0; row<RoomsDown; row++)
             {
                 // work out which map position this is
-                RoomPosition mapPos;
-                if(col < 1)
-                {
-                    // left
-                    if(row < 1) mapPos = RoomPosition.BottomLeft;
-                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopLeft;
-                    else mapPos = RoomPosition.MiddleLeft;
-                }
-                else if(col >= RoomsAcross - 1)
-                {
-                    // right
-                    if(row < 1) mapPos = RoomPosition.BottomRight;
-                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopRight;
-                    else mapPos = RoomPosition.MiddleRight;
-                }
-                else
-                {
-                    // middle
-                    if(row < 1) mapPos = RoomPosition.BottomMiddle;
-                    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopMiddle;
-                    else mapPos = RoomPosition.Center;
-                }
-
-                var x = (col * RoomSize) + col + 1;
-                var y = (row * RoomSize) + row + 1;
-                CreateRoom(x, y, mapPos);
+                //RoomPosition mapPos;
+                //if(col < 1)
+                //{
+                //    // left
+                //    if(row < 1) mapPos = RoomPosition.BottomLeft;
+                //    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopLeft;
+                //    else mapPos = RoomPosition.MiddleLeft;
+                //}
+                //else if(col >= RoomsAcross - 1)
+                //{
+                //    // right
+                //    if(row < 1) mapPos = RoomPosition.BottomRight;
+                //    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopRight;
+                //    else mapPos = RoomPosition.MiddleRight;
+                //}
+                //else
+                //{
+                //    // middle
+                //    if(row < 1) mapPos = RoomPosition.BottomMiddle;
+                //    else if(row >= RoomsDown - 1) mapPos = RoomPosition.TopMiddle;
+                //    else mapPos = RoomPosition.Center;
+                //}
+                CreateRoom(row, col);
             }
         }
 
@@ -78,30 +75,46 @@ public class Arena2: MonoBehaviour
         //    }
         //}
 
-        // loop through remaining grid squares and create walls
-        //var wallPrefab = Resources.Load<Wall>("Arena/Wall");
-        //var wallContainer = new GameObject();
-        //wallContainer.name = "walls";
-        //wallContainer.transform.SetParent(transform);
+        
+        // loop through remaining grid squares and create walls and floors
+        var wallPrefab = Resources.Load<Wall>("Arena/Wall");
+        var wallContainer = new GameObject();
+        wallContainer.name = "walls";
+        wallContainer.transform.SetParent(transform);
 
-        //var wallList = new List<Wall>();
-        //var arenaSize = GetArenaSize();
-        //for(var x =0; x<arenaSize.x; x++)
-        //{
-        //    for(var y =0; y<arenaSize.y; y++)
-        //    {
-        //        var sq = GridMap[x,y];
-        //        if(sq.State == GridSquareState.Wall)
-        //        {
-        //            var wall = Instantiate(wallPrefab).GetComponent<Wall>();
-        //            wall.transform.SetParent(wallContainer.transform);
-        //            wall.transform.localPosition = new Vector3(x,y,0);
-        //            wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+        var floorPrefab = Resources.Load<GameObject>("Arena/Floor");
+        var floorContainer = new GameObject();
+        floorContainer.name = "floors";
+        floorContainer.transform.SetParent(transform);
 
-        //            wallList.Add(wall);
-        //        }
-        //    }
-        //}
+        var wallList = new List<Wall>();
+        var arenaSize = GetArenaSize();
+        for(var x =0; x<arenaSize.x; x++)
+        {
+            for(var y =0; y<arenaSize.y; y++)
+            {
+                var sq = GridMap[x,y];
+                if (sq.Room == null)
+                {
+                    if (sq.State == GridSquareState.Wall)
+                    {
+                        var wall = Instantiate(wallPrefab).GetComponent<Wall>();
+                        wall.transform.SetParent(wallContainer.transform);
+                        wall.transform.localPosition = new Vector3(x, y, 0);
+                        wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+
+                        wallList.Add(wall);
+                    }
+                    else if (sq.State == GridSquareState.Empty)
+                    {
+                        var floor = Instantiate(floorPrefab);
+                        floor.transform.SetParent(floorContainer.transform);
+                        floor.transform.localPosition = new Vector3(x, y, 0);
+                        floor.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                    }
+                }
+            }
+        }
 
         //foreach(var wall in wallList)
         //{
@@ -110,6 +123,14 @@ public class Arena2: MonoBehaviour
 
         //Helper.DebugLogTime("Rooms generated");
 	}
+
+    private Vector2 GetRoomPos(int row, int col)
+    {
+        var x = (col * RoomSize) + col + 1;
+        var y = (row * RoomSize) + row + 1;
+
+        return new Vector2(x, y);
+    }
 
     private Vector2 GetArenaSize()
     {
@@ -133,7 +154,12 @@ public class Arena2: MonoBehaviour
             for(var y=0; y<arenaSize.y; y++)
             {
                 var info = new GridSquareInfo();
-                info.State = GridSquareState.Wall;
+
+                if (x == 0 || y == 0 || x == arenaSize.x - 1 || y == arenaSize.y - 1)
+                    info.State = GridSquareState.Wall;
+                else
+                    info.State = GridSquareState.Empty;
+
                 GridMap[x,y] = info;
             }
         }
@@ -141,54 +167,68 @@ public class Arena2: MonoBehaviour
         //Helper.DebugLogTime("Grid map done.");
     }
 
-    private void CreateRoom(int posx, int posy, RoomPosition mapPos)
+    private void CreateRoom(int row, int col)
     {
-        var roomsList = GameSettings.RoomPrefabs.Where(r => r.RoomPosition == mapPos).ToList();
 
-        if(roomsList.Any())
+        var prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
+        var room = Instantiate<Room>(prefab);
+
+        // generate stuff
+        // this will happen automatically when the room Start() method happens
+        //room.GenerateWallsAndFloors();
+
+        //var wpos = GridToWorldPosition(pos);
+        var pos = GetRoomPos(row, col);
+        room.transform.position = pos;
+
+        // update gridsquare infos
+        foreach(var sq in room.GetGridSquares())
         {
-            var prefab = roomsList[Random.Range(0,roomsList.Count)];
-            var room = Instantiate<Room>(prefab);
-
-            // generate stuff
-            // this will happen automatically when the room Start() method happens
-            //room.GenerateWallsAndFloors();
-
-            var pos = GridToWorldPosition(posx, posy);
-            room.transform.position = pos;
-
-            // update gridsquare infos
-            foreach(var sq in room.GetGridSquares())
-            {
-                var gpos = WorldToGridPosition(sq.transform.position);
-                var info = GridMap[(int)gpos.x, (int)gpos.y];
-                info.State = sq.State;
-            }
+            var gpos = WorldToGridPosition(sq.transform.position);
+            var info = GridMap[(int)gpos.x, (int)gpos.y];
+            info.State = sq.State;
+            info.Room = room;
         }
     }
 
     void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0,0,0,0.3f);
+        //Gizmos.color = new Color(0,0,0,0.3f);
+
+        //var asize = GetArenaSize().ToVector3(0.1f);
+        //var offset = new Vector3(-0.5f, -0.5f, 0);
+        
+        //Gizmos.DrawCube(transform.position + (asize/2) + offset, asize);
+
+        //// draw rooms outline
+        //Gizmos.color = new Color(0,0,0,0.5f);
+        //for(var row = 0; row<RoomsAcross; row++)
+        //{
+        //    for(var col = 0; col<RoomsDown; col++)
+        //    {
+        //        var x = 1 + (row * RoomSize) + row;
+        //        var y = 1 + (col * RoomSize) + col;
+        //        var pos = new Vector3(x,y,0);
+        //        var size = new Vector3(RoomSize, RoomSize, 0.1f);
+        //        Gizmos.DrawCube(transform.position + pos + (size/2) + offset, size);
+        //    }
+        //}
 
         var asize = GetArenaSize().ToVector3(0.1f);
         var offset = new Vector3(-0.5f, -0.5f, 0);
-        Gizmos.DrawCube(transform.position + (asize/2) + offset, asize);
 
-        // draw rooms outline
-        Gizmos.color = new Color(0,0,0,0.5f);
+        Gizmos.color = new Color(1,1,1,0.2f);
+        Gizmos.DrawWireCube(transform.position + (asize/2) + offset, asize);
+
         for(var row = 0; row<RoomsAcross; row++)
         {
             for(var col = 0; col<RoomsDown; col++)
             {
-                var x = 1 + (row * RoomSize) + row;
-                var y = 1 + (col * RoomSize) + col;
-                var pos = new Vector3(x,y,0);
+                var pos = GetRoomPos(row, col).ToVector3(0);
                 var size = new Vector3(RoomSize, RoomSize, 0.1f);
-                Gizmos.DrawCube(transform.position + pos + (size/2) + offset, size);
+                Gizmos.DrawWireCube(transform.position + pos + (size/2) + offset, size);
             }
         }
-
     }
 
     void OnDrawGizmosSelected()
@@ -207,6 +247,8 @@ public class Arena2: MonoBehaviour
                 Helper.DrawGridSquareGizmos(pos, info.State);
             }
         }
+
+        OnDrawGizmos();
     }
 
     public static Vector3 GridToWorldPosition(int gridx, int gridy, float z = 0)
@@ -231,4 +273,5 @@ public class GridSquareInfo
 {
     public GridSquareState State;
     public GridSquare Square;
+    public Room Room;
 }

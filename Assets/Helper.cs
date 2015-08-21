@@ -110,12 +110,12 @@ public class Helper : MonoBehaviour
                     break;
             }
         }
-        Gizmos.color = c;
+        Gizmos.color = new Color(c.r, c.g, c.b, 0.5f);
         var center = pos;// + new Vector3(0.5f, 0.5f, 0);
         Helper.DrawGizmoSquare(center, 1);
 
-        Gizmos.color = new Color(c.r, c.g, c.b, 0.1f);
-        Gizmos.DrawCube(center, new Vector3(1, 1, 0.01f));
+        Gizmos.color = new Color(c.r, c.g, c.b, 0.01f);
+        Gizmos.DrawCube(center, new Vector3(1, 1, 0.005f));
         
 
     }
