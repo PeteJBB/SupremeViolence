@@ -23,9 +23,6 @@ public class PlayerControl : MonoBehaviour {
     private bool muteSounds = true; // sounds muted while we assign pickups etc
     private Orientation orientation = Orientation.Down;
 
-    public Vector2 CurrentGridPos;
-    //public int Score = 0;
-
     public Vector2 AimingOffsetUp;
     public Vector2 AimingOffsetDown;
     public Vector2 AimingOffsetLeft;
@@ -36,12 +33,14 @@ public class PlayerControl : MonoBehaviour {
     private bool isFirstUpdate = true;
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
         // make sure mass is right
         rbody = this.GetComponent<Rigidbody2D>();
         rbody.mass = baseMass;
-
+    }
+    void Start () 
+    {
         if(GameBrain.Instance != null)
             GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
 	}
@@ -114,17 +113,6 @@ public class PlayerControl : MonoBehaviour {
 
                 // update aim angle for pickups to use
                 AimingAngle = angle;
-            }
-
-            // update grid pos
-            if(Arena.Instance != null)
-            {
-                var gridpos = Arena.Instance.WorldToGridPosition(transform.position);
-                if(gridpos != CurrentGridPos)
-                {
-                    CurrentGridPos = gridpos;
-                    Arena.Instance.SetGridObject(CurrentGridPos, gameObject);
-                }
             }
 
             // change weapon

@@ -8,7 +8,6 @@ using System;
 public class GameSettings 
 {
     public static Pickup[] PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
-    public static Decoration[] DecorationPrefabs = Resources.LoadAll<Decoration>("Decorations");
     public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
 
     public static Wall WallPrefab = Resources.Load<Wall>("Arena/Wall");
@@ -18,7 +17,7 @@ public class GameSettings
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
     public static int ScoreLimit = 1;
-    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Rocket Launcher");
+    public static Pickup StartWeapon = PickupPrefabs.First(x => x.GetPickupName() == "Laser Rifle");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
     public static int StartingCash = 2000;

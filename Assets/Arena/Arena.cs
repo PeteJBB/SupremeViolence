@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Arena2: MonoBehaviour 
+public class Arena: Singleton<Arena>
 {
     public GameObject PlayerPrefab;
+    public GameObject PickupIconPrefab;
 
     private const int RoomSize = 5; //  rooms are 5x5 grid squares
 
@@ -13,18 +15,12 @@ public class Arena2: MonoBehaviour
     public int RoomsDown = 3;
 
     private GridSquareInfo[,] GridMap;
+    public GridContentsChangedEvent OnGridContentsChanged;
 
-    private static Arena2 _instance;
-    public static Arena2 Instance
+    void Awake()
     {
-        get
-        {
-            if(_instance == null)
-            {
-                _instance = GameObject.FindObjectOfType<Arena2>();
-            }
-            return _instance;
-        }
+        if(OnGridContentsChanged == null)
+            OnGridContentsChanged = new GridContentsChangedEvent();
     }
 
 	// Use this for initialization
@@ -34,7 +30,7 @@ public class Arena2: MonoBehaviour
         GenerateRooms();
 
         SpawnPlayers();
-
+        SpawnInitialPickups();
     }
 
     private void GenerateRooms()
@@ -134,16 +130,11 @@ public class Arena2: MonoBehaviour
 
     private void CreateRoom(int row, int col)
     {
-
         var prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
         var room = Instantiate<Room>(prefab);
 
-        // generate stuff
-        // this will happen automatically when the room Start() method happens
-        //room.GenerateWallsAndFloors();
-
-        //var wpos = GridToWorldPosition(pos);
         var pos = GetRoomPos(row, col);
+        //var wpos = GridToWorldPosition(pos);
         room.transform.position = pos;
 
         // update gridsquare infos
@@ -181,6 +172,30 @@ public class Arena2: MonoBehaviour
                 var torso = player.transform.Find("Torso").GetComponent<SpriteRenderer>();
                 torso.color = GameState.Players[i].Color;
             }
+        }
+    }
+
+    private void SpawnInitialPickups()
+    {
+        // spawn one of each item at random free location
+        var emptySpots = GetEmptyGridSquares();
+        for(var i = 0; i< GameSettings.PickupPrefabs.Length; i++)
+        {
+            if(emptySpots.Count == 0)
+            {
+                Debug.Log("Ran out of empty places to spawn items");
+                break;
+            }   
+            
+            var sq = emptySpots[Random.Range(0,emptySpots.Count)];
+
+            var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
+            icon.transform.position = GridToWorldPosition(sq.x, sq.y);
+            //icon.transform.parent = generatedStuff;
+            icon.PickupPrefab = GameSettings.PickupPrefabs[i];
+
+            //SetGridObject(sq, icon.gameObject);
+            emptySpots.Remove(sq);
         }
     }
 
@@ -230,29 +245,58 @@ public class Arena2: MonoBehaviour
     
     public static Vector3 GridToWorldPosition(Vector2 gridPoint, float z = 0)
     {
-        return GridToWorldPosition((int)gridPoint.x, (int)gridPoint.y);
+        return GridToWorldPosition((int)gridPoint.x, (int)gridPoint.y, z);
     }
     
     public static Vector2 WorldToGridPosition(Vector3 worldPos)
     {
-        var gridX = Mathf.Floor(worldPos.x);
-        var gridY = Mathf.Floor(worldPos.y);
+        var gridX = Mathf.Floor(worldPos.x + 0.5f);
+        var gridY = Mathf.Floor(worldPos.y + 0.5f);
         return new Vector2(gridX, gridY);
+    }
+
+    public void RegisterTrackableObject(GridTrackedObject obj)
+    {
+        obj.OnGridPositionChanged.AddListener((oldPos, newPos) => UpdateObjectGridPosition(obj, oldPos, newPos));
+    }
+
+    private void UpdateObjectGridPosition(GridTrackedObject obj, Vector2 oldPos, Vector2 newPos)
+    {
+        var oldSq = GridMap[(int)oldPos.x, (int)oldPos.y];
+        oldSq.Objects.Remove(obj);
+        OnGridContentsChanged.Invoke(oldSq);
+
+        var newSq = GridMap[(int)newPos.x, (int)newPos.y];
+        newSq.Objects.Add(obj);
+        OnGridContentsChanged.Invoke(newSq);
+    }
+
+    public GridSquareInfo GetGridSquare(Vector2 gridPos)
+    {
+        return GetGridSquare((int)gridPos.x, (int)gridPos.y);
+    }
+    public GridSquareInfo GetGridSquare(int x, int y)
+    {
+        return GridMap[x, y];
     }
 }
 
 public class GridSquareInfo
 {
-    public int x;
-    public int y;
+    public readonly int x;
+    public readonly int y;
 
     public GridSquareType GridSquareType;
     public Room Room;
-    public List<GameObject> Objects;
+    public List<GridTrackedObject> Objects;
 
     public GridSquareInfo(int x, int y)
     {
         this.x = x;
         this.y = y;
+        Objects = new List<GridTrackedObject>();
     }
 }
+
+public class GridContentsChangedEvent : UnityEvent<GridSquareInfo>
+{ }

@@ -12,16 +12,28 @@ public class SpriteSorter: MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         renderer = GetComponent<Renderer>();
+
+        SetSortOrder();
     }
 
 	void Update () 
     {
-	    int pos = Mathf.RoundToInt(transform.position.y * -100);
+        SetSortOrder();
+	}
+
+    private void SetSortOrder()
+    {
+        int pos = GetOrderByYPosition(transform.position.y);
 
         if(spriteRenderer != null)
             spriteRenderer.sortingOrder = pos + SortOrderOffset;
 
         if(renderer != null)
             renderer.sortingOrder = pos + SortOrderOffset;
-	}
+    }
+
+    public static int GetOrderByYPosition(float y)
+    {
+        return Mathf.RoundToInt(y * -100);
+    }
 }

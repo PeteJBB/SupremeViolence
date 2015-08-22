@@ -15,22 +15,15 @@ public class MiniMap : MonoBehaviour
 
 	// Use this for initialization
 	void Start () 
-    {
-        if(!isInitialised)
-            Init();
-	}
-
-    private void Init()
-    {
-        isInitialised = true;
-
-        var gridSize = mapSize / Arena.Instance.ArenaSizeY;
-        GridMap = new GameObject[Arena.Instance.ArenaSizeX, Arena.Instance.ArenaSizeY];
+    {        
+        var arenaSize = Arena.Instance.GetArenaSize();
+        var gridSize = mapSize / arenaSize.y;
+        GridMap = new GameObject[(int)arenaSize.x, (int)arenaSize.y];
         
         // create the minimap grid squares to match arena size
-        for(var x = 0; x < Arena.Instance.ArenaSizeX; x++)
+        for(var x = 0; x < arenaSize.x; x++)
         {
-            for(var y = 0; y < Arena.Instance.ArenaSizeY; y++)
+            for(var y = 0; y < arenaSize.y; y++)
             {
                 var sq = (GameObject)Instantiate(GridSquarePrefab);
                 sq.transform.SetParent(transform);
@@ -45,26 +38,25 @@ public class MiniMap : MonoBehaviour
         }
         
         var myrect = GetComponent<RectTransform>();
-        myrect.sizeDelta = new Vector2((Arena.Instance.ArenaSizeX * gridSize) + Arena.Instance.ArenaSizeX, (Arena.Instance.ArenaSizeY * gridSize) + Arena.Instance.ArenaSizeY);
+        myrect.sizeDelta = new Vector2((arenaSize.x * gridSize) + arenaSize.x, (arenaSize.y * gridSize) + arenaSize.y);
         myrect.localPosition = new Vector3(-myrect.sizeDelta.x / 2, myrect.localPosition.y + 16, 0);
+
+        Arena.Instance.OnGridContentsChanged.AddListener(GridContentsChanged);
     }
 
-    public void GridContentsChanged(int gridX, int gridY, List<GameObject> objList)
+    public void GridContentsChanged(GridSquareInfo info)
     {
-        if(GameBrain.IsEditMode())
-            return;
-
-        if(!isInitialised)
-            return;//Init();
-
-        var sq = GridMap[gridX, gridY];
+        var sq = GridMap[info.x, info.y];
         var img = sq.GetComponent<Image>();
 
-        if(objList.Count == 0)
+        if(info.Objects.Count == 0)
             img.color = new Vector4(0,0,0,0.5f);
 
-        foreach(var o in objList)
+        foreach(var o in info.Objects)
         {
+            if (o == null)
+                continue;
+
             if(o.tag == "Wall")
             {
                 img.color = new Vector4(0.33f,0.33f,0.33f,0.5f);

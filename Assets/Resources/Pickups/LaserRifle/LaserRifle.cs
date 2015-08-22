@@ -67,10 +67,15 @@ public class LaserRifle : Pickup
                     dam.Damage(20, gameObject);
                 }
             }
+
+            line.sortingLayerName = "Objects";
+            line.sortingOrder = SpriteSorter.GetOrderByYPosition(Mathf.Max(origin.y, hit.point.y));
+
             line.enabled = true;
             line.SetPosition(0, origin);
             line.SetPosition(1, hit.point);
 
+            
             line.SetColors(Color.red, Color.red);
             Player.GetComponent<Collider2D>().enabled = true;
 

@@ -33,11 +33,11 @@ public class Damageable : MonoBehaviour
     {
         if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)
         {
-            var emptySquares = Arena2.Instance.GetEmptyGridSquares();
+            var emptySquares = Arena.Instance.GetEmptyGridSquares();
 
             // choose a random spot
             var spot = emptySquares[Random.Range(0,emptySquares.Count)];
-            transform.position = Arena2.GridToWorldPosition(spot.x, spot.y);
+            transform.position = Arena.GridToWorldPosition(spot.x, spot.y);
 
             IsDead = false;
             Health = StartingHealth;

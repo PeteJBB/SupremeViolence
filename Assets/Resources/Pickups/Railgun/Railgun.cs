@@ -131,6 +131,7 @@ public class Railgun : Pickup
                 line.enabled = true;
                 line.SetPosition(0, origin);
                 line.SetPosition(1, hit.point);
+                line.sortingOrder = SpriteSorter.GetOrderByYPosition(Mathf.Max(origin.y, hit.point.y));
                 
                 // align beam particle emitter
                 var beamParticles = beam.GetComponentInChildren<ParticleSystem>();

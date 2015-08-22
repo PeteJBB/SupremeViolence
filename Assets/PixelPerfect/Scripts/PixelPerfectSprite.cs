@@ -18,8 +18,8 @@ public class PixelPerfectSprite : PixelPerfectObject {
         //    ? Mathf.RoundToInt(transform.parent.position.y * -50)
         //    : Mathf.RoundToInt(transform.position.y * -50);
 
-        int pos = Mathf.RoundToInt(transform.position.y * -100);
-        spriteRenderer.sortingOrder = pos + sortOrderOffset;
+        //int pos = Mathf.RoundToInt(transform.position.y * -100);
+        //spriteRenderer.sortingOrder = pos + sortOrderOffset;
 	}
 	
 	override protected float GetTransformScaleFactor() {

@@ -76,7 +76,7 @@ public class PlayerState
         PickupStates = new List<PickupState>();
         PickupStates.Add(PickupState.FromPrefab(GameSettings.PickupPrefabs.First(x => x.PickupName == "Pistol")));
 
-        if(GameSettings.StartWeapon.PickupName != "Pistol")
+        if(GameSettings.StartWeapon != null && GameSettings.StartWeapon.PickupName != "Pistol")
             PickupStates.Add(PickupState.FromPrefab(GameSettings.StartWeapon));
     }
 }

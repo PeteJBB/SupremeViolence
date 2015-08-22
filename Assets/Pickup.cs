@@ -60,10 +60,6 @@ public class Pickup : MonoBehaviour
                 transform.localPosition = Vector3.zero;
             }
 
-            // free up grid point in arena
-            if(Arena.Instance != null)
-                Arena.Instance.RemoveGridObject(gameObject);
-
             // play pickup sound
             if(PickupSound != null)
                 AudioSource.PlayClipAtPoint(PickupSound, transform.position);

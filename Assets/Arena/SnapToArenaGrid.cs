@@ -12,8 +12,8 @@ public class SnapToArenaGrid: MonoBehaviour
         if(!EditorApplication.isPlaying)
         {
             // snap position
-            var gpos = Arena2.WorldToGridPosition(transform.localPosition);
-            var wpos = Arena2.GridToWorldPosition(gpos, transform.localPosition.z);
+            var gpos = Arena.WorldToGridPosition(transform.localPosition);
+            var wpos = Arena.GridToWorldPosition(gpos, transform.localPosition.z);
 
 //            switch(SnapPlacement)
 //            {
