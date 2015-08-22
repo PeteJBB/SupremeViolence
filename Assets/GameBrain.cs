@@ -97,7 +97,7 @@ public class GameBrain : MonoBehaviour
         // create a new camera which will display the entire play area
         var cam = new GameObject("StartupCamera").AddComponent<Camera>();
         cam.backgroundColor = Color.black;
-        cam.transform.position = new Vector3(0,0,-10);
+        cam.transform.position = (Arena.Instance.GetArenaSize() / 2).ToVector3(-10);
         cam.orthographic = true;
         cam.orthographicSize = Arena.Instance.GetArenaSize().y / 2f;
         cam.gameObject.AddComponent<GUILayer>();

@@ -149,7 +149,7 @@ public class Arena: Singleton<Arena>
 
     public List<GridSquareInfo> GetEmptyGridSquares()
     {
-        return GridMap.Cast<GridSquareInfo>().Where(x => x.GridSquareType == GridSquareType.Empty).ToList();
+        return GridMap.Cast<GridSquareInfo>().Where(x => x.GridSquareType == GridSquareType.Empty && !x.Objects.Any()).ToList();
     }
 
     private void SpawnPlayers()
@@ -171,6 +171,9 @@ public class Arena: Singleton<Arena>
                 // set color
                 var torso = player.transform.Find("Torso").GetComponent<SpriteRenderer>();
                 torso.color = GameState.Players[i].Color;
+
+                var gridTracker = player.GetComponent<GridTrackedObject>();
+                gridTracker.MapColor = GameState.Players[i].Color;
             }
         }
     }
@@ -262,13 +265,18 @@ public class Arena: Singleton<Arena>
 
     private void UpdateObjectGridPosition(GridTrackedObject obj, Vector2 oldPos, Vector2 newPos)
     {
-        var oldSq = GridMap[(int)oldPos.x, (int)oldPos.y];
-        oldSq.Objects.Remove(obj);
-        OnGridContentsChanged.Invoke(oldSq);
-
-        var newSq = GridMap[(int)newPos.x, (int)newPos.y];
-        newSq.Objects.Add(obj);
-        OnGridContentsChanged.Invoke(newSq);
+        if (oldPos.x >= 0 && oldPos.x < GridMap.GetLength(0) && oldPos.y >= 0 && oldPos.y < GridMap.GetLength(1))
+        {
+            var oldSq = GridMap[(int)oldPos.x, (int)oldPos.y];
+            oldSq.Objects.Remove(obj);
+            OnGridContentsChanged.Invoke(oldSq);
+        }
+        if (newPos.x >= 0 && newPos.x < GridMap.GetLength(0) && newPos.y >= 0 && newPos.y < GridMap.GetLength(1))
+        {
+            var newSq = GridMap[(int)newPos.x, (int)newPos.y];
+            newSq.Objects.Add(obj);
+            OnGridContentsChanged.Invoke(newSq);
+        }
     }
 
     public GridSquareInfo GetGridSquare(Vector2 gridPos)

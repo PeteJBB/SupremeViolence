@@ -49,33 +49,36 @@ public class MiniMap : MonoBehaviour
         var sq = GridMap[info.x, info.y];
         var img = sq.GetComponent<Image>();
 
-        if(info.Objects.Count == 0)
+        var obj = info.Objects.OrderByDescending(x => x.MinimapPriority).FirstOrDefault();
+        if(obj == null)
             img.color = new Vector4(0,0,0,0.5f);
+        else
+            img.color = obj.MapColor;
 
-        foreach(var o in info.Objects)
-        {
-            if (o == null)
-                continue;
+        //foreach(var o in info.Objects)
+        //{
+        //    if (o == null)
+        //        continue;
 
-            if(o.tag == "Wall")
-            {
-                img.color = new Vector4(0.33f,0.33f,0.33f,0.5f);
-                break;
-            }
-            else if(o.tag == "Player")
-            {
-                img.color = Color.red;
-                break;
-            }
-            else if(o.GetComponent<PickupIcon>() != null)
-            {
-                img.color = Color.yellow;
-            }
-            else
-            {
-                img.color = new Vector4(0,0,0,0.5f);
-            }
-        }
+            //if(o.tag == "Wall")
+            //{
+            //    img.color = new Vector4(0.33f,0.33f,0.33f,0.5f);
+            //    break;
+            //}
+            //else if(o.tag == "Player")
+            //{
+            //    img.color = Color.red;
+            //    break;
+            //}
+            //else if(o.GetComponent<PickupIcon>() != null)
+            //{
+            //    img.color = Color.yellow;
+            //}
+            //else
+            //{
+            //    img.color = new Vector4(0,0,0,0.5f);
+            //}
+        //}
 
     }
 
