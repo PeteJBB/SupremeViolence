@@ -29,7 +29,6 @@ public class Arena: Singleton<Arena>
 	// Use this for initialization
 	void Start () 
     {
-        
         GenerateGridMap();
 
         if (GenerateOnStartup)

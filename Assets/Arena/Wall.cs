@@ -54,8 +54,13 @@ public class Wall: MonoBehaviour
     }
 
 
-    private bool IsThereAWallAt(int x, int y, Wall[] walls)
+    public static bool IsThereAWallAt(int x, int y, Wall[] walls = null)
     {
+        if (walls == null)
+        {
+            // this is dangerous...
+            walls = GameObject.FindObjectsOfType<Wall>();
+        }
         var match = walls.FirstOrDefault(w => Mathf.RoundToInt(w.transform.position.x) == x && Mathf.RoundToInt(w.transform.position.y) == y);
         return match != null;
     }
