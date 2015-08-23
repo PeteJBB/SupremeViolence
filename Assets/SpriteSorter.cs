@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class SpriteSorter: MonoBehaviour 
 {
     public int SortOrderOffset = 0;

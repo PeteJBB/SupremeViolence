@@ -43,6 +43,7 @@ public class Room: MonoBehaviour
     {
         ResolveContainers();
         Helper.DestroyAllChildren(wallsContainer, true);
+        Helper.DestroyAllChildren(floorsContainer, true);
     }
 
     void GenerateGrid()

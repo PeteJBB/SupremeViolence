@@ -41,8 +41,7 @@ public class PlayerControl : MonoBehaviour {
     }
     void Start () 
     {
-        if(GameBrain.Instance != null)
-            GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
+        GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
 	}
 	
 	// Update is called once per frame

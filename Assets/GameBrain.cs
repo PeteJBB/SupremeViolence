@@ -11,15 +11,10 @@ using UnityEngine.Events;
 /// <summary>
 /// Game brain runs an individual game, controlling cameras, startup and end game sequences and the scoreboard
 /// </summary>
-public class GameBrain : MonoBehaviour 
+public class GameBrain : Singleton<GameBrain>
 {
-    public static GameBrain Instance
-    {
-        get { return FindObjectOfType<GameBrain>(); }
-    }
-
-    public PlayState State = PlayState.Startup;
-    public bool EnableStartupSequence = true;
+    public PlayState State = PlayState.GameOn;
+    public bool EnableStartupSequence = false;
 
     public AudioClip StartupSound;
     public AudioClip GetReadySound;
@@ -34,6 +29,9 @@ public class GameBrain : MonoBehaviour
 
 	void Awake () 
     {
+        if(OnGameOver == null)
+            OnGameOver = new UnityEvent();
+
         if(!GameState.IsGameStarted)
             GameState.StartNewGame();
 	}
@@ -45,8 +43,12 @@ public class GameBrain : MonoBehaviour
 
         CreatePlayerCameras();
 
-        var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
-        resultsCanvas.alpha = 0;
+        var resultsCanvasObj = GameObject.Find("ResultsCanvas");
+        if (resultsCanvasObj != null)
+        {
+            var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
+            resultsCanvas.alpha = 0;
+        }
 
         GameState.StartNewRound();
 
@@ -63,6 +65,9 @@ public class GameBrain : MonoBehaviour
     // create player cameras
     void CreatePlayerCameras()
     {
+        if (PlayerCameraPrefab == null)
+            return;
+
         for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {
             var cam = Instantiate(PlayerCameraPrefab).GetComponent<Camera>();

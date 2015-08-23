@@ -8,17 +8,20 @@ public class Arena: Singleton<Arena>
 {
     public GameObject PlayerPrefab;
     public GameObject PickupIconPrefab;
-
+    
     private const int RoomSize = 5; //  rooms are 5x5 grid squares
-
     public int RoomsAcross = 3;
     public int RoomsDown = 3;
+    public bool GenerateOnStartup = false; //<-- this is here so singletons created in other scenes dont suddenly activate
 
     private GridSquareInfo[,] GridMap;
     public GridContentsChangedEvent OnGridContentsChanged;
 
     void Awake()
     {
+        // singleton should not persist
+        DestroyOnLoad = true;
+
         if(OnGridContentsChanged == null)
             OnGridContentsChanged = new GridContentsChangedEvent();
     }
@@ -26,11 +29,16 @@ public class Arena: Singleton<Arena>
 	// Use this for initialization
 	void Start () 
     {
+        
         GenerateGridMap();
-        GenerateRooms();
 
-        SpawnPlayers();
-        SpawnInitialPickups();
+        if (GenerateOnStartup)
+        {
+            GenerateRooms();
+
+            SpawnPlayers();
+            SpawnInitialPickups();
+        }
     }
 
     private void GenerateRooms()
@@ -57,9 +65,9 @@ public class Arena: Singleton<Arena>
 
         var wallList = new List<Wall>();
         var arenaSize = GetArenaSize();
-        for(var x =0; x<arenaSize.x; x++)
+        for(var x = 0; x<arenaSize.x; x++)
         {
-            for(var y =0; y<arenaSize.y; y++)
+            for(var y = 0; y<arenaSize.y; y++)
             {
                 var sq = GridMap[x,y];
                 if (sq.Room == null)
@@ -69,7 +77,37 @@ public class Arena: Singleton<Arena>
                         var wall = Instantiate(wallPrefab).GetComponent<Wall>();
                         wall.transform.SetParent(wallContainer.transform);
                         wall.transform.localPosition = new Vector3(x, y, 0);
-                        wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                        //wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+
+                        // walls around the edge should use the skin of the room they are next to
+                        Room closestRoom = null;
+                        WallSideFlags sides = 0;
+
+                        if (x == 0)
+                        {
+                            closestRoom = GridMap[x + 1, y].Room;
+                            sides = WallSideFlags.Right | WallSideFlags.Top | WallSideFlags.Bottom;
+                        }
+                        else if (x == arenaSize.x - 1)
+                        {
+                            closestRoom = GridMap[x - 1, y].Room;
+                            sides = WallSideFlags.Left | WallSideFlags.Top | WallSideFlags.Bottom;
+                        }
+                        else if (y == 0)
+                        {
+                            closestRoom = GridMap[x, y + 1].Room;
+                            sides = WallSideFlags.Top | WallSideFlags.Left | WallSideFlags.Right;
+                        }
+                        else if (y == arenaSize.y - 1)
+                        {
+                            closestRoom = GridMap[x, y - 1].Room;
+                            sides = WallSideFlags.Bottom | WallSideFlags.Left | WallSideFlags.Right;
+                        }
+
+                        if (closestRoom != null)
+                        {
+                            wall.SetSkin(closestRoom.WallSkin, sides);
+                        }
 
                         wallList.Add(wall);
                     }
