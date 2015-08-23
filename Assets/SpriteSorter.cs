@@ -35,6 +35,17 @@ public class SpriteSorter: MonoBehaviour
 
     public static int GetOrderByYPosition(float y)
     {
-        return Mathf.RoundToInt(y * -100);
+        // objects are sorted thusly
+        // everything is ordered from 1-100 by its y pos in the square
+        // the next 100 numbers are skipped - this allows for an offset which will place
+        // this sprite above all others in the square without overlapping the next square
+
+        // lights are offset at +100, top and side walls at +150
+
+        var yoffset = y - 0.5f;
+        var rounded = Mathf.FloorToInt(yoffset);
+        var rem = yoffset % 1f;
+        var z = rounded * -200 + rem * -100;
+        return Mathf.RoundToInt(z);
     }
 }
