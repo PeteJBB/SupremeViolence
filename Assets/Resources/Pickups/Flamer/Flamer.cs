@@ -18,8 +18,6 @@ public class Flamer : Pickup
         jetSound = GetComponents<AudioSource>()[0];
         flameSound = GetComponents<AudioSource>()[1];
         flameSound.volume = 0;
-
-        Ammo = MaxAmmo = 100;
 	}
 	
 	// Update is called once per frame

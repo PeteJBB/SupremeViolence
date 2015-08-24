@@ -53,6 +53,20 @@ public class Wall: MonoBehaviour
         transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
     }
 
+    [ContextMenu("Update All Walls Edges (Slow!)")]
+    public void UpdateAllWallEdges()
+    {
+        UpdateAllWallEdgesFunc();
+    }
+
+    private static void UpdateAllWallEdgesFunc()
+    {
+        var walls = GameObject.FindObjectsOfType<Wall>();
+        foreach (var wall in walls)
+        {
+            wall.UpdateEdges();
+        }
+    }
 
     public static bool IsThereAWallAt(int x, int y, Wall[] walls = null)
     {

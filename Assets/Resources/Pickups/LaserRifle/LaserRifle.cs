@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class LaserRifle : Pickup
@@ -6,26 +7,27 @@ public class LaserRifle : Pickup
 	public AudioClip FireSound;
     public AudioClip FireEmptySound;
 
-    public GameObject LightPrefab;
+    public GameObject MuzzleFlashPrefab;
+    public GameObject BeamPrefab;
     public GameObject ImpactPrefab;
 
-    private LineRenderer line;
+    //private LineRenderer line;
 
 	// Use this for initialization
-    void Start()
-    {
-        line = GetComponent<LineRenderer>();
-        line.enabled = false;
-        line.sortingLayerName = "Mid_Front";
-	}
+    //void Start()
+    //{
+    //    line = GetComponent<LineRenderer>();
+    //    line.enabled = false;
+    //    line.sortingLayerName = "Mid_Front";
+    //}
 	
 	// Update is called once per frame
 	void Update() 
     {
-        if(Player != null && line.enabled)
-        {
-            line.SetPosition(0, Player.GetAimingOrigin());
-        }
+        //if(Player != null && line.enabled)
+        //{
+        //    line.SetPosition(0, Player.GetAimingOrigin());
+        //}
 	}
 
     public override string GetDescription()
@@ -54,7 +56,7 @@ public class LaserRifle : Pickup
 
             if(hit.collider == null)
             {
-                Debug.LogError("Laser didnt hit anything!?");
+                //Debug.Log("Laser didnt hit anything!?");
                 hit.point = origin + (beamDirection * 100); // create a hit point so we can still draw a laser beam
                 hit.normal = -beamDirection;
             }
@@ -68,54 +70,66 @@ public class LaserRifle : Pickup
                 }
             }
 
-            line.sortingLayerName = "Objects";
-            line.sortingOrder = SpriteSorter.GetOrderByYPosition(Mathf.Max(origin.y, hit.point.y));
-
-            line.enabled = true;
-            line.SetPosition(0, origin);
-            line.SetPosition(1, hit.point);
-
-            
-            line.SetColors(Color.red, Color.red);
             Player.GetComponent<Collider2D>().enabled = true;
 
             // this is how long the laser beam is visble for
             var laserLifetime = 0.1f;
 
-            // create lights
-            var d = 0f;
-            var lightPre = LightPrefab.GetComponent<Light>();
-            var step = lightPre.range / 2f;
-            while(d < hit.distance)
-            {
-                var pos = origin + (beamDirection * d);
-                var light = Instantiate(LightPrefab, pos, Quaternion.identity);
-                d += step;
+            // muzzle flash
+            var flash = Instantiate(MuzzleFlashPrefab);
+            flash.transform.position = origin;
+            flash.transform.rotation = rotation;
+            flash.transform.SetParent(transform);
+            Destroy(flash, laserLifetime);
 
-                Destroy(light, laserLifetime);
-            }
+            // create beam
+            var beam = Instantiate(BeamPrefab);
+            beam.transform.position = transform.position;
+            beam.transform.rotation = rotation;
+
+            var line = beam.GetComponent<LineRenderer>();
+            line.enabled = true;
+            line.SetPosition(0, origin);
+            line.SetPosition(1, hit.point);
+                
+            line.sortingLayerName = "Objects";
+            line.sortingOrder = SpriteSorter.GetOrderByYPosition(Mathf.Max(origin.y, hit.point.y));
+
+            // create lights
+            //var d = 0f;
+            //var step = LightPrefab.transform.lossyScale.x / 2f;
+            //while(d < hit.distance)
+            //{
+            //    var pos = origin + (beamDirection * d);
+            //    var light = Instantiate(LightPrefab, pos, Quaternion.identity);
+            //    d += step;
+
+            //    Destroy(light, laserLifetime);
+            //}
 
             // create impact sprite
             var impactAngle = Mathf.Atan2(-hit.normal.x, hit.normal.y) * Mathf.Rad2Deg;
             var impact = Instantiate(ImpactPrefab, hit.point, Quaternion.AngleAxis(impactAngle, Vector3.forward));
 
             // tween alpha
-            iTween.StopByName(gameObject, "laser");
-            iTween.ValueTo(gameObject, iTween.Hash("name", "laser", "from", 1, "to", 0, "time", laserLifetime, "onupdate", "TweenLaser", "oncomplete", "TweenLaserComplete"));
+            //iTween.StopByName(gameObject, "laser");
+            //iTween.ValueTo(gameObject, iTween.Hash("name", "laser", "from", 1, "to", 0, "time", laserLifetime, "onupdate", "TweenLaser", "oncomplete", "TweenLaserComplete"));
+            
+            // tween alpha of beam alpha
+            iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", laserLifetime, "onupdate", (Action<object>)(val => 
+            { 
+                var valf = (float)val;
+                var startColor = new Color(1,0.2f,0.2f,valf);
+                var endColor = new Color(1,0,0,valf);
+                line.SetColors(startColor,endColor);
 
+                line.SetPosition(0, Player.GetAimingOrigin());
+            }), 
+            "oncomplete", (Action)(() => 
+            { 
+                Destroy(beam.gameObject); 
+            })));
             Ammo--;
         }
-    }
-
-    void TweenLaser(float alpha)
-    {
-        var c = Color.red;
-        c.a = alpha;
-        line.SetColors(c, c);
-    }
-
-    void TweenLaserComplete()
-    {
-        line.enabled = false;
     }
 }

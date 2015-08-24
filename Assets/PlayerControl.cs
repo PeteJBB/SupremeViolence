@@ -38,10 +38,30 @@ public class PlayerControl : MonoBehaviour {
         // make sure mass is right
         rbody = this.GetComponent<Rigidbody2D>();
         rbody.mass = baseMass;
+        
+        if (!GameState.IsGameStarted)
+                GameState.StartNewGame();
+
+        // setup my pickups
+        Pickups = new List<Pickup>();
+        muteSounds = true;
+
+        foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
+        {
+            var pickup = ps.Instantiate();
+            pickup.PickupSound = null;
+            pickup.CollectPickup(this);
+        }
+        muteSounds = false;
+
+        SelectNextWeapon();
     }
+
     void Start () 
     {
         GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
+        BroadcastMessage("SetOrientation", orientation);
+        BroadcastMessage("SetAnimationSpeed", 0f);
 	}
 	
 	// Update is called once per frame
@@ -50,26 +70,6 @@ public class PlayerControl : MonoBehaviour {
         if(isFirstUpdate)
         {
             isFirstUpdate = false;
-
-            // setup my pickups
-            muteSounds = true;
-            Pickups = new List<Pickup>();
-
-            if (!GameState.IsGameStarted)
-                GameState.StartNewGame();
-
-            foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
-            {
-                var pickup = ps.Instantiate();
-                pickup.PickupSound = null;
-                pickup.CollectPickup(this);
-            }
-            muteSounds = false;
-
-            SelectNextWeapon();
-            
-            BroadcastMessage("SetOrientation", orientation);
-            BroadcastMessage("SetAnimationSpeed", 0f);
         }
 
         if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)

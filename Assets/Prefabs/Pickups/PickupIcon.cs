@@ -4,7 +4,6 @@ using System.Collections;
 [ExecuteInEditMode]
 public class PickupIcon: MonoBehaviour 
 {
-    [HideInInspector]
     public Pickup PickupPrefab;
 
     void Start()
