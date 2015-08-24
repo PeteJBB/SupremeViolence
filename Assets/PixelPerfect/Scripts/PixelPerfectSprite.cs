@@ -89,10 +89,10 @@ public class PixelPerfectSpriteEditor : Editor {
 		pixelScale.intValue=Mathf.Max(pixelScale.intValue, 0, pixelScale.intValue);
         
 
-        EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.PrefixLabel("Sort Order Offset");
-		sortOrderOffset.intValue=EditorGUILayout.IntSlider(sortOrderOffset.intValue, -10, 10);
-        EditorGUILayout.EndHorizontal();
+        //EditorGUILayout.BeginHorizontal();
+        //EditorGUILayout.PrefixLabel("Sort Order Offset");
+        //sortOrderOffset.intValue=EditorGUILayout.IntSlider(sortOrderOffset.intValue, -10, 10);
+        //EditorGUILayout.EndHorizontal();
         
         //EditorGUILayout.BeginHorizontal();
         //EditorGUILayout.PrefixLabel("Use Parent Position for sorting");

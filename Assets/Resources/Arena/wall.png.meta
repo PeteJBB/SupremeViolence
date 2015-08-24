@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440088374
+timeCreated: 1440434443
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -17,6 +17,10 @@ TextureImporter:
     21300020: wall_topleft_inner
     21300022: wall_bottomright_inner
     21300024: wall_bottomleft_inner
+    21300026: skinnywall_horiz
+    21300028: skinnywall_horiz_dead
+    21300030: skinnywall_vert
+    21300032: skinnywall_vert_dead
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -76,11 +80,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 416
+        y: 352
         width: 96
-        height: 96
-      alignment: 9
-      pivot: {x: 1, y: -.666666687}
+        height: 160
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: wall_top
       rect:
@@ -191,6 +195,46 @@ TextureImporter:
         height: 160
       alignment: 9
       pivot: {x: 1, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skinnywall_horiz
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 48
+        width: 128
+        height: 160
+      alignment: 9
+      pivot: {x: .5, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skinnywall_horiz_dead
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 48
+        width: 128
+        height: 160
+      alignment: 9
+      pivot: {x: .5, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skinnywall_vert
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 64
+        width: 8
+        height: 192
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skinnywall_vert_dead
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 64
+        width: 8
+        height: 192
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

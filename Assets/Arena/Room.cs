@@ -10,6 +10,7 @@ public class Room: MonoBehaviour
 {
     public Sprite FloorSprite;
     public Texture2D WallSkin;
+    public bool SkinRightToEdge = false;
 
     private Transform gridContainer;
     private GameObject gridSquarePrefab;
@@ -175,23 +176,26 @@ public class Room: MonoBehaviour
         wall.transform.localPosition = new Vector3(x,y,0);
 
         if (WallSkin != null)
-        {
+        {            
             WallSideFlags sides = 0;
-
+            if (SkinRightToEdge)
+                sides = WallSideFlags.All;
+            else
+            {
                 if (x == 0)
                     sides = sides | WallSideFlags.Right;
                 else if (x == roomSize - 1)
                     sides = sides | WallSideFlags.Left;
-                else 
+                else
                     sides = sides | WallSideFlags.Left | WallSideFlags.Right;
 
                 if (y == 0)
                     sides = sides | WallSideFlags.Top;
                 else if (y == roomSize - 1)
                     sides = sides | WallSideFlags.Bottom;
-                else 
+                else
                     sides = sides | WallSideFlags.Top | WallSideFlags.Bottom;
-
+            }
             wall.SetSkin(WallSkin, sides);
         }
         return wall;

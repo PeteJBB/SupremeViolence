@@ -36,6 +36,7 @@ public class PrefabLoader : MonoBehaviour
         instance.transform.SetParent(transform);
         instance.transform.localPosition = Vector3.zero;
         instance.transform.localRotation = Quaternion.identity;
+        instance.transform.localScale = Prefab.transform.localScale;
 
         Helper.SetHideFlags(instance.gameObject, HideFlags.HideInHierarchy);
 
