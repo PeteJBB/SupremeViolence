@@ -16,8 +16,11 @@ public class SpriteCache
 
         // create a new sprite
         var sprite = Sprite.Create(tex, rect, pivot);
-        spriteDic.Add(key, sprite);
 
+        if (!!GameBrain.IsEditMode())
+        {
+            spriteDic.Add(key, sprite);
+        }
         return sprite;
     }
 	

@@ -1,19 +1,14 @@
 fileFormatVersion: 2
-guid: 7f73ca4e03b809647ba37440dc55cc61
-timeCreated: 1440409569
+guid: 8c6cb6b4befc1e14ba73ce8498d21d93
+timeCreated: 1440424382
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: walllight
-    21300002: walllight
-    21300004: decoration_light_dead
-    21300006: walllight_dead
-    21300008: wallLight_down
-    21300010: wallLight_down_dead
-    21300012: wallLight_side
-    21300014: wallLight_side_dead
-    21300016: wallLight_left
-    21300018: wallLight_left_dead
+    21300000: control_panel_0
+    21300002: control_panel_1
+    21300004: control_panel_side
+    21300006: control_room_wall_light3
+    21300008: control_panel_side_lights
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -40,7 +35,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
-    aniso: -1
+    aniso: 16
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -59,65 +54,55 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: walllight
-      rect:
-        serializedVersion: 2
-        x: 10
-        y: 233
-        width: 13
-        height: 15
-      alignment: 0
-      pivot: {x: .5, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: walllight_dead
-      rect:
-        serializedVersion: 2
-        x: 24
-        y: 233
-        width: 13
-        height: 15
-      alignment: 0
-      pivot: {x: .5, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wallLight_down
+    - name: control_panel_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 16
-        width: 16
-        height: 16
-      alignment: 9
-      pivot: {x: .5, y: -.5}
+        y: 77
+        width: 112
+        height: 83
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wallLight_down_dead
+    - name: control_panel_1
       rect:
         serializedVersion: 2
-        x: 16
-        y: 16
-        width: 16
-        height: 16
-      alignment: 9
-      pivot: {x: .5, y: -.5}
+        x: 112
+        y: 77
+        width: 112
+        height: 83
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wallLight_side
+    - name: control_panel_side
       rect:
         serializedVersion: 2
-        x: 32
-        y: 29
-        width: 16
-        height: 3
-      alignment: 2
-      pivot: {x: .5, y: 1}
+        x: 240
+        y: 18
+        width: 22
+        height: 142
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wallLight_side_dead
+    - name: control_room_wall_light3
       rect:
         serializedVersion: 2
-        x: 48
-        y: 29
+        x: 224
+        y: 95
         width: 16
-        height: 3
-      alignment: 2
-      pivot: {x: .5, y: 1}
+        height: 65
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: control_panel_side_lights
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 18
+        width: 22
+        height: 142
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
