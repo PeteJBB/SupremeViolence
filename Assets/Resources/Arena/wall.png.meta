@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440434443
+timeCreated: 1440478353
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -219,9 +219,9 @@ TextureImporter:
     - name: skinnywall_vert
       rect:
         serializedVersion: 2
-        x: 896
+        x: 881
         y: 64
-        width: 8
+        width: 38
         height: 192
       alignment: 0
       pivot: {x: .5, y: .5}
@@ -229,9 +229,9 @@ TextureImporter:
     - name: skinnywall_vert_dead
       rect:
         serializedVersion: 2
-        x: 960
+        x: 945
         y: 64
-        width: 8
+        width: 38
         height: 192
       alignment: 0
       pivot: {x: .5, y: .5}
