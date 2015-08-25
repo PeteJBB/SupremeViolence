@@ -19,11 +19,14 @@ public class DestroyOnCollision : MonoBehaviour {
 	}
 
     void OnTriggerEnter2D(Collider2D other)
-	{
-        Explode(transform.position, transform.rotation);
-        DamageOther(other.gameObject);
-        Destroy(gameObject);
-	}
+    {
+        if (!other.isTrigger)
+        {
+            Explode(transform.position, transform.rotation);
+            DamageOther(other.gameObject);
+            Destroy(gameObject);
+        }
+    }
 
 	void OnCollisionEnter2D(Collision2D collision) 
 	{

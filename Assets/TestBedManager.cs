@@ -12,7 +12,7 @@ public class TestBedManager: MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        player = FindObjectOfType<PlayerControl>();
+        player = FindObjectsOfType<PlayerControl>().First(x=> x.PlayerIndex == 0);
         
         foreach(var prefab in GameSettings.PickupPrefabs)
         {

@@ -25,6 +25,7 @@ public class Damageable : MonoBehaviour
 
     private FillBar healthBar;
     private List<SpriteRenderer> spriteRenderers;
+    private Dictionary<int, Material> defaultMaterials;
     private Material flashMaterial;
     private bool flashNextUpdate = false;
 
@@ -37,6 +38,13 @@ public class Damageable : MonoBehaviour
         flashMaterial =  new Material(Shader.Find("Sprites/DefaultColorFlash"));
         flashMaterial.SetFloat("_FlashAmount", 0.75f);
         spriteRenderers = Helper.GetComponentsInChildrenRecursive<SpriteRenderer>(transform);
+        defaultMaterials = new Dictionary<int, Material>();
+        foreach (var sr in spriteRenderers)
+        {
+            var key = sr.gameObject.GetInstanceID();
+            if(!defaultMaterials.ContainsKey(key))
+                defaultMaterials.Add(key, sr.material);
+        }
 	}
 	
 	// Update is called once per frame
@@ -64,6 +72,7 @@ public class Damageable : MonoBehaviour
             gameObject.SetActive(true);
 
             healthBar.SetFill(1);
+            ResetAllMaterials();
         }
     }
 
@@ -144,12 +153,23 @@ public class Damageable : MonoBehaviour
         }
     }
 
+    private void ResetAllMaterials()
+    {
+        foreach (var sr in spriteRenderers)
+        {
+            var key = sr.gameObject.GetInstanceID();
+            if (defaultMaterials.ContainsKey(key))
+            {
+                sr.material = defaultMaterials[key];
+            }
+        }
+}
+
     public IEnumerator FlashSprite(SpriteRenderer sr)
     {
-        var oldMat = sr.material;
         sr.material = flashMaterial;
-        yield return new WaitForSeconds(0.1f);
-        sr.material = oldMat;
+        yield return new WaitForSeconds(0.1f);         
+        sr.material = defaultMaterials[sr.gameObject.GetInstanceID()];
     }
 }
 

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440487516
+timeCreated: 1440519874
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -21,6 +21,9 @@ TextureImporter:
     21300028: skinnywall_horiz_dead
     21300030: skinnywall_vert
     21300032: skinnywall_vert_dead
+    21300034: door_h_frame
+    21300036: door_h_door_left
+    21300038: door_h_door_right
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -235,6 +238,36 @@ TextureImporter:
         height: 192
       alignment: 0
       pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_h_frame
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 400
+        width: 128
+        height: 72
+      alignment: 9
+      pivot: {x: .5, y: .899999976}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_h_door_left
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 320
+        width: 63
+        height: 72
+      alignment: 9
+      pivot: {x: .75, y: .899999976}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_h_door_right
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 320
+        width: 64
+        height: 72
+      alignment: 9
+      pivot: {x: .25, y: .899999976}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
