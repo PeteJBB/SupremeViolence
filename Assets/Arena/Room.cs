@@ -245,17 +245,12 @@ public class Room: MonoBehaviour
 
 }
 
-public enum RoomPosition
+[Flags]
+public enum RoomPositionFlags
 {
-    Center,
-    TopLeft,
-    TopMiddle,
-    TopRight,
-    MiddleRight,
-    BottomRight,
-    BottomMiddle,
-    BottomLeft,
-    MiddleLeft,
-    DoorwayVertical,
-    DoorwayHorizontal
+    Center = 0,
+    Top = 1,
+    Bottom = 2,
+    Left = 4,
+    Right = 8
 }

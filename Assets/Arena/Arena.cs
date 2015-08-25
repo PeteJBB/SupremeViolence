@@ -17,6 +17,8 @@ public class Arena: Singleton<Arena>
     private GridSquareInfo[,] GridMap;
     public GridContentsChangedEvent OnGridContentsChanged;
 
+    public GameObject FixedRoomPrefab;
+
     void Awake()
     {
         // singleton should not persist
@@ -167,8 +169,25 @@ public class Arena: Singleton<Arena>
 
     private void CreateRoom(int row, int col)
     {
-        var prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
+        Room prefab;
+        if(FixedRoomPrefab != null)
+            prefab = FixedRoomPrefab.GetComponent<Room>();
+        else
+            prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
+
         var room = Instantiate<Room>(prefab);
+
+        var posFlags = RoomPositionFlags.Center;
+        if (col == 0)
+            posFlags = posFlags | RoomPositionFlags.Left;
+        if (col == RoomsAcross - 1)
+            posFlags = posFlags | RoomPositionFlags.Right;
+        if (row == 0)
+            posFlags = posFlags | RoomPositionFlags.Bottom;
+        if (row == RoomsDown - 1)
+            posFlags = posFlags | RoomPositionFlags.Top;
+
+        room.BroadcastMessage("SetRoomPositionFlags", posFlags, SendMessageOptions.DontRequireReceiver);
 
         var pos = GetRoomPos(row, col);
         //var wpos = GridToWorldPosition(pos);
