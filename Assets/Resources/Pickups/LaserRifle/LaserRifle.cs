@@ -66,6 +66,7 @@ public class LaserRifle : Pickup
                 var dam = hit.collider.GetComponent<Damageable>();
                 if(dam != null)
                 {
+                    var amt = 20 * (1 - dam.Resistance.Heat);
                     dam.Damage(20, gameObject);
                 }
             }
@@ -95,26 +96,10 @@ public class LaserRifle : Pickup
             line.sortingLayerName = "Objects";
             line.sortingOrder = SpriteSorter.GetOrderByYPosition(Mathf.Max(origin.y, hit.point.y));
 
-            // create lights
-            //var d = 0f;
-            //var step = LightPrefab.transform.lossyScale.x / 2f;
-            //while(d < hit.distance)
-            //{
-            //    var pos = origin + (beamDirection * d);
-            //    var light = Instantiate(LightPrefab, pos, Quaternion.identity);
-            //    d += step;
-
-            //    Destroy(light, laserLifetime);
-            //}
-
             // create impact sprite
             var impactAngle = Mathf.Atan2(-hit.normal.x, hit.normal.y) * Mathf.Rad2Deg;
             var impact = Instantiate(ImpactPrefab, hit.point, Quaternion.AngleAxis(impactAngle, Vector3.forward));
 
-            // tween alpha
-            //iTween.StopByName(gameObject, "laser");
-            //iTween.ValueTo(gameObject, iTween.Hash("name", "laser", "from", 1, "to", 0, "time", laserLifetime, "onupdate", "TweenLaser", "oncomplete", "TweenLaserComplete"));
-            
             // tween alpha of beam alpha
             iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", laserLifetime, "onupdate", (Action<object>)(val => 
             { 

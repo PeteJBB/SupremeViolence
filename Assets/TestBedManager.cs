@@ -16,7 +16,7 @@ public class TestBedManager: MonoBehaviour
         
         foreach(var prefab in GameSettings.PickupPrefabs)
         {
-            Debug.Log("TestManager adding pickup: " + prefab.PickupName);
+            //Debug.Log("TestManager adding pickup: " + prefab.PickupName);
             var pickup = Instantiate(prefab);
             pickup.PickupSound = null;
             pickup.CollectPickup(player);
@@ -30,7 +30,7 @@ public class TestBedManager: MonoBehaviour
         {
             pu.Ammo = pu.MaxAmmo;
         }
-        player.GetComponent<Damageable>().Health = 100;
+        //player.GetComponent<Damageable>().Health = 100;
 	}
 
     void OnGUI()

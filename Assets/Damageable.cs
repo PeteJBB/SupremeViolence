@@ -1,13 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading;
 public class Damageable : MonoBehaviour 
 {
     public float StartingHealth = 100;
     public float Health;
+
     public GameObject ExplosionPrefab;
     public GameObject CorpsePrefab;
+    
 
     public bool RespawnOnDeath = false;
     public float RespawnDelaySeconds = 1;
@@ -15,18 +18,35 @@ public class Damageable : MonoBehaviour
     public AudioClip DeathSound;
     public int PointsValue = 0;
 
+    public bool FlashOnDamage = false;
     public bool IsDead = false;
+
+    public DamageResistances Resistance;
+
+    private FillBar healthBar;
+    private List<SpriteRenderer> spriteRenderers;
+    private Material flashMaterial;
+    private bool flashNextUpdate = false;
 
 	// Use this for initialization
 	void Start () 
     {
         Health = StartingHealth;
+        healthBar = transform.GetComponentInChildren<FillBar>();
+
+        flashMaterial =  new Material(Shader.Find("Sprites/DefaultColorFlash"));
+        flashMaterial.SetFloat("_FlashAmount", 0.75f);
+        spriteRenderers = Helper.GetComponentsInChildrenRecursive<SpriteRenderer>(transform);
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-
+        if (flashNextUpdate)
+        {
+            flashNextUpdate = false;
+            FlashSprites();
+        }
 	}
 
     public void Respawn() 
@@ -42,12 +62,19 @@ public class Damageable : MonoBehaviour
             IsDead = false;
             Health = StartingHealth;
             gameObject.SetActive(true);
+
+            healthBar.SetFill(1);
         }
     }
 
     public void Damage(float amount, GameObject damageSource = null)
     {
         Health -= amount;
+        
+        if (healthBar != null)
+        {
+            healthBar.SetFill(Health / StartingHealth);
+        }
 
         if (Health <= 0 && !IsDead)
         {
@@ -55,11 +82,11 @@ public class Damageable : MonoBehaviour
 
             // report to Owner
             var owner = damageSource.GetOwner();
-            if(owner != null)
+            if (owner != null)
             {
                 Debug.Log(gameObject.name + " was killed by " + owner);
                 var player = owner.GetComponent<PlayerControl>();
-                if(player != null)
+                if (player != null)
                 {
                     var plInfo = GameState.Players[player.PlayerIndex];
                     plInfo.RoundScore += PointsValue;
@@ -67,27 +94,27 @@ public class Damageable : MonoBehaviour
                     plInfo.Cash += PointsValue * GameSettings.CashForKill;
                 }
             }
-            
+
             // explode
-            if(ExplosionPrefab != null)
+            if (ExplosionPrefab != null)
             {
                 Instantiate(ExplosionPrefab, transform.position, transform.rotation);
             }
 
             // corpse
-            if(CorpsePrefab != null)
+            if (CorpsePrefab != null)
             {
                 var corpse = (GameObject)Instantiate(CorpsePrefab, transform.position, transform.rotation);
                 var oriented = Helper.GetComponentsInChildrenRecursive<OrientedSprite>(transform);
-                if(oriented.Any())
+                if (oriented.Any())
                     corpse.BroadcastMessage("SetOrientation", oriented.First().orientation, SendMessageOptions.DontRequireReceiver);
             }
-            
+
             // play sound
-            if(DeathSound != null)
+            if (DeathSound != null)
                 AudioSource.PlayClipAtPoint(DeathSound, transform.position);
-            
-            if(RespawnOnDeath)
+
+            if (RespawnOnDeath)
             {
                 gameObject.SetActive(false);
                 Helper.Instance.WaitAndThenCall(RespawnDelaySeconds, () => Respawn());
@@ -97,5 +124,40 @@ public class Damageable : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        else
+        {
+            flashNextUpdate = FlashOnDamage;
+        }
     }
+
+    public void FlashSprites()
+    {
+        if (spriteRenderers.Any())
+        {
+            foreach (var sr in spriteRenderers)
+            {
+                if (sr != null && sr.enabled && sr.sortingLayerName == "Objects")
+                {
+                    StartCoroutine(FlashSprite(sr));
+                }
+            }
+        }
+    }
+
+    public IEnumerator FlashSprite(SpriteRenderer sr)
+    {
+        var oldMat = sr.material;
+        sr.material = flashMaterial;
+        yield return new WaitForSeconds(0.1f);
+        sr.material = oldMat;
+    }
+}
+
+[System.Serializable]
+public class DamageResistances
+{
+    public float Kinetic = 0;
+    public float Heat = 0;
+    public float Explosive = 0;
+    public float Electrical = 0;
 }

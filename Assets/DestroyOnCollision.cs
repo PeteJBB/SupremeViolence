@@ -5,7 +5,7 @@ public class DestroyOnCollision : MonoBehaviour {
 
 	public GameObject explosionPrefab;
     public float baseDamage = 0;
-
+    
 	// Use this for initialization
 	void Start () 
 	{
@@ -51,7 +51,8 @@ public class DestroyOnCollision : MonoBehaviour {
             var damageable = other.GetComponent<Damageable>();
             if(damageable != null)
             {
-                damageable.Damage(baseDamage, gameObject);
+                var amt = baseDamage * (1 - damageable.Resistance.Kinetic);
+                damageable.Damage(amt, gameObject);
             }
         }
     }

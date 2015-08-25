@@ -3,19 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Helper : MonoBehaviour 
+public class Helper : Singleton<Helper>
 {
-    private static Helper _instance;
-    public static Helper Instance
-    {
-        get 
-        { 
-            if(_instance == null)
-                _instance = new GameObject().AddComponent<Helper>();
-            return _instance; 
-        }
-    }
-
     void Awake()
     {
 

@@ -22,10 +22,12 @@ public class FlamerFlame : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision) 
     {
-        var dam = collision.collider.GetComponent<Damageable>();
-        if(dam != null)
+        var damageable = collision.collider.GetComponent<Damageable>();
+        if(damageable != null)
         {
-            dam.Damage(3, gameObject);
+            // check damage against fire resistance
+            var amt = 3 * (1 - damageable.Resistance.Heat);
+            damageable.Damage(amt, gameObject);
             //Physics2D.IgnoreCollision(GetComponent<Collider2D>(), collision.collider);
         }
     }

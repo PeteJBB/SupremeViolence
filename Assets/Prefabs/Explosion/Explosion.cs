@@ -28,9 +28,9 @@ public class Explosion : MonoBehaviour
             var dam = other.GetComponent<Damageable>();
             if(dam != null)
             {
-                var amt = v.magnitude / DamageRadius;
-                var actualDamage = Mathf.Lerp(MaxDamage, 0, amt * amt);
-                Debug.Log("Damage amt " + amt * amt);
+                var ratio = v.magnitude / DamageRadius;
+                var amt = Mathf.Lerp(MaxDamage, 0, ratio * ratio);
+                var actualDamage = amt * (1 - dam.Resistance.Explosive);
                 dam.Damage(actualDamage, gameObject);
             }
 

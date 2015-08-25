@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.Linq;
 
 [ExecuteInEditMode]
-[RequireComponent (typeof (SpriteRenderer))]
-public class OrientedSprite : MonoBehaviour 
+[RequireComponent(typeof(SpriteRenderer))]
+public class OrientedSprite : MonoBehaviour
 {
     public Orientation orientation = Orientation.Down;
 
@@ -24,19 +25,19 @@ public class OrientedSprite : MonoBehaviour
     private string defaultSortingLayer;
     private Sprite defaultSprite;
 
-	// Use this for initialization
-	void Awake () 
+    // Use this for initialization
+    void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         lastOrientation = orientation;
 
         defaultSortingLayer = spriteRenderer.sortingLayerName;
-	}
+    }
 
     public void SetAnimationSpeed(float speed)
     {
-        if(anim != null)
+        if (anim != null && anim.parameters.Any(x => x.name == "Speed"))
         {
             anim.SetFloat("Speed", speed);
         }
@@ -44,9 +45,9 @@ public class OrientedSprite : MonoBehaviour
 
     void Update()
     {
-        if(orientation != lastOrientation)
+        if (orientation != lastOrientation)
         {
-            switch(orientation)
+            switch (orientation)
             {
                 case Orientation.Up:
                     spriteRenderer.sprite = SpriteUp == null ? defaultSprite : SpriteUp;
@@ -65,8 +66,8 @@ public class OrientedSprite : MonoBehaviour
                     spriteRenderer.sortingLayerName = (SortingLayerRight == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerRight.ToString();
                     break;
             }
-            
-            if(anim != null)
+
+            if (anim != null && anim.parameters.Any(x => x.name == orientation.ToString()))
             {
                 anim.SetTrigger(orientation.ToString());
             }
