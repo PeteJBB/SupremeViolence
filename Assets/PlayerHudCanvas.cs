@@ -92,7 +92,7 @@ public class PlayerHudCanvas : MonoBehaviour
         var text = textObj.GetComponent<Text>();
         text.text = msg;
 
-        textObj.transform.parent = transform;
+        textObj.transform.SetParent(transform);
         var rect = textObj.GetComponent<RectTransform>();
         rect.localPosition = Vector3.zero;
 

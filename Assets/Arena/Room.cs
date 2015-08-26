@@ -152,9 +152,10 @@ public class Room: MonoBehaviour
         // update wall edges
         if (GameBrain.IsEditMode())
         {
+            var wallsArr = walls.ToArray();
             foreach(var wall in walls)
             {
-                wall.GetComponent<Wall>().UpdateEdges();
+                wall.GetComponent<Wall>().UpdateEdges(wallsArr);
             }
         }
 

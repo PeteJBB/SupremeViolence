@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 
 public class Wall: MonoBehaviour 
-{
+{    
     void Start()
     {
         // is there another wall here already?
@@ -23,7 +23,13 @@ public class Wall: MonoBehaviour
     [ContextMenu("Update Edges")]
 	public void UpdateEdges()
     {
-        var walls = GameObject.FindObjectsOfType<Wall>();
+        UpdateEdges(null);
+    }
+
+    public void UpdateEdges(Wall[] walls)
+    {
+        if(walls == null)
+            walls = GameObject.FindObjectsOfType<Wall>();
 
         var x = Mathf.RoundToInt(transform.position.x);
         var y = Mathf.RoundToInt(transform.position.y);

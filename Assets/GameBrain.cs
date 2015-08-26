@@ -27,6 +27,8 @@ public class GameBrain : Singleton<GameBrain>
 
     public UnityEvent OnGameOver;
 
+    private bool isFirstUpdate = true;
+
 	void Awake () 
     {
         if(OnGameOver == null)
@@ -38,8 +40,7 @@ public class GameBrain : Singleton<GameBrain>
 
     void Start()
     {
-        if(StartupSound != null)
-            AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
+        GameState.StartNewRound();
 
         CreatePlayerCameras();
 
@@ -49,8 +50,6 @@ public class GameBrain : Singleton<GameBrain>
             var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
             resultsCanvas.alpha = 0;
         }
-
-        GameState.StartNewRound();
 
         if (EnableStartupSequence)
         {
@@ -93,6 +92,9 @@ public class GameBrain : Singleton<GameBrain>
 
     void RunStartupSequence()
     {
+        if(StartupSound != null)
+            AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
+
         // hide UI
         var uiCanvas = GameObject.FindObjectOfType<PlayerHudCanvas>().GetComponent<CanvasGroup>();
         uiCanvas.alpha = 0;
@@ -165,7 +167,7 @@ public class GameBrain : Singleton<GameBrain>
 
     private void GameOn()
     {
-        if(GameOnSound != null)
+        if(EnableStartupSequence && GameOnSound != null)
             AudioSource.PlayClipAtPoint(GameOnSound, Vector3.zero);
 
         State = PlayState.GameOn;
@@ -261,6 +263,11 @@ public class GameBrain : Singleton<GameBrain>
     public static bool IsEditMode()
     {
         return !EditorApplication.isPlaying;
+    }
+
+    void OnGUI()
+    {
+        GUI.TextArea(new Rect(Screen.width - 120, Screen.height-40, 100, 20), "Test");
     }
 }
 

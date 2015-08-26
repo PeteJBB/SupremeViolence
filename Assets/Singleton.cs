@@ -14,6 +14,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     private static object _lock = new object();
 
+    [HideInInspector]
     public bool DestroyOnLoad = false;
 
     public static T Instance

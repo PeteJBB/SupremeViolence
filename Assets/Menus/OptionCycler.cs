@@ -7,25 +7,31 @@ using System.Linq;
 
 public class OptionCycler: CustomSelectable, ISubmitHandler, IMoveHandler
 {
-    Text valText;
     public string SettingName;
     public string DisplayFormat;
 
-    void Start()
+    private Text valText;
+
+    void Awake()
     {
         valText = GetComponent<Text>();
     }
 
-    void Update()
+    new void Start()
+    {
+        UpdateText();
+    }
+
+    void UpdateText()
     {
         var val = GameSettings.GetValue(SettingName);
-        if(val == null)
-            valText.text = string.Empty;
+        if (val == null)
+            val = string.Empty;
 
-        if(string.IsNullOrEmpty(DisplayFormat))
-            valText.text = val.ToString();
-        else
+        if (!string.IsNullOrEmpty(DisplayFormat))
             valText.text = string.Format(DisplayFormat, val);
+        else
+            valText.text = val.ToString();
     }
 
     public void OnSubmit(BaseEventData eventData)
@@ -36,12 +42,14 @@ public class OptionCycler: CustomSelectable, ISubmitHandler, IMoveHandler
     public override Selectable FindSelectableOnLeft()
     {
         GameSettings.IncrementValue(SettingName, -1).ToString();
+        UpdateText();
         return this;
     }
 
     public override Selectable FindSelectableOnRight()
     {
         GameSettings.IncrementValue(SettingName).ToString();
+        UpdateText();
         return this;
     }
 }

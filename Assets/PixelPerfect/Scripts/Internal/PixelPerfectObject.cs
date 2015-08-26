@@ -17,6 +17,8 @@ public class PixelPerfectObject : MonoBehaviour {
     public int sortOrderOffset=0;
     //public bool useParentPositionForSorting;
 
+    Vector3 lastPosition;
+
 	Vector2 spriteOrigin;
 	Vector2 fixedSpriteOrigin;
 	Vector2 fixedSpriteCenter;
@@ -45,8 +47,9 @@ public class PixelPerfectObject : MonoBehaviour {
 	}
 	
 	protected void LateUpdate () {
-		if (runContinously) {
+		if (runContinously || transform.position != lastPosition) {
 			SetPixelPerfect();
+            lastPosition = transform.position;
 		}
 		#if UNITY_EDITOR
 		if (!Application.isPlaying && UnityEditor.Selection.Contains(gameObject)) {
