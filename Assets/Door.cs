@@ -23,7 +23,9 @@ public class Door: MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            objectsInSensor.Add(other.gameObject.GetInstanceID());
+            var id = other.gameObject.GetInstanceID();
+            if(!objectsInSensor.Contains(id))
+                objectsInSensor.Add(id);
 
             if(!isDoorOpen)
                 OpenDoor();
@@ -34,7 +36,8 @@ public class Door: MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            objectsInSensor.Remove(other.gameObject.GetInstanceID());
+            var id = other.gameObject.GetInstanceID();
+            objectsInSensor.Remove(id);
             
             if(isDoorOpen && !objectsInSensor.Any())
                 CloseDoor();

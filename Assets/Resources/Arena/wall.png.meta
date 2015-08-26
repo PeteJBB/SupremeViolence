@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440519874
+timeCreated: 1440565973
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -24,6 +24,11 @@ TextureImporter:
     21300034: door_h_frame
     21300036: door_h_door_left
     21300038: door_h_door_right
+    21300040: door_v_frame_top
+    21300042: door_v_frame_bottom
+    21300044: door_v_door_top
+    21300046: door_v_door_bottom
+    21300048: door_v_edge
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -268,6 +273,56 @@ TextureImporter:
         height: 72
       alignment: 9
       pivot: {x: .25, y: .899999976}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_v_frame_top
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 412
+        width: 15
+        height: 84
+      alignment: 9
+      pivot: {x: .5, y: .25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_v_frame_bottom
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 368
+        width: 15
+        height: 32
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_v_door_top
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 431
+        width: 15
+        height: 33
+      alignment: 2
+      pivot: {x: .5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_v_door_bottom
+      rect:
+        serializedVersion: 2
+        x: 765
+        y: 390
+        width: 15
+        height: 42
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_v_edge
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 368
+        width: 15
+        height: 64
+      alignment: 2
+      pivot: {x: .5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
