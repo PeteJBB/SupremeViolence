@@ -24,6 +24,7 @@ public class DestroyOnCollision : MonoBehaviour {
         {
             Explode(transform.position, transform.rotation);
             DamageOther(other.gameObject);
+            Helper.DetachParticles(gameObject);
             Destroy(gameObject);
         }
     }

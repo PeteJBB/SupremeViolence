@@ -12,12 +12,19 @@ public class Helper : Singleton<Helper>
 
 	public static void DetachParticles(GameObject obj)
     {
-        var particles = obj.transform.GetComponentsInChildren<ParticleSystem>();//.FindChild("Particles");
+        var particles = obj.transform.GetComponentsInChildren<ParticleSystem>();
         foreach(var p in particles)
         {
             p.transform.parent = null;
             p.Stop();
             Destroy(p.gameObject, p.startLifetime);
+        }
+
+        var trails = obj.transform.GetComponentsInChildren<TrailRenderer>();
+        foreach(var t in trails)
+        {
+            t.transform.parent = null;
+            Destroy(t.gameObject, t.time);
         }
     }
 

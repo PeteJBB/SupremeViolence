@@ -7,11 +7,13 @@ public class SpriteSorter: MonoBehaviour
     public int SortOrderOffset = 0;
 
     private SpriteRenderer spriteRenderer;
+    private TrailRenderer trail;
     private Renderer renderer;
-
+    
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        trail = GetComponent<TrailRenderer>();
         renderer = GetComponent<Renderer>();
 
         SetSortOrder();
@@ -28,6 +30,9 @@ public class SpriteSorter: MonoBehaviour
 
         if(spriteRenderer != null)
             spriteRenderer.sortingOrder = pos + SortOrderOffset;
+
+        if(trail != null)
+            trail.sortingOrder = pos + SortOrderOffset;
 
         if(renderer != null)
             renderer.sortingOrder = pos + SortOrderOffset;

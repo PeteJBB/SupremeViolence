@@ -61,6 +61,11 @@ public class GameBrain : Singleton<GameBrain>
         }
     }
 
+    void OnLevelWasLoaded(int level)
+    {
+        Debug.Log("Level was loaded " + level);
+    }
+
     // create player cameras
     void CreatePlayerCameras()
     {
