@@ -23,7 +23,7 @@ public class PixelPerfectObject : MonoBehaviour {
 	Vector2 fixedSpriteOrigin;
 	Vector2 fixedSpriteCenter;
 	Vector2 pixelCorrection;
-	
+
 	protected float pixelCompoundScale {
 		get {
 			if (pixelPerfectCamera!=null) {
@@ -45,11 +45,15 @@ public class PixelPerfectObject : MonoBehaviour {
 	void OnEnable() {
 		SetPixelPerfect();
 	}
-	
+
+    void Start()
+    {
+        SetPixelPerfect();
+    }
+
 	protected void LateUpdate () {
 		if (runContinously || transform.position != lastPosition) {
 			SetPixelPerfect();
-            lastPosition = transform.position;
 		}
 		#if UNITY_EDITOR
 		if (!Application.isPlaying && UnityEditor.Selection.Contains(gameObject)) {
@@ -62,6 +66,8 @@ public class PixelPerfectObject : MonoBehaviour {
 		FindPixelPerfectCamera();
 		SetPixelPerfectPosition();
 		SetPixelPerfectScale();
+
+        lastPosition = transform.position;
 	}
 	
 	void FindPixelPerfectCamera() {

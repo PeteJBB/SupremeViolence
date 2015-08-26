@@ -1,16 +1,16 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440565973
+timeCreated: 1440602338
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: wall_bg
     21300002: wall_topleft
-    21300004: wall_top
+    21300004: wall_top_l
     21300006: wall_topright
     21300008: wall_right
     21300010: wall_bottomright
-    21300012: wall_bottom
+    21300012: wall_bottom_l
     21300014: wall_bottomleft
     21300016: wall_left
     21300018: wall_topright_inner
@@ -29,6 +29,8 @@ TextureImporter:
     21300044: door_v_door_top
     21300046: door_v_door_bottom
     21300048: door_v_edge
+    21300050: wall_bottom_r
+    21300052: wall_top_r
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -94,15 +96,15 @@ TextureImporter:
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_top
+    - name: wall_top_l
       rect:
         serializedVersion: 2
         x: 112
         y: 352
-        width: 128
+        width: 64
         height: 160
-      alignment: 7
-      pivot: {x: .5, y: 0}
+      alignment: 9
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: wall_topright
       rect:
@@ -134,15 +136,15 @@ TextureImporter:
       alignment: 9
       pivot: {x: 0, y: .600000024}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_bottom
+    - name: wall_bottom_l
       rect:
         serializedVersion: 2
         x: 112
         y: 48
-        width: 128
+        width: 64
         height: 160
       alignment: 9
-      pivot: {x: .5, y: .600000024}
+      pivot: {x: 1, y: .600000024}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: wall_bottomleft
       rect:
@@ -323,6 +325,26 @@ TextureImporter:
         height: 64
       alignment: 2
       pivot: {x: .5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_bottom_r
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 48
+        width: 64
+        height: 160
+      alignment: 9
+      pivot: {x: 0, y: .600000024}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_top_r
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 352
+        width: 64
+        height: 160
+      alignment: 9
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

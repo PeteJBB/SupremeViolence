@@ -5,19 +5,27 @@ using System.Linq;
 using System;
 
 public class Wall: MonoBehaviour 
-{    
+{
+    private SpriteRenderer bg;
+    private SpriteRenderer topL;
+    private SpriteRenderer topR;
+    private SpriteRenderer topLeft;
+    private SpriteRenderer topRight;
+    private SpriteRenderer left;
+    private SpriteRenderer right;
+    private SpriteRenderer bottomL;
+    private SpriteRenderer bottomR;
+    private SpriteRenderer bottomLeft;
+    private SpriteRenderer bottomRight;
+
+    private SpriteRenderer topLeftInner;
+    private SpriteRenderer topRightInner;
+    private SpriteRenderer bottomLeftInner;
+    private SpriteRenderer bottomRightInner;
+
     void Start()
     {
-        // is there another wall here already?
-        //var walls = GameObject.FindObjectsOfType<Wall>();
-        //var x = Mathf.RoundToInt(transform.position.x);
-        //var y = Mathf.RoundToInt(transform.position.y);
-        //if (IsThereAWallAt(x, y, walls))
-        //{
-        //    Destroy(gameObject);
-        //}
-        //else
-            UpdateEdges();
+        UpdateEdges();
     }
 
     [ContextMenu("Update Edges")]
@@ -26,8 +34,30 @@ public class Wall: MonoBehaviour
         UpdateEdges(null);
     }
 
+    private void FindSpriteRenderers()
+    {
+        bg = transform.FindChild("Bg").GetComponent<SpriteRenderer>();
+        topL = transform.FindChild("TopL").GetComponent<SpriteRenderer>();
+        topR = transform.FindChild("TopR").GetComponent<SpriteRenderer>();
+        topLeft = transform.FindChild("TopLeft").GetComponent<SpriteRenderer>();
+        topRight = transform.FindChild("TopRight").GetComponent<SpriteRenderer>();
+        left = transform.FindChild("Left").GetComponent<SpriteRenderer>();
+        right = transform.FindChild("Right").GetComponent<SpriteRenderer>();
+        bottomL = transform.FindChild("BottomL").GetComponent<SpriteRenderer>();
+        bottomR = transform.FindChild("BottomR").GetComponent<SpriteRenderer>();
+        bottomLeft = transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>();
+        bottomRight = transform.FindChild("BottomRight").GetComponent<SpriteRenderer>();
+
+        topLeftInner = transform.FindChild("TopLeftInner").GetComponent<SpriteRenderer>();
+        topRightInner = transform.FindChild("TopRightInner").GetComponent<SpriteRenderer>();
+        bottomLeftInner = transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>();
+        bottomRightInner = transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>();
+    }
+
     public void UpdateEdges(Wall[] walls)
     {
+        FindSpriteRenderers();
+
         if(walls == null)
             walls = GameObject.FindObjectsOfType<Wall>();
 
@@ -40,23 +70,45 @@ public class Wall: MonoBehaviour
         var isWallLeft = IsThereAWallAt(x-1, y, walls);
         var isWallRight = IsThereAWallAt(x+1, y, walls);
 
-        // sides
-        transform.FindChild("Left").GetComponent<SpriteRenderer>().enabled = !isWallLeft;
-        transform.FindChild("Right").GetComponent<SpriteRenderer>().enabled = !isWallRight;
-        transform.FindChild("Top").GetComponent<SpriteRenderer>().enabled = !isWallAbove;
-        transform.FindChild("Bottom").GetComponent<SpriteRenderer>().enabled = !isWallBelow;
-        
         // outside corners
-        transform.FindChild("TopLeft").GetComponent<SpriteRenderer>().enabled = !isWallAbove && !isWallLeft;
-        transform.FindChild("TopRight").GetComponent<SpriteRenderer>().enabled = !isWallAbove && !isWallRight;
-        transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>().enabled = !isWallBelow && !isWallLeft;
-        transform.FindChild("BottomRight").GetComponent<SpriteRenderer>().enabled = !isWallBelow && !isWallRight;
+        topLeft.enabled = !isWallAbove && !isWallLeft;        
+        topRight.enabled = !isWallAbove && !isWallRight;
+        bottomLeft.enabled = !isWallBelow && !isWallLeft;
+        bottomRight.enabled = !isWallBelow && !isWallRight;
 
         // inside corners
-        transform.FindChild("TopLeftInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
-        transform.FindChild("TopRightInner").GetComponent<SpriteRenderer>().enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
-        transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
-        transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>().enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
+        topLeftInner.enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
+        topRightInner.enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
+        bottomLeftInner.enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
+        bottomRightInner.enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
+
+        // sides
+        topL.enabled = !isWallAbove && !topLeft.enabled;
+        topR.enabled = !isWallAbove && !topRight.enabled;
+        bottomL.enabled = !isWallBelow && !bottomLeft.enabled;
+        bottomR.enabled = !isWallBelow && !bottomRight.enabled;
+
+        left.enabled = !isWallLeft;// && (!topLeft.enabled || !bottomLeft.enabled);
+        right.enabled = !isWallRight;// && (!topRight.enabled || !bottomRight.enabled);
+
+
+
+
+        //left.enabled = !isWallLeft;
+        //right.enabled = !isWallRight;
+        //top.enabled = !isWallAbove;
+        //bottom.enabled = !isWallBelow;
+
+        // kill unnecessary overlapping
+        //if (topLeft.enabled && topRight.enabled)
+        //    top.enabled = false;
+        //if (bottomLeft.enabled && bottomRight.enabled)
+        //    bottom.enabled = false;
+
+        //if (topLeft.enabled && bottomLeft.enabled)
+        //    left.enabled = false;
+        //if (topRight.enabled && bottomRight.enabled)
+        //    right.enabled = false;
     }
 
     [ContextMenu("Update All Walls Edges (Slow!)")]
@@ -92,13 +144,19 @@ public class Wall: MonoBehaviour
             transform.FindChild("Bg").GetComponent<SkinableSprite>().SetSkin(skin);
 
         if (sides.HasFlags(WallSideFlags.Top))
-            transform.FindChild("Top").GetComponent<SkinableSprite>().SetSkin(skin);
+        {
+            transform.FindChild("TopL").GetComponent<SkinableSprite>().SetSkin(skin);
+            transform.FindChild("TopR").GetComponent<SkinableSprite>().SetSkin(skin);
+        }
 
         if (sides.HasFlags(WallSideFlags.Left))
             transform.FindChild("Left").GetComponent<SkinableSprite>().SetSkin(skin);
 
         if (sides.HasFlags(WallSideFlags.Bottom))
-            transform.FindChild("Bottom").GetComponent<SkinableSprite>().SetSkin(skin);
+        {
+            transform.FindChild("BottomL").GetComponent<SkinableSprite>().SetSkin(skin);
+            transform.FindChild("BottomR").GetComponent<SkinableSprite>().SetSkin(skin);
+        }
 
         if (sides.HasFlags(WallSideFlags.Right))
             transform.FindChild("Right").GetComponent<SkinableSprite>().SetSkin(skin);
