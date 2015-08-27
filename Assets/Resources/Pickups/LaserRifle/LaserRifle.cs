@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Linq;
 
 public class LaserRifle : Pickup
 {
@@ -29,7 +30,16 @@ public class LaserRifle : Pickup
             var beamDirection = rotation * Vector2.up;
 
             AudioSource.PlayClipAtPoint(FireSound, origin);
+
+            // disable player's colliders while raycasting
             Player.GetComponent<Collider2D>().enabled = false;
+            var shield = Helper.GetComponentsInChildrenRecursive<Shield>(Player.transform).FirstOrDefault();
+            bool isShieldEnabled = false;
+            if (shield != null)
+            {
+                isShieldEnabled = shield.GetComponent<Collider2D>().enabled;
+                shield.GetComponent<Collider2D>().enabled = false;
+            }
 
             // set up collision layers - 1 is default
             var layerMask = 1 | LayerMask.GetMask("Shields");
@@ -52,7 +62,10 @@ public class LaserRifle : Pickup
                 }
             }
 
+            // re-enable colliders
             Player.GetComponent<Collider2D>().enabled = true;
+            if (isShieldEnabled)
+                shield.enabled = true;
 
             // this is how long the laser beam is visble for
             var laserLifetime = 0.1f;

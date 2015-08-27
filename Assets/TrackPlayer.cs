@@ -4,7 +4,8 @@ using System.Linq;
 
 public class TrackPlayer : MonoBehaviour {
 
-    private float maxSpeed = 6f; // world units per second
+    private float minSpeed = 1f; // world units per second
+    private float maxSpeed = 10f; // world units per second
 
     public int PlayerIndex;
     public PlayerControl Player;
@@ -31,20 +32,16 @@ public class TrackPlayer : MonoBehaviour {
 
         if(Player != null)
         {
-            var path = Player.transform.position - transform.position;
-            path.z = 0;
+            var target = Player.GetAimingViewPoint();
+            var path = target - transform.position.ToVector2();
 
-//            if(path.magnitude < maxSpeed * Time.deltaTime)
-//            {
-//                transform.position = new Vector3(target.transform.position.x, target.transform.position.y, transform.position.z);
-//            }
-//            else 
-            if(path.magnitude > maxSpeed * Time.deltaTime)
+            var speed = Mathf.Clamp(path.magnitude, minSpeed, maxSpeed);
+            if(path.magnitude > speed * Time.deltaTime)
             {
-                path = path.normalized * maxSpeed * Time.deltaTime;
+                path = ((path.normalized * speed) + Player.GetComponent<Rigidbody2D>().velocity) * Time.deltaTime;
             }
 
-            transform.position += path;
+            transform.position += path.ToVector3(0);
         }
 	}
 }

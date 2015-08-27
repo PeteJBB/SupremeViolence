@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class MachineGun : Pickup
 {
@@ -8,18 +9,18 @@ public class MachineGun : Pickup
     public AudioClip FireSound;
 
     private float fireDelay = 0.1f;
-    private bool isTriggerDown= false;
+    private bool isTriggerDown = false;
     private float lastFireTime = 0;
 
-	// Update is called once per frame
-	void Update() 
+    // Update is called once per frame
+    void Update()
     {
         if (isTriggerDown && Time.time - lastFireTime > fireDelay)
         {
             FireBullet();
             lastFireTime = Time.time;
         }
-	}
+    }
 
     public override string GetDescription()
     {
@@ -33,14 +34,22 @@ public class MachineGun : Pickup
 
     public void FireBullet()
     {
-        if(Ammo > 0)
+        if (Ammo > 0)
         {
             var origin = Player.GetAimingOrigin();
 
             var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
             var bullet = (GameObject)GameObject.Instantiate(BulletPrefab, Player.GetAimingOrigin(), rotation);
+
+            // ignore player
             Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
-            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse); 
+
+            // ignore my own shield
+            var shield = Helper.GetComponentsInChildrenRecursive<Shield>(Player.transform);
+            if (shield.Any())
+                Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
+
+            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
             bullet.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;

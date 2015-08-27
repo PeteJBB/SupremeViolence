@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class Flamer : Pickup
 {
@@ -57,7 +58,14 @@ public class Flamer : Pickup
         var flame = (GameObject)GameObject.Instantiate(FlamePrefab, Player.GetAimingOrigin(), rotation);
         flame.SetOwner(Player.gameObject);
 
+        // ignore player
         Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
+
+        // ignore my own shield
+        var shield = Helper.GetComponentsInChildrenRecursive<Shield>(Player.transform);
+        if(shield.Any())
+            Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
+
         var rb = flame.GetComponent<Rigidbody2D>();
         rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
         rb.AddTorque(Random.Range(-0.2f, 0.2f));

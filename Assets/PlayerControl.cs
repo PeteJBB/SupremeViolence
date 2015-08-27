@@ -18,6 +18,9 @@ public class PlayerControl : MonoBehaviour {
     public float AimingAngle = 90;
     private bool triggerDown = false;
 
+    [HideInInspector]
+    private Vector2 viewOffset = Vector2.zero; // used to work out where the camera is centered
+
     private Rigidbody2D rbody;
 
     private bool muteSounds = true; // sounds muted while we assign pickups etc
@@ -85,9 +88,11 @@ public class PlayerControl : MonoBehaviour {
 
             // aim
             var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);
+            viewOffset = aimInput * 2;
             if(aimInput.magnitude == 0)
                 aimInput = moveInput;
 
+            
             if(aimInput.magnitude > 0)
             {
         		// rotate to face input dir
@@ -203,6 +208,15 @@ public class PlayerControl : MonoBehaviour {
             default:
                 return transform.position.ToVector2() + AimingOffsetDown;
         }
+    }
+
+    /// <summary>
+    /// Used by the camera to track where you are looking with the right stick
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetAimingViewPoint()
+    {
+        return transform.position.ToVector2() + viewOffset;
     }
 
     void OnDrawGizmos()
