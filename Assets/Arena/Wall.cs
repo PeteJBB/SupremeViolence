@@ -6,60 +6,38 @@ using System;
 
 public class Wall: MonoBehaviour 
 {
-    private SpriteRenderer bg;
-    private SpriteRenderer topL;
-    private SpriteRenderer topR;
-    private SpriteRenderer topLeft;
-    private SpriteRenderer topRight;
-    private SpriteRenderer left;
-    private SpriteRenderer right;
-    private SpriteRenderer bottomL;
-    private SpriteRenderer bottomR;
-    private SpriteRenderer bottomLeft;
-    private SpriteRenderer bottomRight;
-
-    private SpriteRenderer topLeftInner;
-    private SpriteRenderer topRightInner;
-    private SpriteRenderer bottomLeftInner;
-    private SpriteRenderer bottomRightInner;
-
+    public Sprite bg;
+    
+    public Sprite topL;
+    public Sprite topR;
+    public Sprite leftT;
+    public Sprite leftB;
+    public Sprite rightT;
+    public Sprite rightB;
+    public Sprite bottomL;
+    public Sprite bottomR;
+    
+    public Sprite topLeft;
+    public Sprite topRight;
+    public Sprite bottomLeft;
+    public Sprite bottomRight;
+     
+    public Sprite topLeftInner;
+    public Sprite topRightInner;
+    public Sprite bottomLeftInner;
+    public Sprite bottomRightInner;
+    
     void Start()
     {
         UpdateEdges();
     }
 
     [ContextMenu("Update Edges")]
-	public void UpdateEdges()
+    public void UpdateEdges()
     {
-        UpdateEdges(null);
-    }
+        //FindSpriteRenderers();
 
-    private void FindSpriteRenderers()
-    {
-        bg = transform.FindChild("Bg").GetComponent<SpriteRenderer>();
-        topL = transform.FindChild("TopL").GetComponent<SpriteRenderer>();
-        topR = transform.FindChild("TopR").GetComponent<SpriteRenderer>();
-        topLeft = transform.FindChild("TopLeft").GetComponent<SpriteRenderer>();
-        topRight = transform.FindChild("TopRight").GetComponent<SpriteRenderer>();
-        left = transform.FindChild("Left").GetComponent<SpriteRenderer>();
-        right = transform.FindChild("Right").GetComponent<SpriteRenderer>();
-        bottomL = transform.FindChild("BottomL").GetComponent<SpriteRenderer>();
-        bottomR = transform.FindChild("BottomR").GetComponent<SpriteRenderer>();
-        bottomLeft = transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>();
-        bottomRight = transform.FindChild("BottomRight").GetComponent<SpriteRenderer>();
-
-        topLeftInner = transform.FindChild("TopLeftInner").GetComponent<SpriteRenderer>();
-        topRightInner = transform.FindChild("TopRightInner").GetComponent<SpriteRenderer>();
-        bottomLeftInner = transform.FindChild("BottomLeftInner").GetComponent<SpriteRenderer>();
-        bottomRightInner = transform.FindChild("BottomRightInner").GetComponent<SpriteRenderer>();
-    }
-
-    public void UpdateEdges(Wall[] walls)
-    {
-        FindSpriteRenderers();
-
-        if(walls == null)
-            walls = GameObject.FindObjectsOfType<Wall>();
+        var walls = GameObject.FindObjectsOfType<Wall>();
 
         var x = Mathf.RoundToInt(transform.position.x);
         var y = Mathf.RoundToInt(transform.position.y);
@@ -69,55 +47,87 @@ public class Wall: MonoBehaviour
         var isWallBelow = IsThereAWallAt(x, y-1, walls);
         var isWallLeft = IsThereAWallAt(x-1, y, walls);
         var isWallRight = IsThereAWallAt(x+1, y, walls);
+        
+        // topleft
+        var sr = transform.FindChild("TopLeft").GetComponent<SpriteRenderer>();
+        sr.enabled = true;
+        if (!isWallAbove && !isWallLeft)
+            sr.sprite = topLeft;
+        else if (isWallAbove && isWallLeft && !IsThereAWallAt(x - 1, y + 1, walls))
+            sr.sprite = topLeftInner;
+        else if (!isWallAbove)
+            sr.sprite = topL;
+        else if (!isWallLeft)
+            sr.sprite = leftT;
+        else
+            sr.enabled = false;
+
+        // topright
+        sr = transform.FindChild("TopRight").GetComponent<SpriteRenderer>();
+        sr.enabled = true;
+        if (!isWallAbove && !isWallRight)
+            sr.sprite = topRight;
+        else if (isWallAbove && isWallRight && !IsThereAWallAt(x + 1, y + 1, walls))
+            sr.sprite = topRightInner;
+        else if (!isWallAbove)
+            sr.sprite = topR;
+        else if (!isWallRight)
+            sr.sprite = rightT;
+        else
+            sr.enabled = false;
+
+        // bottomleft
+        sr = transform.FindChild("BottomLeft").GetComponent<SpriteRenderer>();
+        sr.enabled = true;
+        if (!isWallBelow && !isWallLeft)
+            sr.sprite = bottomLeft;
+        else if (isWallBelow && isWallLeft && !IsThereAWallAt(x - 1, y - 1, walls))
+            sr.sprite = bottomLeftInner;
+        else if (!isWallBelow)
+            sr.sprite = bottomL;
+        else if (!isWallLeft)
+            sr.sprite = leftB;
+        else
+            sr.enabled = false;
+
+        // bottomright
+        sr = transform.FindChild("BottomRight").GetComponent<SpriteRenderer>();
+        sr.enabled = true;
+        if (!isWallBelow && !isWallRight)
+            sr.sprite = bottomRight;
+        else if (isWallBelow && isWallRight && !IsThereAWallAt(x + 1, y - 1, walls))
+            sr.sprite = bottomRightInner;
+        else if (!isWallBelow)
+            sr.sprite = bottomR;
+        else if (!isWallRight)
+            sr.sprite = rightB;
+        else
+            sr.enabled = false;
 
         // outside corners
-        topLeft.enabled = !isWallAbove && !isWallLeft;        
-        topRight.enabled = !isWallAbove && !isWallRight;
-        bottomLeft.enabled = !isWallBelow && !isWallLeft;
-        bottomRight.enabled = !isWallBelow && !isWallRight;
+        //topLeft.enabled = !isWallAbove && !isWallLeft;        
+        //topRight.enabled = !isWallAbove && !isWallRight;
+        //bottomLeft.enabled = !isWallBelow && !isWallLeft;
+        //bottomRight.enabled = !isWallBelow && !isWallRight;
 
-        // inside corners
-        topLeftInner.enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
-        topRightInner.enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
-        bottomLeftInner.enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
-        bottomRightInner.enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
+        //// inside corners
+        //topLeftInner.enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
+        //topRightInner.enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
+        //bottomLeftInner.enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
+        //bottomRightInner.enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
 
-        // sides
-        topL.enabled = !isWallAbove && !topLeft.enabled;
-        topR.enabled = !isWallAbove && !topRight.enabled;
-        bottomL.enabled = !isWallBelow && !bottomLeft.enabled;
-        bottomR.enabled = !isWallBelow && !bottomRight.enabled;
-
-        left.enabled = !isWallLeft;// && (!topLeft.enabled || !bottomLeft.enabled);
-        right.enabled = !isWallRight;// && (!topRight.enabled || !bottomRight.enabled);
-
-
-
+        //// sides
+        //topL.enabled = !isWallAbove && !topLeft.enabled;
+        //topR.enabled = !isWallAbove && !topRight.enabled;
+        //bottomL.enabled = !isWallBelow && !bottomLeft.enabled;
+        //bottomR.enabled = !isWallBelow && !bottomRight.enabled;
 
         //left.enabled = !isWallLeft;
         //right.enabled = !isWallRight;
-        //top.enabled = !isWallAbove;
-        //bottom.enabled = !isWallBelow;
-
-        // kill unnecessary overlapping
-        //if (topLeft.enabled && topRight.enabled)
-        //    top.enabled = false;
-        //if (bottomLeft.enabled && bottomRight.enabled)
-        //    bottom.enabled = false;
-
-        //if (topLeft.enabled && bottomLeft.enabled)
-        //    left.enabled = false;
-        //if (topRight.enabled && bottomRight.enabled)
-        //    right.enabled = false;
     }
 
-    [ContextMenu("Update All Walls Edges (Slow!)")]
+    [ContextMenu("Update All Wall Edges")]
     public void UpdateAllWallEdges()
-    {
-        UpdateAllWallEdgesFunc();
-    }
-
-    private static void UpdateAllWallEdgesFunc()
     {
         var walls = GameObject.FindObjectsOfType<Wall>();
         foreach (var wall in walls)
@@ -140,6 +150,8 @@ public class Wall: MonoBehaviour
     // skinning
     public void SetSkin(Texture2D skin, WallSideFlags sides)
     {
+        return;
+
         if(sides == WallSideFlags.All)
             transform.FindChild("Bg").GetComponent<SkinableSprite>().SetSkin(skin);
 

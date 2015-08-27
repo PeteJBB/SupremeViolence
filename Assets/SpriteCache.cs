@@ -10,14 +10,14 @@ public class SpriteCache
         var key = new SpriteCacheKey(tex,rect,pivot);
         if(spriteDic.ContainsKey(key))
         {
-            //Debug.Log("used cached sprite");
             return spriteDic[key];
         }
 
         // create a new sprite
+        //Debug.Log("New sprite added to cache: " + tex.name + ", " + rect + ", " + pivot);
         var sprite = Sprite.Create(tex, rect, pivot);
 
-        if (!!GameBrain.IsEditMode())
+        if (!GameBrain.IsEditMode())
         {
             spriteDic.Add(key, sprite);
         }

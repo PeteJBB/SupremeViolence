@@ -13,6 +13,8 @@ public class Door: MonoBehaviour
     private List<int> objectsInSensor = new List<int>();
     private bool isDoorOpen = false;
 
+    public AudioClip OpenSound;
+
 	void Start () 
     {
         leftDoor = transform.Find("door_left");
@@ -51,6 +53,8 @@ public class Door: MonoBehaviour
         iTween.MoveTo(leftDoor.gameObject, iTween.Hash("name", "leftdoor", "x", transform.position.x - 0.4f, "time", 1f));
         iTween.MoveTo(rightDoor.gameObject, iTween.Hash("name", "rightdoor", "x", transform.position.x + 0.4f, "time", 1f));
 
+        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
+
         isDoorOpen = true;
     }
 
@@ -60,6 +64,8 @@ public class Door: MonoBehaviour
         iTween.StopByName(rightDoor.gameObject, "rightdoor");
         iTween.MoveTo(leftDoor.gameObject, iTween.Hash("name", "leftdoor", "x", transform.position.x, "time", 1f));
         iTween.MoveTo(rightDoor.gameObject, iTween.Hash("name", "rightdoor", "x", transform.position.x, "time", 1f));
+
+        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
 
         isDoorOpen = false;
     }

@@ -52,19 +52,18 @@ public class Arena: Singleton<Arena>
                 CreateRoom(row, col);
             }
         }
+
+        Helper.DebugLogTime("All rooms created, generating remaining walls and floors");
         
         // loop through remaining grid squares and create walls and floors
-        var wallPrefab = Resources.Load<Wall>("Arena/Wall");
         var wallContainer = new GameObject();
         wallContainer.name = "walls";
         wallContainer.transform.SetParent(transform);
 
-        var floorPrefab = Resources.Load<GameObject>("Arena/Floor");
         var floorContainer = new GameObject();
         floorContainer.name = "floors";
         floorContainer.transform.SetParent(transform);
 
-        var wallList = new List<Wall>();
         var arenaSize = GetArenaSize();
         for(var x = 0; x<arenaSize.x; x++)
         {
@@ -75,10 +74,10 @@ public class Arena: Singleton<Arena>
                 {
                     if (sq.GridSquareType == GridSquareType.Wall)
                     {
-                        var wall = Instantiate(wallPrefab).GetComponent<Wall>();
+                        var wall = Instantiate(GameSettings.WallPrefab).GetComponent<Wall>();
                         wall.transform.SetParent(wallContainer.transform);
                         wall.transform.localPosition = new Vector3(x, y, 0);
-                        //wall.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                        Helper.SetHideFlags(wall.gameObject, HideFlags.HideInHierarchy);
 
                         // walls around the edge should use the skin of the room they are next to
                         Room closestRoom = null;
@@ -105,23 +104,23 @@ public class Arena: Singleton<Arena>
                             sides = WallSideFlags.Bottom | WallSideFlags.Left | WallSideFlags.Right;
                         }
 
-                        if (closestRoom != null)
+                        if (closestRoom != null && closestRoom.WallSkin != null)
                         {
                             wall.SetSkin(closestRoom.WallSkin, sides);
                         }
-
-                        wallList.Add(wall);
                     }
                     else if (sq.GridSquareType == GridSquareType.Empty)
                     {
-                        var floor = Instantiate(floorPrefab);
+                        var floor = Instantiate(GameSettings.FloorPrefab);
                         floor.transform.SetParent(floorContainer.transform);
                         floor.transform.localPosition = new Vector3(x, y, 0);
-                        floor.gameObject.hideFlags = HideFlags.HideInHierarchy;
+                        Helper.SetHideFlags(floor.gameObject, HideFlags.HideInHierarchy);
                     }
                 }
             }
         }
+
+        Helper.DebugLogTime("Arena generation complete");        
 	}
 
     private Vector2 GetRoomPos(int row, int col)
@@ -175,6 +174,8 @@ public class Arena: Singleton<Arena>
         else
             prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
 
+        Helper.DebugLogTime("Creating room " + prefab.name);
+        
         var room = Instantiate<Room>(prefab);
 
         var posFlags = RoomPositionFlags.Center;
@@ -201,6 +202,9 @@ public class Arena: Singleton<Arena>
             info.GridSquareType = sq.SquareType;
             info.Room = room;
         }
+
+        Helper.DebugLogTime("Room created." + prefab.name);
+        
     }
 
     public List<GridSquareInfo> GetEmptyGridSquares()

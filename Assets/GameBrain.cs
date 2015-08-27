@@ -97,6 +97,9 @@ public class GameBrain : Singleton<GameBrain>
 
     void RunStartupSequence()
     {
+        Helper.DebugLogTime("RunStartupSequence");
+        
+
         if(StartupSound != null)
             AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
 

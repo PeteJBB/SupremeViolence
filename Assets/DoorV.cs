@@ -15,6 +15,8 @@ public class DoorV: MonoBehaviour
     private bool isDoorOpen = false;
     private SpriteRenderer topDoorSpriteRenderer;
 
+    public AudioClip OpenSound;
+
 	void Start () 
     {
         topDoor = transform.Find("door_top");
@@ -65,6 +67,8 @@ public class DoorV: MonoBehaviour
         iTween.ScaleTo(topDoor.gameObject, iTween.Hash("name", "topDoor", "y", 0.05f, "time", 1f));
         iTween.ScaleTo(bottomDoor.gameObject, iTween.Hash("name", "bottomDoor", "y", 0.05f, "time", 1f));
 
+        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
+        
         isDoorOpen = true;
     }
 
@@ -76,6 +80,8 @@ public class DoorV: MonoBehaviour
 
         iTween.ScaleTo(topDoor.gameObject, iTween.Hash("name", "topDoor", "y", 1, "time", 1f));
         iTween.ScaleTo(bottomDoor.gameObject, iTween.Hash("name", "bottomDoor", "y", 1, "time", 1f));
+
+        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
 
         isDoorOpen = false;
     }

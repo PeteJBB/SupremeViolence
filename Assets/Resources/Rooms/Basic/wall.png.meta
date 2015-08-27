@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440602338
+timeCreated: 1440645823
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -8,11 +8,11 @@ TextureImporter:
     21300002: wall_topleft
     21300004: wall_top_l
     21300006: wall_topright
-    21300008: wall_right
+    21300008: wall_right_t
     21300010: wall_bottomright
     21300012: wall_bottom_l
     21300014: wall_bottomleft
-    21300016: wall_left
+    21300016: wall_left_t
     21300018: wall_topright_inner
     21300020: wall_topleft_inner
     21300022: wall_bottomright_inner
@@ -31,10 +31,12 @@ TextureImporter:
     21300048: door_v_edge
     21300050: wall_bottom_r
     21300052: wall_top_r
+    21300054: wall_left_b
+    21300056: wall_right_b
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -90,9 +92,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 352
+        y: 384
         width: 96
-        height: 160
+        height: 128
       alignment: 8
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -100,9 +102,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 112
-        y: 352
+        y: 384
         width: 64
-        height: 160
+        height: 128
       alignment: 9
       pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -110,21 +112,21 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 256
-        y: 352
+        y: 384
         width: 96
-        height: 160
+        height: 128
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_right
+    - name: wall_right_t
       rect:
         serializedVersion: 2
         x: 256
-        y: 224
+        y: 288
         width: 96
-        height: 128
-      alignment: 4
-      pivot: {x: 0, y: .5}
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: wall_bottomright
       rect:
@@ -156,15 +158,15 @@ TextureImporter:
       alignment: 9
       pivot: {x: 1, y: .600000024}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: wall_left
+    - name: wall_left_t
       rect:
         serializedVersion: 2
         x: 0
-        y: 224
+        y: 288
         width: 96
-        height: 128
-      alignment: 5
-      pivot: {x: 1, y: .5}
+        height: 64
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: wall_topright_inner
       rect:
@@ -340,11 +342,31 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 176
-        y: 352
+        y: 384
         width: 64
-        height: 160
+        height: 128
       alignment: 9
       pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_left_b
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 96
+        height: 64
+      alignment: 3
+      pivot: {x: 1, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wall_right_b
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 224
+        width: 96
+        height: 64
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

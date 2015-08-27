@@ -155,7 +155,7 @@ public class Room: MonoBehaviour
             var wallsArr = walls.ToArray();
             foreach(var wall in walls)
             {
-                wall.GetComponent<Wall>().UpdateEdges(wallsArr);
+                wall.UpdateEdges();
             }
         }
 
