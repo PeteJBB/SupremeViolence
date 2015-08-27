@@ -7,24 +7,29 @@ using XInputDotNetPure;
 
 public class Shield: Pickup, IDamageable, IReflector
 {
-    private SpriteRenderer overlay;
-    private CircleCollider2D collider;
-    private bool isShieldActivated;
-    
-    private Material defaultMaterial;
-    private Material flashMaterial;
-
     public AudioClip ActivateSound;
     public AudioClip RunningSound;
     public AudioClip DeactivateSound;
     public AudioClip HitSound;
 
+    private SpriteRenderer overlay;
+    private CircleCollider2D collider;
+    private FillBar ammoBar;
+    
+    private Material defaultMaterial;
+    private Material flashMaterial;
+
+    private bool isShieldActivated;
     private AudioSource shieldAudio;
+    private float lastHitSoundPlayTime;
+
 
 	// Use this for initialization
     void Awake()
     {        
         overlay = transform.FindChild("overlay").GetComponent<SpriteRenderer>();
+        ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
+
         overlay.enabled = false;
         transform.localScale = Vector3.zero;
 
@@ -41,15 +46,23 @@ public class Shield: Pickup, IDamageable, IReflector
         shieldAudio.pitch = 0;
 	}
 
-	// Update is called once per frame
+    private float lastAmmoDrain;
 	void Update() 
     {
         if (Player != null)
         {
-            //if (isShieldActivated)
-            //{
-                
-            //}
+            if (isShieldActivated)
+            {
+                if (Time.time - lastAmmoDrain > 0.05f)
+                {
+                    Ammo--;
+                    ammoBar.SetFill(Ammo / (float)MaxAmmo);
+                    lastAmmoDrain = Time.time;
+
+                    if (Ammo <= 0)
+                        DeactivateShield();
+                }
+            }
 
             var gamepadState = GetGamePadInput();
 
@@ -89,24 +102,27 @@ public class Shield: Pickup, IDamageable, IReflector
 
     private void ActivateShield()
     {
-        overlay.enabled = true;
-        collider.enabled = true;
-        isShieldActivated = true;
-
-        if(ActivateSound != null)
-            AudioSource.PlayClipAtPoint(ActivateSound, transform.position);
-
-        shieldAudio.Play();
-    
-        transform.localScale = Vector3.one;
-        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.15f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((val) =>
+        if (Ammo > 0)
         {
-            var a = (float)val;
-            overlay.color = new Color(1,1,1, a);        
-            transform.localScale = new Vector3(a, a, a);
-            shieldAudio.pitch = a;
-            shieldAudio.volume = a;
-        })));
+            overlay.enabled = true;
+            collider.enabled = true;
+            isShieldActivated = true;
+            transform.localScale = Vector3.zero;
+
+            if (ActivateSound != null)
+                AudioSource.PlayClipAtPoint(ActivateSound, transform.position);
+
+            shieldAudio.Play();
+
+            iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.15f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((val) =>
+            {
+                var a = (float)val;
+                overlay.color = new Color(1, 1, 1, a);
+                transform.localScale = new Vector3(a, a, a);
+                shieldAudio.pitch = a;
+                shieldAudio.volume = a;
+            })));
+        }
     }
 
     private void DeactivateShield()
@@ -153,17 +169,23 @@ public class Shield: Pickup, IDamageable, IReflector
         };
     }
 
+    private float lastHitTime;
     public void Damage(float amount, GameObject damageSource = null)
     {
         // flash shield
         overlay.material = flashMaterial;
+        lastHitTime = Time.time;
         Helper.Instance.WaitAndThenCall(0.1f, () =>
         {
-            overlay.material = defaultMaterial;
+            if(Time.time - lastHitTime >= 0.1f)
+                overlay.material = defaultMaterial;
         });
 
-        if (HitSound != null)
+        if (HitSound != null && Time.time - lastHitSoundPlayTime > 0.3f)
+        {
+            lastHitSoundPlayTime = Time.time;
             AudioSource.PlayClipAtPoint(HitSound, transform.position);
+        }
     }
 
     public bool DoesReflectMe(GameObject obj)

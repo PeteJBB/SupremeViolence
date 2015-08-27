@@ -11,25 +11,6 @@ public class LaserRifle : Pickup
     public GameObject BeamPrefab;
     public GameObject ImpactPrefab;
 
-    //private LineRenderer line;
-
-	// Use this for initialization
-    //void Start()
-    //{
-    //    line = GetComponent<LineRenderer>();
-    //    line.enabled = false;
-    //    line.sortingLayerName = "Mid_Front";
-    //}
-	
-	// Update is called once per frame
-	void Update() 
-    {
-        //if(Player != null && line.enabled)
-        //{
-        //    line.SetPosition(0, Player.GetAimingOrigin());
-        //}
-	}
-
     public override string GetDescription()
     {
         return "Fires a narrow but high-powered laser beam which can cut a watermelon clean in half. Protective goggles are recommended during use.";
@@ -50,8 +31,8 @@ public class LaserRifle : Pickup
             AudioSource.PlayClipAtPoint(FireSound, origin);
             Player.GetComponent<Collider2D>().enabled = false;
 
-            // collide with the default layer only
-            var layerMask = 1 << LayerMask.NameToLayer("Default");
+            // set up collision layers - 1 is default
+            var layerMask = 1 | LayerMask.GetMask("Shields");
             var hit = Physics2D.Raycast(origin, beamDirection, Mathf.Infinity, layerMask);
 
             if(hit.collider == null)

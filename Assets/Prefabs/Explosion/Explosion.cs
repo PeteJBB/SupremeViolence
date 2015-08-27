@@ -16,7 +16,8 @@ public class Explosion : MonoBehaviour
 
         AudioSource.PlayClipAtPoint(explosionSound, transform.position);
 
-        var layerMask = 1 << LayerMask.NameToLayer("Default");
+        // set up collision layers - 1 is default
+        var layerMask = 1 | LayerMask.GetMask("Shields");
         var colliders = Physics2D.OverlapCircleAll(transform.position, DamageRadius, layerMask);
 	
         transform.localScale = new Vector3(DamageRadius, DamageRadius, 1);
@@ -24,6 +25,14 @@ public class Explosion : MonoBehaviour
         foreach(var other in colliders)
         {
             var v = other.transform.position - transform.position;
+
+            // check for line of sight
+            var hit = Physics2D.Raycast(transform.position, v, layerMask);
+            if (hit.collider != other)
+            {
+                //Debug.Log("Explosion expected to hit " + other.gameObject.name + " but was blocked by " + hit.collider.gameObject.name);
+                continue;
+            }
 
             var dam = other.GetComponent<IDamageable>();
             if(dam != null)

@@ -96,8 +96,8 @@ public class Railgun : Pickup
                 AudioSource.PlayClipAtPoint(FireSound, origin);
                 Player.GetComponent<Collider2D>().enabled = false;
                 
-                // collide with the default layer only
-                var layerMask = 1 << LayerMask.NameToLayer("Default");
+                // set up collision layers - 1 is default
+                var layerMask = 1 | LayerMask.GetMask("Shields");
                 var hit = Physics2D.Raycast(origin, beamDirection, Mathf.Infinity, layerMask);
                 
                 if(hit.collider == null)

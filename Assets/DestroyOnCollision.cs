@@ -9,6 +9,8 @@ public class DestroyOnCollision : MonoBehaviour
     private Rigidbody2D rb;
     private Vector3 lastKnownVelocity;
 
+    public bool CanBeReflected = false;
+
 	// Use this for initialization
 	void Awake () 
 	{
@@ -36,26 +38,30 @@ public class DestroyOnCollision : MonoBehaviour
         var contact = collision.contacts[0];
         var rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
 
-        var reflector = contact.collider.GetComponent<IReflector>();
-        if (reflector != null && reflector.DoesReflectMe(gameObject))
+        if (CanBeReflected)
         {
-            // reflect
-            var rb = GetComponent<Rigidbody2D>();
-            var vect = contact.normal;// Vector2.Reflect(rb.velocity, contact.normal);
-            rb.velocity = vect * lastKnownVelocity.magnitude;
+            var reflector = contact.collider.GetComponent<IReflector>();
+            if (reflector != null && reflector.DoesReflectMe(gameObject))
+            {
+                // reflect
+                var rb = GetComponent<Rigidbody2D>();
+                var vect = contact.normal;// Vector2.Reflect(rb.velocity, contact.normal);
+                rb.velocity = vect * lastKnownVelocity.magnitude;
 
-            var angle = Mathf.Rad2Deg * Mathf.Atan2(-vect.x, vect.y);
-            rb.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            DamageOther(contact.collider.gameObject);
+                var angle = Mathf.Rad2Deg * Mathf.Atan2(-vect.x, vect.y);
+                rb.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                DamageOther(contact.collider.gameObject);
+
+                return;
+            }
         }
-        else
-        {
-            // destroy 
-            Explode(contact.point, rot);
-            DamageOther(contact.collider.gameObject);
-            Helper.DetachParticles(gameObject);
-            Destroy(gameObject);
-        }
+
+        // destroy 
+        Explode(contact.point, rot);
+        DamageOther(contact.collider.gameObject);
+        Helper.DetachParticles(gameObject);
+        Destroy(gameObject);
+
 	}
 
     void Explode(Vector2 pos, Quaternion rot) 
