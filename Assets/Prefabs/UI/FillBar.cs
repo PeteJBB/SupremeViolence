@@ -7,28 +7,65 @@ using UnityEngine.UI;
 
 public class FillBar: MonoBehaviour 
 {
-    private Transform bar;
-    private Sprite barSprite;
+    private SpriteRenderer frame;
+    private SpriteRenderer bar;
     private float fullScale;
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
-        bar = transform.Find("bar");
-        barSprite = bar.GetComponent<SpriteRenderer>().sprite;
-        fullScale = bar.localScale.x;
+        frame = GetComponent<SpriteRenderer>();
+        bar = transform.Find("bar").GetComponent<SpriteRenderer>();
+
+        fullScale = bar.transform.localScale.x;
 	}
 	
     public void SetFill(float amt)
     {
-        if(barSprite != null)
-        {
-            var scale = Mathf.Clamp(amt, 0, 1) * fullScale;
-            bar.transform.localScale = new Vector3(scale, bar.localScale.y, bar.localScale.z);
+        var scale = Mathf.Clamp(amt, 0, 1) * fullScale;
+        bar.transform.localScale = new Vector3(scale, bar.transform.localScale.y, bar.transform.localScale.z);
+    }
 
-            //var width = fullWidth - barSprite.bounds.size.x;
-            //var left = -width / 2;
-            //bar.transform.position = new Vector3(left, bar.position.y, bar.position.z);
+    public void Hide(bool immediate = false)
+    {
+        if (immediate)
+        {
+            frame.color = new Color(0, 0, 0, 0);
+            bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, 0);
+            frame.enabled = false;
+            bar.enabled = false;
         }
+        else
+        {
+            iTween.ValueTo(gameObject, iTween.Hash("from", 1, "to", 0, "time", 0.15f, "easetype", iTween.EaseType.linear, "onupdate", (Action<object>)((val) =>
+            {
+                var a = (float)val;
+                frame.color = new Color(0, 0, 0, a * 0.25f);
+                bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, 0);
+            }),
+            "oncomplete", (Action)(() =>
+            {
+                frame.enabled = false;
+                bar.enabled = false;
+            })));
+        }
+    }
+
+    public void Show()
+    {
+        frame.enabled = true;
+        bar.enabled = true;
+        frame.color = new Color(0, 0, 0, 0);
+        bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, 0);
+
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.15f, "easetype", iTween.EaseType.linear, "onupdate", (Action<object>)((val) =>
+        {
+            var a = (float)val;
+            frame.color = new Color(0, 0, 0, a * 0.25f);
+
+            var barColor = bar.color;
+            barColor.a = a;
+            bar.color = barColor;
+        })));
     }
 }

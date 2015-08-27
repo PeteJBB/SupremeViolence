@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using XInputDotNetPure;
 
 public class Shield: Pickup, IDamageable, IReflector
@@ -22,7 +23,8 @@ public class Shield: Pickup, IDamageable, IReflector
     private bool isShieldActivated;
     private AudioSource shieldAudio;
     private float lastHitSoundPlayTime;
-
+    private float lastAmmoDrain;
+	
 
 	// Use this for initialization
     void Awake()
@@ -44,10 +46,11 @@ public class Shield: Pickup, IDamageable, IReflector
         shieldAudio.clip = RunningSound;
         shieldAudio.loop = true;
         shieldAudio.pitch = 0;
+
+        base.OnPlayerPickup.AddListener(OnPlayerPickup);
 	}
 
-    private float lastAmmoDrain;
-	void Update() 
+    void Update() 
     {
         if (Player != null)
         {
@@ -150,12 +153,9 @@ public class Shield: Pickup, IDamageable, IReflector
         
     }
 
-    public override void OnPlayerPickup(PlayerControl player)
+    public void OnPlayerPickup()
     {
-        Physics2D.IgnoreCollision(collider, player.GetComponent<Collider2D>());
-
-        if(GameBrain.Instance.State == PlayState.GameOn && PlayerHudCanvas.Instance != null)
-            PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
+        Physics2D.IgnoreCollision(collider, Player.GetComponent<Collider2D>());
     }
 
     public DamageResistances GetResistances()
