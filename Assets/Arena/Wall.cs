@@ -35,8 +35,6 @@ public class Wall: MonoBehaviour
     [ContextMenu("Update Edges")]
     public void UpdateEdges()
     {
-        //FindSpriteRenderers();
-
         var walls = GameObject.FindObjectsOfType<Wall>();
 
         var x = Mathf.RoundToInt(transform.position.x);

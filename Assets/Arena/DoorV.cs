@@ -17,7 +17,7 @@ public class DoorV: MonoBehaviour
 
     public AudioClip OpenSound;
 
-	void Start () 
+	void Awake() 
     {
         topDoor = transform.Find("door_top");
         bottomDoor = transform.Find("door_bottom");

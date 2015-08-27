@@ -15,7 +15,7 @@ public class Door: MonoBehaviour
 
     public AudioClip OpenSound;
 
-	void Start () 
+	void Awake() 
     {
         leftDoor = transform.Find("door_left");
         rightDoor = transform.Find("door_right");
