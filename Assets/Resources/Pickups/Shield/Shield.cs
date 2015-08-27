@@ -1,0 +1,173 @@
+﻿using System;
+using System.Collections;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+using XInputDotNetPure;
+
+public class Shield: Pickup, IDamageable, IReflector
+{
+    private SpriteRenderer overlay;
+    private CircleCollider2D collider;
+    private bool isShieldActivated;
+    
+    private Material defaultMaterial;
+    private Material flashMaterial;
+
+    public AudioClip ActivateSound;
+    public AudioClip RunningSound;
+    public AudioClip DeactivateSound;
+    public AudioClip HitSound;
+
+    private AudioSource shieldAudio;
+
+	// Use this for initialization
+    void Awake()
+    {        
+        overlay = transform.FindChild("overlay").GetComponent<SpriteRenderer>();
+        overlay.enabled = false;
+        transform.localScale = Vector3.zero;
+
+        collider = GetComponent<CircleCollider2D>();
+        collider.enabled = false;
+
+        defaultMaterial = overlay.material;
+        flashMaterial = new Material(Shader.Find("Sprites/DefaultColorFlash"));
+        flashMaterial.SetFloat("_FlashAmount", 0.75f);
+
+        shieldAudio = gameObject.AddComponent<AudioSource>();
+        shieldAudio.clip = RunningSound;
+        shieldAudio.loop = true;
+        shieldAudio.pitch = 0;
+	}
+
+	// Update is called once per frame
+	void Update() 
+    {
+        if (Player != null)
+        {
+            //if (isShieldActivated)
+            //{
+                
+            //}
+
+            var gamepadState = GetGamePadInput();
+
+            if (gamepadState.Buttons.Y == ButtonState.Pressed && !isShieldActivated)
+            {
+                ActivateShield();
+            }
+
+            else if (gamepadState.Buttons.Y == ButtonState.Released && isShieldActivated)
+            {
+                DeactivateShield();
+            }
+        }
+	}    
+
+    private GamePadState GetGamePadInput()
+    {
+        switch(Player.PlayerIndex)
+        {
+            case 0:
+            default:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.One);
+            case 1:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Two);
+            case 2:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Three);
+            case 3:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
+        }
+    }
+
+    public override string GetDescription()
+    {
+        return "A personal energy shield which reflects projectiles away from you and towards some other unsuspecting fool. Battery life is short so use wisely!";
+    }
+
+
+    private void ActivateShield()
+    {
+        overlay.enabled = true;
+        collider.enabled = true;
+        isShieldActivated = true;
+
+        if(ActivateSound != null)
+            AudioSource.PlayClipAtPoint(ActivateSound, transform.position);
+
+        shieldAudio.Play();
+    
+        transform.localScale = Vector3.one;
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.15f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((val) =>
+        {
+            var a = (float)val;
+            overlay.color = new Color(1,1,1, a);        
+            transform.localScale = new Vector3(a, a, a);
+            shieldAudio.pitch = a;
+            shieldAudio.volume = a;
+        })));
+    }
+
+    private void DeactivateShield()
+    {
+        isShieldActivated = false;
+
+        
+       if(DeactivateSound != null)
+            AudioSource.PlayClipAtPoint(DeactivateSound, transform.position);
+
+        iTween.ValueTo(gameObject, iTween.Hash("from", 1, "to", 0, "time", 0.15f, "easetype", iTween.EaseType.easeInCirc, "onupdate", (Action<object>)((val) =>
+        {
+            var a = (float)val;
+            overlay.color = new Color(1,1,1, a);        
+            transform.localScale = new Vector3(a, a, a);
+            shieldAudio.pitch = a;
+            shieldAudio.volume = a;
+        }),
+        "oncomplete", (Action)(() =>
+        {
+            overlay.enabled = false;
+            collider.enabled = false;            
+            shieldAudio.Stop();
+        })));
+        
+    }
+
+    public override void OnPlayerPickup(PlayerControl player)
+    {
+        Physics2D.IgnoreCollision(collider, player.GetComponent<Collider2D>());
+
+        if(GameBrain.Instance.State == PlayState.GameOn && PlayerHudCanvas.Instance != null)
+            PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
+    }
+
+    public DamageResistances GetResistances()
+    {
+        return new DamageResistances()
+        {
+            Electrical = 0,
+            Explosive = 0,
+            Heat = 0,
+            Kinetic = 0
+        };
+    }
+
+    public void Damage(float amount, GameObject damageSource = null)
+    {
+        // flash shield
+        overlay.material = flashMaterial;
+        Helper.Instance.WaitAndThenCall(0.1f, () =>
+        {
+            overlay.material = defaultMaterial;
+        });
+
+        if (HitSound != null)
+            AudioSource.PlayClipAtPoint(HitSound, transform.position);
+    }
+
+    public bool DoesReflectMe(GameObject obj)
+    {
+        return true;
+    }
+}

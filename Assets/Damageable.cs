@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-public class Damageable : MonoBehaviour 
+public class Damageable : MonoBehaviour, IDamageable
 {
     public float StartingHealth = 100;
     public float Health;
@@ -21,7 +21,7 @@ public class Damageable : MonoBehaviour
     public bool FlashOnDamage = false;
     public bool IsDead = false;
 
-    public DamageResistances Resistance;
+    public DamageResistances Resistances;
 
     private FillBar healthBar;
     private List<SpriteRenderer> spriteRenderers;
@@ -56,6 +56,11 @@ public class Damageable : MonoBehaviour
             FlashSprites();
         }
 	}
+
+    public DamageResistances GetResistances()
+    {
+        return Resistances;
+    }
 
     public void Respawn() 
     {
@@ -180,4 +185,10 @@ public class DamageResistances
     public float Heat = 0;
     public float Explosive = 0;
     public float Electrical = 0;
+}
+
+public interface IDamageable
+{
+    DamageResistances GetResistances();
+    void Damage(float amount, GameObject damageSource = null);
 }

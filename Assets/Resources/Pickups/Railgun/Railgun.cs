@@ -109,10 +109,11 @@ public class Railgun : Pickup
                 else
                 {
                     // do damage
-                    var dam = hit.collider.GetComponent<Damageable>();
+                    var dam = hit.collider.GetComponent<IDamageable>();
                     if(dam != null)
                     {
-                        dam.Damage(100, gameObject);
+                        var amt = 100 * (1 - dam.GetResistances().Kinetic);
+                        dam.Damage(amt, gameObject);
                     }
                 }
 

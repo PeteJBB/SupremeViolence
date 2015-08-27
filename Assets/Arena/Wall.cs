@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class Wall: MonoBehaviour 
+public class Wall : MonoBehaviour
 {
     public Sprite bg;
-    
+
     public Sprite topL;
     public Sprite topR;
     public Sprite leftT;
@@ -16,17 +16,20 @@ public class Wall: MonoBehaviour
     public Sprite rightB;
     public Sprite bottomL;
     public Sprite bottomR;
-    
+
     public Sprite topLeft;
     public Sprite topRight;
     public Sprite bottomLeft;
     public Sprite bottomRight;
-     
+
     public Sprite topLeftInner;
     public Sprite topRightInner;
     public Sprite bottomLeftInner;
     public Sprite bottomRightInner;
-    
+
+    public Texture2D Skin;
+    public WallSideFlags SkinSides;
+
     void Start()
     {
         UpdateEdges();
@@ -35,17 +38,20 @@ public class Wall: MonoBehaviour
     [ContextMenu("Update Edges")]
     public void UpdateEdges()
     {
+        if (Skin != null)
+            ApplySkin();
+
         var walls = GameObject.FindObjectsOfType<Wall>();
 
         var x = Mathf.RoundToInt(transform.position.x);
         var y = Mathf.RoundToInt(transform.position.y);
 
         // where are other walls
-        var isWallAbove = IsThereAWallAt(x, y+1, walls);
-        var isWallBelow = IsThereAWallAt(x, y-1, walls);
-        var isWallLeft = IsThereAWallAt(x-1, y, walls);
-        var isWallRight = IsThereAWallAt(x+1, y, walls);
-        
+        var isWallAbove = IsThereAWallAt(x, y + 1, walls);
+        var isWallBelow = IsThereAWallAt(x, y - 1, walls);
+        var isWallLeft = IsThereAWallAt(x - 1, y, walls);
+        var isWallRight = IsThereAWallAt(x + 1, y, walls);
+
         // topleft
         var sr = transform.FindChild("TopLeft").GetComponent<SpriteRenderer>();
         sr.enabled = true;
@@ -101,27 +107,6 @@ public class Wall: MonoBehaviour
             sr.sprite = rightB;
         else
             sr.enabled = false;
-
-        // outside corners
-        //topLeft.enabled = !isWallAbove && !isWallLeft;        
-        //topRight.enabled = !isWallAbove && !isWallRight;
-        //bottomLeft.enabled = !isWallBelow && !isWallLeft;
-        //bottomRight.enabled = !isWallBelow && !isWallRight;
-
-        //// inside corners
-        //topLeftInner.enabled = isWallAbove && isWallLeft && !IsThereAWallAt(x-1, y+1, walls);
-        //topRightInner.enabled = isWallAbove && isWallRight && !IsThereAWallAt(x+1, y+1, walls);
-        //bottomLeftInner.enabled = isWallBelow && isWallLeft && !IsThereAWallAt(x-1, y-1, walls);
-        //bottomRightInner.enabled = isWallBelow && isWallRight && !IsThereAWallAt(x+1, y-1, walls);
-
-        //// sides
-        //topL.enabled = !isWallAbove && !topLeft.enabled;
-        //topR.enabled = !isWallAbove && !topRight.enabled;
-        //bottomL.enabled = !isWallBelow && !bottomLeft.enabled;
-        //bottomR.enabled = !isWallBelow && !bottomRight.enabled;
-
-        //left.enabled = !isWallLeft;
-        //right.enabled = !isWallRight;
     }
 
     [ContextMenu("Update All Wall Edges")]
@@ -146,57 +131,78 @@ public class Wall: MonoBehaviour
     }
 
     // skinning
-    public void SetSkin(Texture2D skin, WallSideFlags sides)
+    [ContextMenu("Apply Skin")]
+    public void ApplySkin()
     {
-        return;
-
-        if(sides == WallSideFlags.All)
-            transform.FindChild("Bg").GetComponent<SkinableSprite>().SetSkin(skin);
-
-        if (sides.HasFlags(WallSideFlags.Top))
+        if (SkinSides == WallSideFlags.All)
         {
-            transform.FindChild("TopL").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("TopR").GetComponent<SkinableSprite>().SetSkin(skin);
+            bg = SpriteCache.GetOrCreateSprite(Skin, bg);
         }
 
-        if (sides.HasFlags(WallSideFlags.Left))
-            transform.FindChild("Left").GetComponent<SkinableSprite>().SetSkin(skin);
-
-        if (sides.HasFlags(WallSideFlags.Bottom))
+        if (SkinSides.HasFlags(WallSideFlags.Top))
         {
-            transform.FindChild("BottomL").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("BottomR").GetComponent<SkinableSprite>().SetSkin(skin);
+            topL = SpriteCache.GetOrCreateSprite(Skin, topL);
+            topR = SpriteCache.GetOrCreateSprite(Skin, topR);
         }
 
-        if (sides.HasFlags(WallSideFlags.Right))
-            transform.FindChild("Right").GetComponent<SkinableSprite>().SetSkin(skin);
-
-        if (sides.HasFlags(WallSideFlags.Top, WallSideFlags.Left))
+        if (SkinSides.HasFlags(WallSideFlags.Left))
         {
-            transform.FindChild("TopLeft").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("TopLeftInner").GetComponent<SkinableSprite>().SetSkin(skin);
-        }   
+            leftT = SpriteCache.GetOrCreateSprite(Skin, leftT);
+            leftB = SpriteCache.GetOrCreateSprite(Skin, leftB);
+        }
 
-        if (sides.HasFlags(WallSideFlags.Top, WallSideFlags.Right))
+        if (SkinSides.HasFlags(WallSideFlags.Right))
         {
-            transform.FindChild("TopRight").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("TopRightInner").GetComponent<SkinableSprite>().SetSkin(skin);
-        }  
+            rightT = SpriteCache.GetOrCreateSprite(Skin, rightT);
+            rightB = SpriteCache.GetOrCreateSprite(Skin, rightB);
+        }
 
-        if (sides.HasFlags(WallSideFlags.Bottom, WallSideFlags.Left))
+        if (SkinSides.HasFlags(WallSideFlags.Bottom))
         {
-            transform.FindChild("BottomLeft").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("BottomLeftInner").GetComponent<SkinableSprite>().SetSkin(skin);
-        }   
+            bottomL = SpriteCache.GetOrCreateSprite(Skin, bottomL);
+            bottomR = SpriteCache.GetOrCreateSprite(Skin, bottomR);
+        }
 
-        if (sides.HasFlags(WallSideFlags.Bottom, WallSideFlags.Right))
+        if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Left))
         {
-            transform.FindChild("BottomRight").GetComponent<SkinableSprite>().SetSkin(skin);
-            transform.FindChild("BottomRightInner").GetComponent<SkinableSprite>().SetSkin(skin);
-        }  
+            topLeft = SpriteCache.GetOrCreateSprite(Skin, topLeft);
+            topLeftInner = SpriteCache.GetOrCreateSprite(Skin, topLeftInner);
+        }
+
+        if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Right))
+        {
+            topRight = SpriteCache.GetOrCreateSprite(Skin, topRight);
+            topRightInner = SpriteCache.GetOrCreateSprite(Skin, topRightInner);
+        }
+
+        if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Left))
+        {
+            bottomLeft = SpriteCache.GetOrCreateSprite(Skin, bottomLeft);
+            bottomLeftInner = SpriteCache.GetOrCreateSprite(Skin, bottomLeftInner);
+        }
+
+        if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Right))
+        {
+            bottomRight = SpriteCache.GetOrCreateSprite(Skin, bottomRight);
+            bottomRightInner = SpriteCache.GetOrCreateSprite(Skin, bottomRightInner);
+        }
+
+
+        // if(SkinSides == WallSideFlags.All)
+        //    transform.FindChild("Bg").GetComponent<SkinableSprite>().SetSkin(Skin);
+
+        //if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Left))
+        //    transform.FindChild("TopLeft").GetComponent<SkinableSprite>().SetSkin(Skin);
+
+        //if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Right))
+        //    transform.FindChild("TopRight").GetComponent<SkinableSprite>().SetSkin(Skin);
+
+        //if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Right))
+        //    transform.FindChild("BottomRight").GetComponent<SkinableSprite>().SetSkin(Skin);
+
+        //if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Left))
+        //    transform.FindChild("BottomLeft").GetComponent<SkinableSprite>().SetSkin(Skin);
     }
-
-    
 }
 
 [Flags]
@@ -212,7 +218,7 @@ public enum WallSideFlags
 public static class WallSideFlagsExtentions
 {
     public static bool HasFlags(this WallSideFlags val, params WallSideFlags[] flags)
-    {        
+    {
         var b = true;
         foreach (var f in flags)
         {

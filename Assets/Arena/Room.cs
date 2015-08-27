@@ -197,7 +197,8 @@ public class Room: MonoBehaviour
                 else
                     sides = sides | WallSideFlags.Top | WallSideFlags.Bottom;
             }
-            wall.SetSkin(WallSkin, sides);
+            wall.Skin = WallSkin;
+            wall.SkinSides = sides;
         }
         return wall;
     }

@@ -8,7 +8,7 @@ public class SpriteCache
     public static Sprite GetOrCreateSprite(Texture2D tex, Rect rect, Vector2 pivot)
     {
         var key = new SpriteCacheKey(tex,rect,pivot);
-        if(spriteDic.ContainsKey(key))
+        if(!GameBrain.IsEditMode() && spriteDic.ContainsKey(key))
         {
             return spriteDic[key];
         }
@@ -22,6 +22,11 @@ public class SpriteCache
             spriteDic.Add(key, sprite);
         }
         return sprite;
+    }
+
+    public static Sprite GetOrCreateSprite(Texture2D tex, Sprite original)
+    {
+        return GetOrCreateSprite(tex, original.rect, new Vector2(original.pivot.x / original.rect.width, original.pivot.y / original.rect.height));
     }
 	
     public class SpriteCacheKey

@@ -106,7 +106,8 @@ public class Arena: Singleton<Arena>
 
                         if (closestRoom != null && closestRoom.WallSkin != null)
                         {
-                            wall.SetSkin(closestRoom.WallSkin, sides);
+                            wall.Skin = closestRoom.WallSkin;
+                            wall.SkinSides = sides;
                         }
                     }
                     else if (sq.GridSquareType == GridSquareType.Empty)

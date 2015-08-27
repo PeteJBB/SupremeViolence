@@ -1,27 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestroyOnCollision : MonoBehaviour {
-
+public class DestroyOnCollision : MonoBehaviour
+{
 	public GameObject explosionPrefab;
     public float baseDamage = 0;
     
+    private Rigidbody2D rb;
+    private Vector3 lastKnownVelocity;
+
 	// Use this for initialization
-	void Start () 
+	void Awake () 
 	{
-	
+        rb = GetComponent<Rigidbody2D>();
 	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		
-	}
+
+    void LateUpdate()
+    {
+        lastKnownVelocity = rb.velocity;
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.isTrigger)
-        {
+        {            
             Explode(transform.position, transform.rotation);
             DamageOther(other.gameObject);
             Helper.DetachParticles(gameObject);
@@ -33,10 +35,27 @@ public class DestroyOnCollision : MonoBehaviour {
 	{
         var contact = collision.contacts[0];
         var rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
-        Explode(contact.point, rot);
-        DamageOther(contact.collider.gameObject);
-        Helper.DetachParticles(gameObject);
-		Destroy(gameObject);
+
+        var reflector = contact.collider.GetComponent<IReflector>();
+        if (reflector != null && reflector.DoesReflectMe(gameObject))
+        {
+            // reflect
+            var rb = GetComponent<Rigidbody2D>();
+            var vect = contact.normal;// Vector2.Reflect(rb.velocity, contact.normal);
+            rb.velocity = vect * lastKnownVelocity.magnitude;
+
+            var angle = Mathf.Rad2Deg * Mathf.Atan2(-vect.x, vect.y);
+            rb.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            DamageOther(contact.collider.gameObject);
+        }
+        else
+        {
+            // destroy 
+            Explode(contact.point, rot);
+            DamageOther(contact.collider.gameObject);
+            Helper.DetachParticles(gameObject);
+            Destroy(gameObject);
+        }
 	}
 
     void Explode(Vector2 pos, Quaternion rot) 
@@ -52,10 +71,10 @@ public class DestroyOnCollision : MonoBehaviour {
     {
         if(baseDamage > 0)
         {
-            var damageable = other.GetComponent<Damageable>();
+            var damageable = other.GetComponent<IDamageable>();
             if(damageable != null)
             {
-                var amt = baseDamage * (1 - damageable.Resistance.Kinetic);
+                var amt = baseDamage * (1 - damageable.GetResistances().Kinetic);
                 damageable.Damage(amt, gameObject);
             }
         }

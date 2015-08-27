@@ -63,10 +63,10 @@ public class LaserRifle : Pickup
             else
             {
                 // do damage
-                var dam = hit.collider.GetComponent<Damageable>();
+                var dam = hit.collider.GetComponent<IDamageable>();
                 if(dam != null)
                 {
-                    var amt = 20 * (1 - dam.Resistance.Heat);
+                    var amt = 20 * (1 - dam.GetResistances().Heat);
                     dam.Damage(20, gameObject);
                 }
             }
