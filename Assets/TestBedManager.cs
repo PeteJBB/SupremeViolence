@@ -35,6 +35,6 @@ public class TestBedManager: MonoBehaviour
 
     void OnGUI()
     {
-        GUI.TextArea(new Rect(20, 20, 200, 20), player.CurrentWeapon.PickupName + " " + player.CurrentWeapon.Ammo);
+        //GUI.TextArea(new Rect(20, 20, 200, 20), player.CurrentWeapon.PickupName + " " + player.CurrentWeapon.Ammo);
     }
 }

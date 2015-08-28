@@ -35,6 +35,8 @@ public class PlayerControl : MonoBehaviour {
 
     private bool isFirstUpdate = true;
 
+    private WeaponCycler weaponCycler;
+
 	// Use this for initialization
 	void Awake () 
     {
@@ -57,11 +59,15 @@ public class PlayerControl : MonoBehaviour {
         }
         muteSounds = false;
 
-        SelectNextWeapon();
+        weaponCycler = GetComponentInChildren<WeaponCycler>();
+
+        
     }
 
     void Start () 
     {
+        SelectNextWeapon();
+
         GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
         BroadcastMessage("SetOrientation", orientation);
         BroadcastMessage("SetAnimationSpeed", 0f);
@@ -289,6 +295,8 @@ public class PlayerControl : MonoBehaviour {
 
         if(CurrentWeapon != null)
             CurrentWeapon.OnSelectWeapon();
+
+        weaponCycler.Cycle(dir);
     }
 
     public void RecalculateMass()
