@@ -24,11 +24,14 @@ public class PlayerHudCanvas : MonoBehaviour
     }
 
 	// Use this for initialization
-	void Start () 
+	void Awake () 
     {
         MessageTextTemplate = transform.FindChild("MessageTextTemplate").gameObject;
         PickupTextTemplate = transform.FindChild("PickupTextTemplate").gameObject;
+    }
 
+    void Start()
+    {
         // create player HUDs
         for(var i=0; i<GameSettings.NumberOfPlayers; i++)
         {

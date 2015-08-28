@@ -16,10 +16,13 @@ public class WeaponCycler : MonoBehaviour
     private SpriteRenderer right;
     private SpriteRenderer right2;
 
+    private Text label;
+
     // Use this for initialization
     void Start()
     {
         player = GetComponentInParent<PlayerControl>();
+        label = GetComponentInChildren<Text>();
 
         left2 = transform.FindChild("left2").GetComponent<SpriteRenderer>();
         left = transform.FindChild("left").GetComponent<SpriteRenderer>();
@@ -49,7 +52,8 @@ public class WeaponCycler : MonoBehaviour
         right.sprite = weapons[(index + 1) % weapons.Count].Icon;
         right2.sprite = weapons[(index + 2) % weapons.Count].Icon;
 
-        
+        label.text = current.PickupName;
+        label.color = new Color(1,1,1,1);
 
         var moveStep = 0.2f;
 
@@ -67,7 +71,14 @@ public class WeaponCycler : MonoBehaviour
             right.transform.localPosition = new Vector3(2 * moveStep, right.transform.localPosition.y, 0);
             right2.transform.localPosition = new Vector3(3 * moveStep, right2.transform.localPosition.y, 0);
 
-            iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.5f, "easetype", iTween.EaseType.easeInOutCirc, "onupdate", (Action<object>)((obj) =>
+            right2.transform.localScale = new Vector3(0, 0, 1);
+            right.transform.localScale = new Vector3(0.3f, 0.3f, 1);
+            center.transform.localScale = new Vector3(0.6f, 0.6f, 1);
+            left.transform.localScale = new Vector3(1, 1, 0);
+            left2.transform.localScale = new Vector3(0.6f, 0.6f, 0);
+
+            iTween.StopByName(gameObject, "weaponCycler");
+            iTween.ValueTo(gameObject, iTween.Hash("name", "weaponCycler", "from", 0, "to", 1, "time", 0.75f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((obj) =>
             {
                 var val = (float)obj;
 
@@ -83,14 +94,23 @@ public class WeaponCycler : MonoBehaviour
                 center.color = new Color(1, 1, 1, 0.5f + (val * 0.5f));
                 right.color = new Color(1, 1, 1, 0 + (val * 0.5f));
                 right2.color = new Color(1, 1, 1, 0);
+
+                right2.transform.localScale = new Vector3(0.3f * val, 0.3f * val, 1);
+                right.transform.localScale = new Vector3(0.3f + (0.3f * val), 0.3f + (0.3f * val), 1);
+                center.transform.localScale = new Vector3(0.6f + (0.3f * val), 0.6f + (0.3f * val), 1);
+                left.transform.localScale = new Vector3(1 - (0.3f * val), 1 - (0.3f * val), 0);
+                left2.transform.localScale = new Vector3(0.6f - (0.3f * val), 0.6f - (0.3f * val), 0);
+
             }), "oncomplete", (Action)(() => 
             {
-
+                // hide icons
                 left2.color = new Color(1, 1, 1, 0);
                 left.color = new Color(1, 1, 1, 0);
                 center.color = new Color(1, 1, 1, 0);
                 right.color = new Color(1, 1, 1, 0);
                 right2.color = new Color(1, 1, 1, 0);
+
+                label.color = new Color(1,1,1,0);
             })));
         }
         else
@@ -108,7 +128,14 @@ public class WeaponCycler : MonoBehaviour
             right.transform.localPosition = new Vector3(0, right.transform.localPosition.y, 0);
             right2.transform.localPosition = new Vector3(moveStep, right2.transform.localPosition.y, 0);
 
-            iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.5f, "easetype", iTween.EaseType.easeInOutCirc, "onupdate", (Action<object>)((obj) =>
+            left2.transform.localScale = new Vector3(0, 0, 1);
+            left.transform.localScale = new Vector3(0.3f, 0.3f, 1);
+            center.transform.localScale = new Vector3(0.6f, 0.6f, 1);
+            right.transform.localScale = new Vector3(1, 1, 0);
+            right2.transform.localScale = new Vector3(0.6f, 0.6f, 0);
+
+            iTween.StopByName(gameObject, "weaponCycler");
+            iTween.ValueTo(gameObject, iTween.Hash("name", "weaponCycler", "from", 0, "to", 1, "time", 0.75f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((obj) =>
             {
                 var val = (float)obj;
 
@@ -123,14 +150,23 @@ public class WeaponCycler : MonoBehaviour
                 center.color = new Color(1, 1, 1, 0.5f + (val * 0.5f));
                 right.color = new Color(1, 1, 1, 1 - (val * 0.5f));
                 right2.color = new Color(1, 1, 1, 0.5f - (val * 0.5f));
+
+                left2.transform.localScale = new Vector3(0.3f * val, 0.3f * val, 1);
+                left.transform.localScale = new Vector3(0.3f + (0.3f * val), 0.3f + (0.3f * val), 1);
+                center.transform.localScale = new Vector3(0.6f + (0.3f * val), 0.6f + (0.3f * val), 1);
+                right.transform.localScale = new Vector3(1 - (0.3f * val), 1 - (0.3f * val), 0);
+                right2.transform.localScale = new Vector3(0.6f - (0.3f * val), 0.6f - (0.3f * val), 0);
+
             }), "oncomplete", (Action)(() => 
             {
-
+                // hide icons
                 left2.color = new Color(1, 1, 1, 0);
                 left.color = new Color(1, 1, 1, 0);
                 center.color = new Color(1, 1, 1, 0);
                 right.color = new Color(1, 1, 1, 0);
                 right2.color = new Color(1, 1, 1, 0);
+
+                label.color = new Color(1,1,1,0);
             })));
         }
     }
