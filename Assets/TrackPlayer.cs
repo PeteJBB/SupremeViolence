@@ -38,10 +38,10 @@ public class TrackPlayer : MonoBehaviour {
             var speed = Mathf.Clamp(path.magnitude, minSpeed, maxSpeed);
             var move = ((path.normalized * speed) + Player.GetComponent<Rigidbody2D>().velocity) * Time.deltaTime;
 
-            if (move.magnitude > target.magnitude)
+            if (move.magnitude > path.magnitude)
                 transform.position = target.ToVector3(transform.position.z);
             else
-                transform.position += path.ToVector3(0);
+                transform.position += move.ToVector3(0);
         }
 	}
 }

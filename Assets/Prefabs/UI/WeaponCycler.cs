@@ -16,6 +16,8 @@ public class WeaponCycler : MonoBehaviour
     private SpriteRenderer right;
     private SpriteRenderer right2;
 
+    private SpriteRenderer icon; // this icons stays visible after animation
+
     private Text label;
 
     // Use this for initialization
@@ -30,12 +32,16 @@ public class WeaponCycler : MonoBehaviour
         right = transform.FindChild("right").GetComponent<SpriteRenderer>();
         right2 = transform.FindChild("right2").GetComponent<SpriteRenderer>();
 
+        icon = transform.FindChild("icon").GetComponent<SpriteRenderer>();
+
 
         left2.color = new Color(1, 1, 1, 0);
         left.color = new Color(1, 1, 1, 0);
         center.color = new Color(1, 1, 1, 0);
         right.color = new Color(1, 1, 1, 0);
         right2.color = new Color(1, 1, 1, 0);
+
+        icon.enabled = true;
     }
 
     // Update is called once per frame
@@ -55,7 +61,7 @@ public class WeaponCycler : MonoBehaviour
         label.text = current.PickupName;
         label.color = new Color(1,1,1,1);
 
-        var moveStep = 0.2f;
+        var moveStep = 0.3f;
 
         if (dir == 1)
         {
@@ -76,6 +82,8 @@ public class WeaponCycler : MonoBehaviour
             center.transform.localScale = new Vector3(0.6f, 0.6f, 1);
             left.transform.localScale = new Vector3(1, 1, 0);
             left2.transform.localScale = new Vector3(0.6f, 0.6f, 0);
+            
+            icon.enabled = false;
 
             iTween.StopByName(gameObject, "weaponCycler");
             iTween.ValueTo(gameObject, iTween.Hash("name", "weaponCycler", "from", 0, "to", 1, "time", 0.75f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((obj) =>
@@ -111,6 +119,9 @@ public class WeaponCycler : MonoBehaviour
                 right2.color = new Color(1, 1, 1, 0);
 
                 label.color = new Color(1,1,1,0);
+
+                icon.sprite = current.Icon;
+                icon.enabled = true;
             })));
         }
         else
@@ -133,6 +144,8 @@ public class WeaponCycler : MonoBehaviour
             center.transform.localScale = new Vector3(0.6f, 0.6f, 1);
             right.transform.localScale = new Vector3(1, 1, 0);
             right2.transform.localScale = new Vector3(0.6f, 0.6f, 0);
+
+            icon.enabled = false;
 
             iTween.StopByName(gameObject, "weaponCycler");
             iTween.ValueTo(gameObject, iTween.Hash("name", "weaponCycler", "from", 0, "to", 1, "time", 0.75f, "easetype", iTween.EaseType.easeOutCirc, "onupdate", (Action<object>)((obj) =>
@@ -167,6 +180,8 @@ public class WeaponCycler : MonoBehaviour
                 right2.color = new Color(1, 1, 1, 0);
 
                 label.color = new Color(1,1,1,0);
+                icon.sprite = current.Icon;
+                icon.enabled = true;
             })));
         }
     }

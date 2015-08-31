@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class FillBar: MonoBehaviour 
 {
+    public FillBarColorPoint[] Colors;
+
     private SpriteRenderer frame;
     private SpriteRenderer bar;
     private float fullScale;
@@ -24,6 +26,13 @@ public class FillBar: MonoBehaviour
     {
         var scale = Mathf.Clamp(amt, 0, 1) * fullScale;
         bar.transform.localScale = new Vector3(scale, bar.transform.localScale.y, bar.transform.localScale.z);
+
+        if (Colors != null && Colors.Any())
+        {
+            var point = Colors.OrderByDescending(x => x.value).FirstOrDefault(x => x.value <= amt);
+            if (point != null)
+                bar.color = point.color;
+        }
     }
 
     public void Hide(bool immediate = false)
@@ -61,11 +70,18 @@ public class FillBar: MonoBehaviour
         iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.15f, "easetype", iTween.EaseType.linear, "onupdate", (Action<object>)((val) =>
         {
             var a = (float)val;
-            frame.color = new Color(0, 0, 0, a * 0.25f);
+            frame.color = new Color(0, 0, 0, a);
 
             var barColor = bar.color;
             barColor.a = a;
             bar.color = barColor;
         })));
     }
+}
+
+[System.Serializable]
+public class FillBarColorPoint
+{
+    public Color color;
+    public float value;
 }

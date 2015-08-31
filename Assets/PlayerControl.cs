@@ -35,6 +35,8 @@ public class PlayerControl : MonoBehaviour {
 
     private bool isFirstUpdate = true;
 
+    private FillBar ammobar;
+    private SpriteRenderer weaponIcon;
     private WeaponCycler weaponCycler;
 
 	// Use this for initialization
@@ -59,8 +61,9 @@ public class PlayerControl : MonoBehaviour {
         }
         muteSounds = false;
 
+        ammobar = transform.FindChild("ammobar").GetComponent<FillBar>();
+        //weaponIcon = transform.FindChild("weaponIcon").GetComponent<SpriteRenderer>();
         weaponCycler = GetComponentInChildren<WeaponCycler>();
-
         
     }
 
@@ -157,6 +160,13 @@ public class PlayerControl : MonoBehaviour {
             }
 
             lastGamePadState = gamepadState;
+        }
+
+        // update wepaon icon and ammo bars
+        if (CurrentWeapon != null)
+        {
+            ammobar.SetFill(CurrentWeapon.Ammo / (float)CurrentWeapon.MaxAmmo);
+            //weaponIcon.sprite = CurrentWeapon.Icon;
         }
 
         BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
