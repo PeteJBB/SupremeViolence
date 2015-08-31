@@ -18,13 +18,15 @@ public class WeaponCycler : MonoBehaviour
 
     private SpriteRenderer icon; // this icons stays visible after animation
 
-    private Text label;
+    private CanvasGroup label;
+    private Text labelText;
 
     // Use this for initialization
     void Start()
     {
         player = GetComponentInParent<PlayerControl>();
-        label = GetComponentInChildren<Text>();
+        label = transform.FindChild("label").GetComponent<CanvasGroup>();
+        labelText = transform.FindChild("label/text").GetComponent<Text>();
 
         left2 = transform.FindChild("left2").GetComponent<SpriteRenderer>();
         left = transform.FindChild("left").GetComponent<SpriteRenderer>();
@@ -58,8 +60,8 @@ public class WeaponCycler : MonoBehaviour
         right.sprite = weapons[(index + 1) % weapons.Count].Icon;
         right2.sprite = weapons[(index + 2) % weapons.Count].Icon;
 
-        label.text = current.PickupName;
-        label.color = new Color(1,1,1,1);
+        labelText.text = current.PickupName;
+        label.alpha = 1;
 
         var moveStep = 0.3f;
 
@@ -118,9 +120,9 @@ public class WeaponCycler : MonoBehaviour
                 right.color = new Color(1, 1, 1, 0);
                 right2.color = new Color(1, 1, 1, 0);
 
-                label.color = new Color(1,1,1,0);
+                label.alpha = 0;
 
-                icon.sprite = current.Icon;
+                icon.sprite = forcedIcon == null ? current.Icon : forcedIcon;
                 icon.enabled = true;
             })));
         }
@@ -179,10 +181,24 @@ public class WeaponCycler : MonoBehaviour
                 right.color = new Color(1, 1, 1, 0);
                 right2.color = new Color(1, 1, 1, 0);
 
-                label.color = new Color(1,1,1,0);
-                icon.sprite = current.Icon;
+                label.alpha = 0;
+
+                icon.sprite = forcedIcon == null ? current.Icon : forcedIcon;
                 icon.enabled = true;
             })));
         }
+    }
+
+    private Sprite forcedIcon;
+    public void SetIcon(Sprite sprite)
+    {
+        icon.sprite = sprite;
+        forcedIcon = sprite;
+    }
+
+    public void ClearIcon(Sprite sprite)
+    {
+        icon.sprite = sprite;
+        forcedIcon = null;
     }
 }

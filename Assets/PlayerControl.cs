@@ -36,8 +36,10 @@ public class PlayerControl : MonoBehaviour {
     private bool isFirstUpdate = true;
 
     private FillBar ammobar;
-    private SpriteRenderer weaponIcon;
+    //private SpriteRenderer weaponIcon;
     private WeaponCycler weaponCycler;
+
+    private Pickup ammoBarSource;
 
 	// Use this for initialization
 	void Awake () 
@@ -61,15 +63,14 @@ public class PlayerControl : MonoBehaviour {
         }
         muteSounds = false;
 
-        ammobar = transform.FindChild("ammobar").GetComponent<FillBar>();
-        //weaponIcon = transform.FindChild("weaponIcon").GetComponent<SpriteRenderer>();
-        weaponCycler = GetComponentInChildren<WeaponCycler>();
-        
+        ammobar = transform.FindChild("UI/ammobar").GetComponent<FillBar>();        
+        weaponCycler = GetComponentInChildren<WeaponCycler>();        
     }
 
     void Start () 
     {
         SelectNextWeapon();
+        ammoBarSource = CurrentWeapon;
 
         GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
         BroadcastMessage("SetOrientation", orientation);
@@ -163,14 +164,36 @@ public class PlayerControl : MonoBehaviour {
         }
 
         // update wepaon icon and ammo bars
-        if (CurrentWeapon != null)
+        if (ammoBarSource != null)
         {
-            ammobar.SetFill(CurrentWeapon.Ammo / (float)CurrentWeapon.MaxAmmo);
-            //weaponIcon.sprite = CurrentWeapon.Icon;
+            ammobar.SetFill(ammoBarSource.GetAmmoBarValue());
         }
 
         BroadcastMessage("SetAnimationSpeed", rbody.velocity.magnitude);
 	}
+
+    public void SetAmmoBarSource(Pickup p, Color color)
+    {
+        SetAmmoBarSource(p, new FillBarColorPoint[] { new FillBarColorPoint(color, 0) });
+    }
+
+    public void SetAmmoBarSource(Pickup p, FillBarColorPoint[] colors = null)
+    {
+        ammoBarSource = p;
+        weaponCycler.SetIcon(p.Icon);
+
+        if (colors == null)
+            colors = new FillBarColorPoint[] { new FillBarColorPoint(Color.yellow, 0) };
+
+        ammobar.Colors = colors;
+    }
+
+    public void RestoreAmmoBarSource()
+    {
+        SetAmmoBarSource(CurrentWeapon);
+        weaponCycler.ClearIcon(CurrentWeapon.Icon);
+        ammobar.Colors = new FillBarColorPoint[] { new FillBarColorPoint(Color.yellow, 0) };
+    }
 
     public void OnGameOver()
     {

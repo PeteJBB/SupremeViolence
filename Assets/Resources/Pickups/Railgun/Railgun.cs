@@ -8,7 +8,7 @@ public class Railgun : Pickup
     public AudioClip FireSound;
     public GameObject ImpactPrefab;
 
-    private float chargingTime = 2.6f;
+    private float chargingTime = 2f;
     private bool isCharging = false;
     private float chargeStartTime;
 
@@ -20,7 +20,6 @@ public class Railgun : Pickup
 
     private ParticleSystem particles;
     private GameObject muzzleFlash;
-    private FillBar chargeBar;
 
 	// Use this for initialization
     void Awake()
@@ -36,9 +35,6 @@ public class Railgun : Pickup
         // particles
         particles = GetComponent<ParticleSystem>();
         particles.enableEmission = false;
-
-        chargeBar = transform.FindChild("chargebar").GetComponent<FillBar>();
-        chargeBar.Hide();
 
         muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
         HideMuzzleFlash();
@@ -65,26 +61,25 @@ public class Railgun : Pickup
             humming.Play();
             chargingSound.Play();
 
-            chargeBar.Show();
-            chargeBar.SetFill(0);
-
             iTween.StopByName(gameObject, "charge");
             iTween.ValueTo(gameObject, iTween.Hash("name", "charge", "from", 0f, "to", 1f, "time", chargingTime, "onupdate", (Action<object>)((o) => 
             {
                 var val = (float)o;
-                chargeBar.SetFill(val);
                 humming.volume = val;
             }),
             "oncomplete", (Action)(() =>
             {
                 particles.enableEmission = true;
             })));
+
+            Player.SetAmmoBarSource(this, new FillBarColorPoint[] { new FillBarColorPoint(new Color(0, 0.5f, 0), 0), new FillBarColorPoint(new Color(0, 1, 0), 1) });
         }
     }
 
     public override void OnFireUp(Vector3 origin)
     {
-        chargeBar.Hide();
+        //chargeBar.Hide();
+        Player.RestoreAmmoBarSource();
 
         if(Ammo > 0)
         {
@@ -208,5 +203,15 @@ public class Railgun : Pickup
     {
         muzzleFlash.GetComponent<Light>().enabled = false;
         muzzleFlash.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    public override float GetAmmoBarValue()
+    {
+        if (isCharging)
+        {
+            return (Time.time - chargeStartTime) / chargingTime;
+        }
+
+        return base.GetAmmoBarValue();
     }
 }

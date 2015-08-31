@@ -15,7 +15,7 @@ public class Shield: Pickup, IDamageable, IReflector
 
     private SpriteRenderer overlay;
     private CircleCollider2D collider;
-    private FillBar ammoBar;
+    //private FillBar ammoBar;
     
     private Material defaultMaterial;
     private Material flashMaterial;
@@ -30,7 +30,7 @@ public class Shield: Pickup, IDamageable, IReflector
     void Awake()
     {        
         overlay = transform.FindChild("overlay").GetComponent<SpriteRenderer>();
-        ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
+        //ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
 
         overlay.enabled = false;
         transform.localScale = Vector3.zero;
@@ -59,7 +59,7 @@ public class Shield: Pickup, IDamageable, IReflector
                 if (Time.time - lastAmmoDrain > 0.05f)
                 {
                     Ammo--;
-                    ammoBar.SetFill(Ammo / (float)MaxAmmo);
+                    //ammoBar.SetFill(Ammo / (float)MaxAmmo);
                     lastAmmoDrain = Time.time;
 
                     if (Ammo <= 0)
@@ -102,11 +102,12 @@ public class Shield: Pickup, IDamageable, IReflector
         return "A personal energy shield which reflects projectiles away from you and towards some other unsuspecting fool. Battery life is short so use wisely!";
     }
 
-
     private void ActivateShield()
     {
         if (Ammo > 0)
         {
+            Player.SetAmmoBarSource(this, new FillBarColorPoint[] { new FillBarColorPoint(new Color(.148f, .668f, 1), 0) });
+
             overlay.enabled = true;
             collider.enabled = true;
             isShieldActivated = true;
@@ -132,6 +133,7 @@ public class Shield: Pickup, IDamageable, IReflector
     {
         isShieldActivated = false;
 
+        Player.RestoreAmmoBarSource();
         
        if(DeactivateSound != null)
             AudioSource.PlayClipAtPoint(DeactivateSound, transform.position);

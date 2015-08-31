@@ -78,7 +78,7 @@ public class GameBrain : Singleton<GameBrain>
             cameras.Add(cam);
             cam.orthographicSize = 4;
             cam.name = "PlayerCamera" + i;
-            var track = cam.GetComponent<TrackPlayer>();
+            var track = cam.GetComponent<PlayerCamera>();
             track.PlayerIndex = i;
             if(i > 0)
                 cam.GetComponent<AudioListener>().enabled = false;

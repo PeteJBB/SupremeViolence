@@ -81,6 +81,11 @@ public class Pickup : MonoBehaviour
         }
     }
 
+    public virtual float GetAmmoBarValue()
+    {
+        return (float)Ammo / MaxAmmo;
+    }
+
     public virtual float GetLegStrengthMultiplier()
     {
         return 1;

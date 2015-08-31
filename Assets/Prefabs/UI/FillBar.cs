@@ -84,4 +84,10 @@ public class FillBarColorPoint
 {
     public Color color;
     public float value;
+
+    public FillBarColorPoint(Color col, float val = 0)
+    {
+        value = val;
+        color = col;
+    }
 }

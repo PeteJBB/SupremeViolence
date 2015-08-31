@@ -7,7 +7,7 @@ public class SpeedyBoots : Pickup
     ParticleSystem particles;
     Rigidbody2D ownerPlayerBody;
 
-    private FillBar ammoBar;
+    //private FillBar ammoBar;
     
     private bool isBootsActive = false;
     private float lastAmmoDrain;
@@ -25,13 +25,13 @@ public class SpeedyBoots : Pickup
 
         base.OnPlayerPickup.AddListener(OnPlayerPickup);
 
-        ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
+        //ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
         
 	}
 
     void Start()
     {
-        ammoBar.Hide(true);
+        //ammoBar.Hide(true);
     }
 	
 	// Update is called once per frame
@@ -44,7 +44,7 @@ public class SpeedyBoots : Pickup
             if (Time.time - lastAmmoDrain > 0.05f)
             {
                 Ammo--;
-                ammoBar.SetFill(Ammo / (float)MaxAmmo);
+                //ammoBar.SetFill(Ammo / (float)MaxAmmo);
                 lastAmmoDrain = Time.time;
 
                 if (Ammo <= 0)
@@ -93,15 +93,17 @@ public class SpeedyBoots : Pickup
         {
             isBootsActive = true;
             particles.enableEmission = true;
-            ammoBar.Show();
+
+            Player.SetAmmoBarSource(this, Color.red);
         }
     }
 
     private void DeactivateBoots()
     {
         isBootsActive = false;
-        particles.enableEmission = false;
-        ammoBar.Hide();
+        particles.enableEmission = false;        
+
+        Player.RestoreAmmoBarSource();
     }
 
     public override float GetLegStrengthMultiplier()
