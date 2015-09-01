@@ -98,7 +98,7 @@ public class PlayerControl : MonoBehaviour {
 
             // aim
             var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);
-            viewOffset = aimInput * 2;
+            viewOffset = aimInput;// *2;
             if(aimInput.magnitude == 0)
                 aimInput = moveInput;
 

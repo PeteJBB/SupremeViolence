@@ -34,7 +34,8 @@ public class ShopWindow: CustomMenuInputController
         var rect = GetComponent<RectTransform>();
         renderTexture = new RenderTexture((int)rect.rect.width, (int)rect.rect.height, 0, RenderTextureFormat.Default);
         renderTexture.Create();
-        
+        renderTexture.filterMode = FilterMode.Bilinear;
+
         var camera = GetComponentInChildren<Camera>();
         camera.targetTexture = renderTexture;
 

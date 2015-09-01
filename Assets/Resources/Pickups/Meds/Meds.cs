@@ -26,6 +26,7 @@ public class Meds: Pickup
     {
         activateSoundSource = gameObject.AddComponent<AudioSource>();
         activateSoundSource.clip = ActivateSound;
+        activateSoundSource.playOnAwake = false;
     }
 
     void Update()

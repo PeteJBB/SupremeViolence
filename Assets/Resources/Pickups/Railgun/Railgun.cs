@@ -28,9 +28,11 @@ public class Railgun : Pickup
         humming = gameObject.AddComponent<AudioSource>();
         humming.clip = HummingSoundClip;
         humming.loop = true;
+        humming.playOnAwake = false;
 
         chargingSound = gameObject.AddComponent<AudioSource>();
         chargingSound.clip = ChargingSoundClip;
+        chargingSound.playOnAwake = false;
 
         // particles
         particles = GetComponent<ParticleSystem>();
