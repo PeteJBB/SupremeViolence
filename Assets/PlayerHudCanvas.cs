@@ -120,7 +120,7 @@ public class PlayerHudCanvas : MonoBehaviour
         var point = WorldToCanvasPoint(obj.transform.position, playerIndex);
         rect.anchoredPosition = point;
 
-        iTween.MoveTo(textObj, iTween.Hash("y", point.y + 38, "time", 1));
+        iTween.MoveTo(textObj, iTween.Hash("y", point.y + 70, "time", 1));
         iTween.ValueTo(textObj, iTween.Hash("from", 1, "to", 0, "delay", 1, "time", 0.3f, "onupdate", (Action<object>) (newVal =>  
         { 
             var c = text.color; 

@@ -22,7 +22,7 @@ public class WeaponCycler : MonoBehaviour
     private Text labelText;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         player = GetComponentInParent<PlayerControl>();
         label = transform.FindChild("label").GetComponent<CanvasGroup>();

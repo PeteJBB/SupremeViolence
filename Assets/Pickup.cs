@@ -8,6 +8,7 @@ public class Pickup : MonoBehaviour
     public Sprite Icon;
     public PickupType PickupType;
     public AudioClip PickupSound;
+    public bool SpawnDuringGame = true;
 
     [HideInInspector]
     public UnityEvent OnPlayerPickup = new UnityEvent();

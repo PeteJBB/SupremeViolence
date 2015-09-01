@@ -1,16 +1,14 @@
 fileFormatVersion: 2
-guid: c6f115156d2b8624485c544217537a45
-timeCreated: 1441017395
+guid: 552c072a19b39e449b7ffab1792cd97a
+timeCreated: 1441078866
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: laserRifleSprite_0
-    21300002: laserRifleSprite_1
-    21300004: laserRifleSprite_2
-    21300006: laserRifleSprite_3
-    21300008: laserRifleSprite_4
-    21300010: laserRifleSprite_5
-    21300012: laserRifleSprite_6
+    21300000: bulletImpactSprite_0
+    21300002: bulletImpactSprite_1
+    21300004: bulletImpactSprite_2
+    21300006: bulletImpactSprite_3
+    21300008: bulletImpactSprite_4
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -37,7 +35,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
-    aniso: -1
+    aniso: 16
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -56,65 +54,55 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: laserRifleSprite_1
+    - name: bulletImpactSprite_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
-        width: 32
-        height: 32
+        x: 6
+        y: 39
+        width: 21
+        height: 15
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: laserRifleSprite_2
+    - name: bulletImpactSprite_1
       rect:
         serializedVersion: 2
-        x: 32
-        y: 64
-        width: 32
-        height: 32
+        x: 37
+        y: 39
+        width: 27
+        height: 20
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: laserRifleSprite_3
+    - name: bulletImpactSprite_2
       rect:
         serializedVersion: 2
-        x: 64
-        y: 64
-        width: 32
-        height: 32
+        x: 75
+        y: 41
+        width: 14
+        height: 11
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: laserRifleSprite_4
+    - name: bulletImpactSprite_3
       rect:
         serializedVersion: 2
-        x: 96
-        y: 64
-        width: 32
-        height: 32
+        x: 105
+        y: 40
+        width: 18
+        height: 17
       alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: laserRifleSprite_5
+    - name: bulletImpactSprite_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 32
+        x: 6
+        y: 7
+        width: 21
+        height: 18
       alignment: 0
-      pivot: {x: .5, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: laserRifleSprite_6
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: .5, y: .5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

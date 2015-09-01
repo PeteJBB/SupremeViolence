@@ -80,6 +80,7 @@ public class GameBrain : Singleton<GameBrain>
             cam.name = "PlayerCamera" + i;
             var track = cam.GetComponent<PlayerCamera>();
             track.PlayerIndex = i;
+            
             if(i > 0)
                 cam.GetComponent<AudioListener>().enabled = false;
             

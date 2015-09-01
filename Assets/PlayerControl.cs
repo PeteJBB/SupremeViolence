@@ -140,7 +140,7 @@ public class PlayerControl : MonoBehaviour {
             }
 
     		// shoot?
-            if (gamepadState.Triggers.Right > 0)
+            if (gamepadState.Triggers.Right > 0.5f)
     		{
                 if(!triggerDown)
                 {
@@ -163,7 +163,7 @@ public class PlayerControl : MonoBehaviour {
             lastGamePadState = gamepadState;
         }
 
-        // update wepaon icon and ammo bars
+        // update weapon icon and ammo bars
         if (ammoBarSource != null)
         {
             ammobar.SetFill(ammoBarSource.GetAmmoBarValue());
@@ -329,6 +329,7 @@ public class PlayerControl : MonoBehaviour {
         if(CurrentWeapon != null)
             CurrentWeapon.OnSelectWeapon();
 
+        SetAmmoBarSource(CurrentWeapon);
         weaponCycler.Cycle(dir);
     }
 
