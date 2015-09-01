@@ -25,17 +25,9 @@ public class Grenade : MonoBehaviour
                 var exp = Instantiate<GameObject>(ExplosionPrefab).GetComponent<Explosion>();
                 exp.transform.position = transform.position;
                 exp.gameObject.SetOwner(gameObject.GetOwner());
-                exp.DamageRadius = 1f;
-                exp.MaxDamage = 100;
             }
 
-            // detach particle sys
-            var particles = transform.FindChild("Particles");
-            particles.transform.parent = null;
-            var pSys = particles.GetComponent<ParticleSystem>();
-            pSys.Stop();
-            Destroy(particles.gameObject, pSys.startLifetime);
-
+            Helper.DetachParticles(gameObject);
             Destroy(gameObject);
         }
 	}

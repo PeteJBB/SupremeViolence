@@ -144,6 +144,14 @@ public class Damageable : MonoBehaviour, IDamageable
         }
     }
 
+    public void SetHealth(float val)
+    {
+        Health = val;
+
+        if(healthBar != null)
+            healthBar.SetFill(Health / StartingHealth);
+    }
+
     public void FlashSprites()
     {
         if (spriteRenderers.Any())

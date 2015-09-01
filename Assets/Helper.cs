@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using XInputDotNetPure;
 
 public class Helper : Singleton<Helper>
 {
@@ -131,5 +132,19 @@ public class Helper : Singleton<Helper>
     }
 
 
-
+    public static GamePadState GetGamePadInput(int playerIndex)
+    {
+        switch(playerIndex)
+        {
+            case 0:
+            default:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.One);
+            case 1:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Two);
+            case 2:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Three);
+            case 3:
+                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
+        }
+    }
 }

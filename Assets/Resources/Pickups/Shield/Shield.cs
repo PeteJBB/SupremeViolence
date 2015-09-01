@@ -71,7 +71,7 @@ public class Shield: Pickup, IDamageable, IReflector
                 }
             }
 
-            var gamepadState = GetGamePadInput();
+            var gamepadState = Helper.GetGamePadInput(Player.PlayerIndex);
 
             if (gamepadState.Buttons.Y == ButtonState.Pressed && !isShieldActivated)
             {
@@ -85,22 +85,6 @@ public class Shield: Pickup, IDamageable, IReflector
         }
 	}    
 
-    private GamePadState GetGamePadInput()
-    {
-        switch(Player.PlayerIndex)
-        {
-            case 0:
-            default:
-                return GamePad.GetState(XInputDotNetPure.PlayerIndex.One);
-            case 1:
-                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Two);
-            case 2:
-                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Three);
-            case 3:
-                return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
-        }
-    }
-    
     private void ActivateShield()
     {
         if (Ammo > 0)
