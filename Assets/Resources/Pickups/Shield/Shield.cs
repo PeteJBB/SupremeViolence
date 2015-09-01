@@ -25,6 +25,10 @@ public class Shield: Pickup, IDamageable, IReflector
     private float lastHitSoundPlayTime;
     private float lastAmmoDrain;
 	
+    public override string GetDescription()
+    {
+        return "A personal energy shield which reflects projectiles away from you and towards some other unsuspecting fool.";
+    }
 
 	// Use this for initialization
     void Awake()
@@ -96,12 +100,7 @@ public class Shield: Pickup, IDamageable, IReflector
                 return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
         }
     }
-
-    public override string GetDescription()
-    {
-        return "A personal energy shield which reflects projectiles away from you and towards some other unsuspecting fool. Battery life is short so use wisely!";
-    }
-
+    
     private void ActivateShield()
     {
         if (Ammo > 0)

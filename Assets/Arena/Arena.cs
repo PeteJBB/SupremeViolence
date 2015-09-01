@@ -281,6 +281,9 @@ public class Arena : Singleton<Arena>
     /// </summary>
     void CheckSpawnRandomPickup()
     {
+        if (PickupIconPrefab == null)
+            return;
+
         // how many pickup icons are around right now?
         var icons = FindObjectsOfType<PickupIcon>();
         var spawnablePickups = GameSettings.PickupPrefabs.Where(x => x.SpawnDuringGame).ToList();

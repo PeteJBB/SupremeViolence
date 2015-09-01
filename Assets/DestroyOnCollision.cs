@@ -10,6 +10,7 @@ public class DestroyOnCollision : MonoBehaviour
     private Vector3 lastKnownVelocity;
 
     public bool CanBeReflected = false;
+    public AudioClip CollisionSound;
 
 	// Use this for initialization
 	void Awake () 
@@ -70,6 +71,11 @@ public class DestroyOnCollision : MonoBehaviour
         {
             var exp = (GameObject)Instantiate(explosionPrefab, pos, rot);
             exp.SetOwner(gameObject.GetOwner());
+        }
+
+        if (CollisionSound != null)
+        {
+            AudioSource.PlayClipAtPoint(CollisionSound, transform.position);
         }
     }
 
