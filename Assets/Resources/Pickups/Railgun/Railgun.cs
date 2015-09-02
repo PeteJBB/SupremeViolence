@@ -5,13 +5,14 @@ using System.Collections;
 public class Railgun : Pickup
 {
     public GameObject BeamPrefab;
-    public AudioClip FireSound;
     public GameObject ImpactPrefab;
 
     private float chargingTime = 2f;
     private bool isCharging = false;
     private float chargeStartTime;
 
+    public AudioClip FireSound;
+    public AudioClip FireEmptySound;
     public AudioClip ChargingSoundClip;
     public AudioClip HummingSoundClip;
 
@@ -49,7 +50,7 @@ public class Railgun : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        if(Ammo > 0)
+        if (Ammo > 0)
         {
             chargeStartTime = Time.time;
             isCharging = true;
@@ -64,7 +65,7 @@ public class Railgun : Pickup
             chargingSound.Play();
 
             iTween.StopByName(gameObject, "charge");
-            iTween.ValueTo(gameObject, iTween.Hash("name", "charge", "from", 0f, "to", 1f, "time", chargingTime, "onupdate", (Action<object>)((o) => 
+            iTween.ValueTo(gameObject, iTween.Hash("name", "charge", "from", 0f, "to", 1f, "time", chargingTime, "onupdate", (Action<object>)((o) =>
             {
                 var val = (float)o;
                 humming.volume = val;
@@ -75,6 +76,10 @@ public class Railgun : Pickup
             })));
 
             Player.SetAmmoBarSource(this, new FillBarColorPoint[] { new FillBarColorPoint(new Color(0, 0.5f, 0), 0), new FillBarColorPoint(new Color(0, 1, 0), 1) });
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
         }
     }
 

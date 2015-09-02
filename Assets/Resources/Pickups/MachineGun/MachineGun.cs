@@ -7,6 +7,7 @@ public class MachineGun : Pickup
     public GameObject MuzzleFlashPrefab;
     public GameObject BulletPrefab;
     public AudioClip FireSound;
+    public AudioClip FireEmptySound;
 
     private float fireDelay = 0.1f;
     private bool isTriggerDown = false;
@@ -29,7 +30,10 @@ public class MachineGun : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        isTriggerDown = true;
+        if (Ammo > 0)
+            isTriggerDown = true;
+        else
+            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
     }
 
     public void FireBullet()
@@ -49,7 +53,7 @@ public class MachineGun : Pickup
             if (shield.Any())
                 Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
 
-            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
+            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 4f), ForceMode2D.Impulse);
             bullet.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;

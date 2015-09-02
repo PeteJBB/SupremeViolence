@@ -7,6 +7,7 @@ public class PlasmaGun : Pickup
     public GameObject MuzzleFlashPrefab;
     public GameObject BulletPrefab;
     public AudioClip FireSound;
+    public AudioClip FireEmptySound;
 
     private float fireDelay = 0.1f;
     private bool isTriggerDown = false;
@@ -29,7 +30,10 @@ public class PlasmaGun : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        isTriggerDown = true;
+        if (Ammo > 0)
+            isTriggerDown = true;
+        else
+            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
     }
 
     public void FireBullet()

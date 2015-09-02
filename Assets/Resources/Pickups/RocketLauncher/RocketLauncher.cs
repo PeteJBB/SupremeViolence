@@ -6,7 +6,8 @@ public class RocketLauncher : Pickup
 {
     public GameObject RocketPrefab;
     public AudioClip FireSound;
-
+    public AudioClip FireEmptySound;
+    
     public override string GetDescription()
     {
         return "Rockets sure are fun aren't they? This is your high-explosive, point and shoot, no frills model favoured by terrorists and action movie stars alike.";
@@ -14,11 +15,11 @@ public class RocketLauncher : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        if(Ammo > 0)
+        if (Ammo > 0)
         {
             var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
             var rocket = (GameObject)GameObject.Instantiate(RocketPrefab, origin, rotation);
-            
+
             // ignore player
             Physics2D.IgnoreCollision(Player.GetComponent<Collider2D>(), rocket.GetComponent<Collider2D>());
 
@@ -31,6 +32,10 @@ public class RocketLauncher : Pickup
             rocket.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
         }
     }
 

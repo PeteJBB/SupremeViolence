@@ -6,6 +6,7 @@ public class GrenadeLauncher : Pickup
 {
     public GameObject GrenadePrefab;
     public AudioClip FireSound;
+    public AudioClip FireEmptySound;
 
     public override string GetDescription()
     {
@@ -32,6 +33,10 @@ public class GrenadeLauncher : Pickup
             grenade.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
             Ammo--;
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
         }
     }
 }

@@ -12,6 +12,7 @@ public class Minigun : Pickup
     public AudioClip SpinClip;
     public AudioClip SpinDownClip;
     public AudioClip FireClip;
+    public AudioClip FireEmptyClip;
 
     private AudioSource spinUpSound;
     private AudioSource spinSound;
@@ -49,8 +50,20 @@ public class Minigun : Pickup
     {
         if (isTriggerDown && Time.time - lastFireTime > fireDelay)
         {
-            FireBullet();
-            lastFireTime = Time.time;
+            if (Ammo > 0)
+            {
+                if (!spinSound.isPlaying)
+                    spinSound.Play();
+
+                FireBullet();
+                lastFireTime = Time.time;
+            }
+            else if (spinSound.isPlaying)
+            {
+                spinSound.Stop();
+                spinDownSound.Play();
+                isTriggerDown = false;
+            }
         }
     }
 
@@ -68,28 +81,33 @@ public class Minigun : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        isTriggerDown = true;
-
-        float timeToSpinUp;
-
-        if (spinDownSound.isPlaying && spinDownSound.time < spinUpTime)
+        if (Ammo > 0)
         {
-            var ratio = spinDownSound.time / spinDownSound.clip.length;
-            timeToSpinUp = spinUpTime * ratio;
-            spinUpSound.time = spinUpSound.clip.length - (spinUpSound.clip.length * ratio);
+            isTriggerDown = true;
+            float timeToSpinUp;
 
-            Debug.Log("timeToSpinUp " + timeToSpinUp);
+            if (spinDownSound.isPlaying && spinDownSound.time < spinUpTime)
+            {
+                var ratio = spinDownSound.time / spinDownSound.clip.length;
+                timeToSpinUp = spinUpTime * ratio;
+                spinUpSound.time = spinUpSound.clip.length - (spinUpSound.clip.length * ratio);
+
+                Debug.Log("timeToSpinUp " + timeToSpinUp);
+            }
+            else
+            {
+                timeToSpinUp = spinUpTime;
+                spinUpSound.time = 0;
+            }
+
+            spinDownSound.Stop();
+            spinUpSound.Play();
+            lastFireTime = Time.time + timeToSpinUp - fireDelay;
         }
         else
         {
-            timeToSpinUp = spinUpTime;
-            spinUpSound.time = 0;
+            AudioSource.PlayClipAtPoint(FireEmptyClip, transform.position);
         }
-
-        spinDownSound.Stop();
-        spinUpSound.Play();
-        lastFireTime = Time.time + timeToSpinUp - fireDelay;
-
         //iTween.AudioTo(gameObject, iTween.Hash("name", "spin", "audiosource", spinSound, "pitch", 1, "volume", 1, "time", spinUpTime)); 
     }
 
@@ -97,9 +115,18 @@ public class Minigun : Pickup
     {
         isTriggerDown = false;
 
-        spinUpSound.Stop();
-        spinSound.Stop();
-        spinDownSound.Play();
+        if (spinSound.isPlaying || spinUpSound.isPlaying)
+        {
+            spinUpSound.Stop();
+            spinSound.Stop();
+
+            if (spinUpSound.isPlaying)
+            {
+                spinDownSound.time = spinUpSound.clip.length - spinUpSound.time;               
+            }
+
+            spinDownSound.Play();
+        }
     }
 
     public void FireBullet()
@@ -119,14 +146,12 @@ public class Minigun : Pickup
             if (shield.Any())
                 Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
 
-            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
+            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 4f), ForceMode2D.Impulse);
             bullet.SetOwner(Player.gameObject);
 
-            if (!spinSound.isPlaying)
-                spinSound.Play();
 
             fireSound.time = 0;
-            if(!fireSound.isPlaying)
+            if (!fireSound.isPlaying)
                 fireSound.Play();
 
             Ammo--;

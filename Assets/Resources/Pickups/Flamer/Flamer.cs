@@ -5,6 +5,9 @@ using System.Linq;
 public class Flamer : Pickup
 {
     public GameObject FlamePrefab;
+    public AudioClip FireEmptySoundClip;
+    public AudioClip FireJetSoundClip;
+    public AudioClip FlameSoundClip;
 
     private float fireDelay = 0.04f;
     private bool isFiring = false;
@@ -12,13 +15,20 @@ public class Flamer : Pickup
 
     private AudioSource jetSound;
     private AudioSource flameSound;
-
+    
 	// Use this for initialization
-	void Start()
+	void Awake()
     {
-        jetSound = GetComponents<AudioSource>()[0];
-        flameSound = GetComponents<AudioSource>()[1];
+        jetSound = gameObject.AddComponent<AudioSource>();
+        jetSound.clip = FireJetSoundClip;
+        jetSound.loop = true;
+        jetSound.playOnAwake = false;
+
+        flameSound = gameObject.AddComponent<AudioSource>();
+        flameSound.clip = FlameSoundClip;
+        flameSound.loop = true;
         flameSound.volume = 0;
+        flameSound.playOnAwake = false;
 	}
 	
 	// Update is called once per frame
@@ -45,9 +55,13 @@ public class Flamer : Pickup
 
     public override void OnFireDown(Vector3 origin)
     {
-        if(Ammo > 0)
+        if (Ammo > 0)
         {
             StartFiring();
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(FireEmptySoundClip, transform.position);
         }
     }
 

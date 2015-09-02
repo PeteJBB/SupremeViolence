@@ -7,19 +7,28 @@ using UnityEngine.UI;
 
 public class TestBedManager: MonoBehaviour 
 {
-    PlayerControl player;
+    PlayerControl[] players;
+
+    public bool GiveAllPickups;
+    public bool UnlimitedAmmo;
+    public bool Invincibility;
 
 	// Use this for initialization
 	void Start () 
     {
-        foreach (var player in FindObjectsOfType<PlayerControl>())
+        players = FindObjectsOfType<PlayerControl>();
+
+        if (GiveAllPickups)
         {
-            foreach (var prefab in GameSettings.PickupPrefabs)
+            foreach (var player in players)
             {
-                //Debug.Log("TestManager adding pickup: " + prefab.PickupName);
-                var pickup = Instantiate(prefab);
-                pickup.PickupSound = null;
-                pickup.CollectPickup(player);
+                foreach (var prefab in GameSettings.PickupPrefabs)
+                {
+                    //Debug.Log("TestManager adding pickup: " + prefab.PickupName);
+                    var pickup = Instantiate(prefab);
+                    pickup.PickupSound = null;
+                    pickup.CollectPickup(player);
+                }
             }
         }
 	}
@@ -27,11 +36,24 @@ public class TestBedManager: MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        foreach (var pu in player.Pickups)
+        if (UnlimitedAmmo)
         {
-            pu.Ammo = pu.MaxAmmo;
+            foreach (var player in players)
+            {
+                foreach (var pu in player.Pickups)
+                {
+                    pu.Ammo = pu.MaxAmmo;
+                }
+            }
         }
-        //player.GetComponent<Damageable>().Health = 100;
+
+        if (Invincibility)
+        {
+            foreach (var player in players)
+            {
+                player.GetComponent<Damageable>().Health = 100;
+            }
+        }
 	}
 
     void OnGUI()
