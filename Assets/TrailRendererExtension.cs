@@ -8,7 +8,8 @@ using UnityEngine.UI;
 public class TrailRendererExtension: MonoBehaviour 
 {
     public string SortingLayerName;
-    public int OrderInLayer;    
+    public int OrderInLayer;
+    public bool UniformFadeOut = false;
 
     private TrailRenderer trail;
     private bool isFadingOut = false;
@@ -24,7 +25,7 @@ public class TrailRendererExtension: MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (!isFadingOut && transform.parent == null)
+        if (UniformFadeOut && !isFadingOut && transform.parent == null)
         {
             // thats my queue to start fading out
             isFadingOut = true;

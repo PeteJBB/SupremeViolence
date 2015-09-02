@@ -34,21 +34,23 @@ public class ShopWindow: CustomMenuInputController
         var rect = GetComponent<RectTransform>();
         renderTexture = new RenderTexture((int)rect.rect.width, (int)rect.rect.height, 0, RenderTextureFormat.Default);
         renderTexture.Create();
-        renderTexture.filterMode = FilterMode.Bilinear;
+        //renderTexture.filterMode = FilterMode.Bilinear;
 
         var camera = GetComponentInChildren<Camera>();
         camera.targetTexture = renderTexture;
 
+        
         shopGroup = transform.Find("Shop").GetComponent<CanvasGroup>();
+        stockPanel = transform.Find("Shop/StockPanel");
+        itemDesc = transform.Find("Shop/ItemDesc").GetComponent<Text>();
+        yourCash = transform.Find("Shop/YourCash").GetComponent<Text>();
         finishedGroup = transform.Find("Finished").GetComponent<CanvasGroup>();
     }
 
 	// Use this for initialization
 	void Start () 
     {
-        stockPanel = transform.Find("Shop/StockPanel");
-        itemDesc = transform.Find("Shop/ItemDesc").GetComponent<Text>();
-        yourCash = transform.Find("Shop/YourCash").GetComponent<Text>();
+        transform.Find("Shop/Welcome").GetComponent<Text>().text = "Welcome, Player " + (PlayerIndex + 1);
 
         var orderedPickups = GameSettings.PickupPrefabs.Where(x => x.Price > 0).OrderBy(x => x.Price).ToList();
         for(var i=0; i<orderedPickups.Count; i++)

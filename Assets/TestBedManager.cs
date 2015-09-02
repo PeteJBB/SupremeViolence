@@ -12,14 +12,15 @@ public class TestBedManager: MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        player = FindObjectsOfType<PlayerControl>().First(x=> x.PlayerIndex == 0);
-        
-        foreach(var prefab in GameSettings.PickupPrefabs)
+        foreach (var player in FindObjectsOfType<PlayerControl>())
         {
-            //Debug.Log("TestManager adding pickup: " + prefab.PickupName);
-            var pickup = Instantiate(prefab);
-            pickup.PickupSound = null;
-            pickup.CollectPickup(player);
+            foreach (var prefab in GameSettings.PickupPrefabs)
+            {
+                //Debug.Log("TestManager adding pickup: " + prefab.PickupName);
+                var pickup = Instantiate(prefab);
+                pickup.PickupSound = null;
+                pickup.CollectPickup(player);
+            }
         }
 	}
 	
