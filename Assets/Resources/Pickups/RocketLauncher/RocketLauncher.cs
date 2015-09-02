@@ -7,15 +7,31 @@ public class RocketLauncher : Pickup
     public GameObject RocketPrefab;
     public AudioClip FireSound;
     public AudioClip FireEmptySound;
-    
+
+    private float lastFireTime;
+    private float reloadTime = 2;
+    private bool isReloading = false;    
+
     public override string GetDescription()
     {
         return "Rockets sure are fun aren't they? This is your high-explosive, point and shoot, no frills model favoured by terrorists and action movie stars alike.";
     }
 
+    void Update()
+    {
+        if (Player.CurrentWeapon == this)
+        {
+            if (isReloading && Time.time - lastFireTime >= reloadTime)
+            {
+                isReloading = false;
+                Player.RestoreAmmoBarSource();
+            }
+        }
+    }
+
     public override void OnFireDown(Vector3 origin)
     {
-        if (Ammo > 0)
+        if (Ammo > 0 && !isReloading)
         {
             var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
             var rocket = (GameObject)GameObject.Instantiate(RocketPrefab, origin, rotation);
@@ -31,7 +47,16 @@ public class RocketLauncher : Pickup
             rocket.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 5f), ForceMode2D.Impulse);
             rocket.SetOwner(Player.gameObject);
             AudioSource.PlayClipAtPoint(FireSound, transform.position);
+
+            lastFireTime = Time.time;
             Ammo--;
+
+            if (Ammo > 0)
+            {
+                // show reloadtime in ammo bar
+                isReloading = true;
+                Player.SetAmmoBarSource(this, new Color(1, 0.5f, 0));
+            }
         }
         else
         {
@@ -39,12 +64,11 @@ public class RocketLauncher : Pickup
         }
     }
 
-    public override void OnDeselectWeapon()
+    public override float GetAmmoBarValue()
     {
-        if(Ammo <= 0)
-        {
-            // drop weapon
-            Player.RemovePickup(this);
-        }
+        if (isReloading)
+            return (Time.time - lastFireTime) / reloadTime;
+        else 
+            return base.GetAmmoBarValue();
     }
 }

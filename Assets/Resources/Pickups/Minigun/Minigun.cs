@@ -146,7 +146,7 @@ public class Minigun : Pickup
             if (shield.Any())
                 Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
 
-            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 4f), ForceMode2D.Impulse);
+            bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 0.1f), ForceMode2D.Impulse);
             bullet.SetOwner(Player.gameObject);
 
 

@@ -81,8 +81,8 @@ public class Flamer : Pickup
             Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), flame.GetComponent<Collider2D>());
 
         var rb = flame.GetComponent<Rigidbody2D>();
-        rb.AddRelativeForce(new Vector2(0, 0.4f), ForceMode2D.Impulse); 
-        rb.AddTorque(Random.Range(-0.2f, 0.2f));
+        rb.AddRelativeForce(new Vector2(0, 0.04f), ForceMode2D.Impulse); 
+        rb.AddTorque(Random.Range(-0.02f, 0.02f));
 
         Ammo--;
     }

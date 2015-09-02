@@ -21,7 +21,7 @@ public class Pistol : Pickup
         if(shield.Any())
             Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
        
-        bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
+        bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 0.1f), ForceMode2D.Impulse);
         bullet.SetOwner(Player.gameObject);
         AudioSource.PlayClipAtPoint(FireSound, transform.position);
 

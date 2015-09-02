@@ -54,7 +54,7 @@ public class PlasmaGun : Pickup
                 Physics2D.IgnoreCollision(shield.First().GetComponent<Collider2D>(), bullet.GetComponent<Collider2D>());
 
             var rb = bullet.GetComponent<Rigidbody2D>();
-            rb.AddRelativeForce(new Vector2(0, 6f), ForceMode2D.Impulse);
+            rb.AddRelativeForce(new Vector2(0, 0.08f), ForceMode2D.Impulse);
             //rb.AddTorque(1);
 
             bullet.SetOwner(Player.gameObject);
