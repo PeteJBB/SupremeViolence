@@ -61,8 +61,7 @@ public class PlayerControl : MonoBehaviour {
             pickup.PickupSound = null;
             pickup.CollectPickup(this);
         }
-        muteSounds = false;
-
+        
         ammobar = transform.FindChild("UI/ammobar").GetComponent<FillBar>();        
         weaponCycler = GetComponentInChildren<WeaponCycler>();        
     }
@@ -75,6 +74,8 @@ public class PlayerControl : MonoBehaviour {
         GameBrain.Instance.OnGameOver.AddListener(OnGameOver);
         BroadcastMessage("SetOrientation", orientation);
         BroadcastMessage("SetAnimationSpeed", 0f);
+
+        
 	}
 	
 	// Update is called once per frame
@@ -82,6 +83,7 @@ public class PlayerControl : MonoBehaviour {
     {
         if(isFirstUpdate)
         {
+            muteSounds = false;
             isFirstUpdate = false;
         }
 
