@@ -1,11 +1,10 @@
 fileFormatVersion: 2
-guid: 1e15e4402bca48f48baa6e76d18e890b
-timeCreated: 1441302633
+guid: aa1a2c591dde1714ea0b240544b7067f
+timeCreated: 1441291505
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: pot-plant_alive
-    21300002: pot-plant_dead
+    21300000: teleport_particles_0
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -39,37 +38,27 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: .5, y: .5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  alignment: 7
+  spritePivot: {x: .5, y: 0}
+  spriteBorder: {x: 0, y: 0, z: 1, w: 0}
   spritePixelsToUnits: 128
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: pot-plant_alive
+    - name: teleport_particles_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 32
-        height: 64
-      alignment: 9
-      pivot: {x: .491624802, y: .18453373}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: pot-plant_dead
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 64
-      alignment: 9
-      pivot: {x: .502791643, y: .18453373}
+        x: 1
+        y: 25
+        width: 3
+        height: 39
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

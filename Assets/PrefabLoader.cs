@@ -22,14 +22,6 @@ public class PrefabLoader : MonoBehaviour
 
         // delete the old one first
         Helper.DestroyAllChildren(transform, GameBrain.IsEditMode());
-        //if (t != null)
-        //{
-        //    if (GameBrain.IsEditMode())
-                
-        //        DestroyImmediate(t.gameObject);
-        //    else
-        //        Destroy(t.gameObject);
-        //}
 
         instance = Instantiate(Prefab);
         instance.name = "instance";

@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 1e15e4402bca48f48baa6e76d18e890b
-timeCreated: 1441302633
+guid: 058d3f45faa1ba744aedcfc677a4fddc
+timeCreated: 1441294417
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: pot-plant_alive
-    21300002: pot-plant_dead
+    21300000: teleporter_pad_0
+    21300002: teleporter_pad_lights
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -28,7 +28,7 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
@@ -51,25 +51,25 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: pot-plant_alive
+    - name: teleporter_pad_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 32
-        height: 64
-      alignment: 9
-      pivot: {x: .491624802, y: .18453373}
+        x: 8
+        y: 54
+        width: 80
+        height: 68
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: pot-plant_dead
+    - name: teleporter_pad_lights
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 64
-      alignment: 9
-      pivot: {x: .502791643, y: .18453373}
+        x: 25
+        y: 7
+        width: 46
+        height: 40
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

@@ -20,4 +20,5 @@ public enum GridSquareType
 {
     Empty,
     Wall,
+    Void // Nothing can spawn here
 }

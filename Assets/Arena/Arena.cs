@@ -202,7 +202,7 @@ public class Arena : Singleton<Arena>
             RoomPrefabs.Remove(prefab); // to stop multiples the same spawning
         }
 
-        Helper.DebugLogTime("Creating room " + prefab.name);
+        //Helper.DebugLogTime("Creating room " + prefab.name);
 
         var room = Instantiate<Room>(prefab);
 
@@ -231,8 +231,7 @@ public class Arena : Singleton<Arena>
             info.Room = room;
         }
 
-        Helper.DebugLogTime("Room created." + prefab.name);
-
+        //Helper.DebugLogTime("Room created." + prefab.name);
     }
 
     public List<GridSquareInfo> GetEmptyGridSquares()

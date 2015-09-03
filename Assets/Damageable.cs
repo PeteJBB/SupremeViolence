@@ -10,7 +10,8 @@ public class Damageable : MonoBehaviour, IDamageable
 
     public GameObject ExplosionPrefab;
     public GameObject CorpsePrefab;
-    
+
+    public Vector3 ExplosionOffset;
 
     public bool RespawnOnDeath = false;
     public float RespawnDelaySeconds = 1;
@@ -112,7 +113,7 @@ public class Damageable : MonoBehaviour, IDamageable
             // explode
             if (ExplosionPrefab != null)
             {
-                Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+                Instantiate(ExplosionPrefab, transform.position + ExplosionOffset, transform.rotation);
             }
 
             // corpse
@@ -183,6 +184,12 @@ public class Damageable : MonoBehaviour, IDamageable
         sr.material = flashMaterial;
         yield return new WaitForSeconds(0.1f);         
         sr.material = defaultMaterials[sr.gameObject.GetInstanceID()];
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Helper.DrawGizmoSquare(transform.position + ExplosionOffset, 0.01f);
     }
 }
 

@@ -98,7 +98,9 @@ public class Helper : Singleton<Helper>
             case GridSquareType.Wall:
                 c = isSelected ? Color.green : Color.red;
                 break;
-            case GridSquareType.Empty:
+            case GridSquareType.Void:
+                c = isSelected ? Color.green : new Color(1,0,1);
+                break;case GridSquareType.Empty:
             default:
                 c = isSelected ? Color.green : Color.white;
                 break;

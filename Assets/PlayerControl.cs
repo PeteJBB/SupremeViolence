@@ -10,6 +10,7 @@ public class PlayerControl : MonoBehaviour {
     private float baseMass = 1;
 
     public int PlayerIndex;
+    public bool FreezeControl = false;
 
     public List<Pickup> Pickups = new List<Pickup>();
     public Pickup CurrentWeapon;
@@ -41,6 +42,7 @@ public class PlayerControl : MonoBehaviour {
 
     private Pickup ammoBarSource;
 
+    
 	// Use this for initialization
 	void Awake () 
     {
@@ -89,7 +91,7 @@ public class PlayerControl : MonoBehaviour {
             isFirstUpdate = false;
         }
 
-        if(GameBrain.Instance != null && GameBrain.Instance.State == PlayState.GameOn)
+        if(GameBrain.Instance.State == PlayState.GameOn && !FreezeControl)
         {
             var gamepadState = GetGamePadInput();
 
