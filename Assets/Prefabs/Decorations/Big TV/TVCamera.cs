@@ -49,8 +49,8 @@ public class TVCamera: MonoBehaviour
     private void FindNewTarget()
     {
         var potentialTargets = GameObject.FindGameObjectsWithTag("Player");
-        trackTarget = potentialTargets[Random.RandomRange(0, potentialTargets.Length)];
-        camera.orthographicSize = Random.RandomRange(0.2f, 1f);
+        trackTarget = potentialTargets[Random.Range(0, potentialTargets.Length)];
+        camera.orthographicSize = Random.Range(0.1f, 1f);
 
         lastSwitchTargetTime = Time.time;
     }

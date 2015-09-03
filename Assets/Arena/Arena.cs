@@ -19,8 +19,11 @@ public class Arena : Singleton<Arena>
 
     public GameObject FixedRoomPrefab;
 
-    private float pickupSpawnCheckInterval = 3; // seconds
+    private int idealNumberOfPickups = 4;
+    private float pickupSpawnCheckInterval = 7; // seconds
     private float lastPickupSpawnCheckTime;
+
+    private List<Room> RoomPrefabs = new List<Room>();
 
     void Awake()
     {
@@ -183,11 +186,21 @@ public class Arena : Singleton<Arena>
 
     private void CreateRoom(int row, int col)
     {
+        if(RoomPrefabs.Count == 0)
+        {
+            var arr = new Room[GameSettings.RoomPrefabs.Length];
+            GameSettings.RoomPrefabs.CopyTo(arr, 0);
+            RoomPrefabs = arr.ToList();
+        }
+
         Room prefab;
         if (FixedRoomPrefab != null)
             prefab = FixedRoomPrefab.GetComponent<Room>();
         else
-            prefab = GameSettings.RoomPrefabs[Random.Range(0, GameSettings.RoomPrefabs.Length)];
+        {
+            prefab = RoomPrefabs[Random.Range(0, RoomPrefabs.Count)];
+            RoomPrefabs.Remove(prefab); // to stop multiples the same spawning
+        }
 
         Helper.DebugLogTime("Creating room " + prefab.name);
 
@@ -253,12 +266,36 @@ public class Arena : Singleton<Arena>
         }
     }
 
+    private Pickup ChooseRandomPickup()
+    {
+        // weighted selection by price - so more expensive items spawn less often
+        var spawnablePickups = GameSettings.PickupPrefabs
+            .Where(x => x.SpawnDuringGame)
+            .OrderBy(x => x.Price)
+            .ToList();
+
+        // add up all prices
+        var max = spawnablePickups.Sum(x => 100f / x.Price);
+        var val = Random.Range(0, max);
+
+        // loop through all pickups adding 100f/price until we reach a value higher than val, then we have a winner
+        var total = 0f;
+        foreach (var p in spawnablePickups)
+        {
+            total += 100f / p.Price;
+            if (total > val)
+                return p;
+        }
+
+        Debug.LogError("Failed to choose a random pickup??");
+        return null;
+    }
+
     private void SpawnInitialPickups()
     {
         // spawn one of each item at random free location
         var emptySpots = GetEmptyGridSquares();
-        var spawnablePickups = GameSettings.PickupPrefabs.Where(x => x.SpawnDuringGame).ToList();
-        for (var i = 0; i < spawnablePickups.Count; i++)
+        for (var i = 0; i < idealNumberOfPickups; i++)
         {
             if (emptySpots.Count == 0)
             {
@@ -270,7 +307,7 @@ public class Arena : Singleton<Arena>
 
             var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
             icon.transform.position = GridToWorldPosition(sq.x, sq.y);
-            icon.PickupPrefab = spawnablePickups[i];
+            icon.PickupPrefab = ChooseRandomPickup();
 
             emptySpots.Remove(sq);
         }
@@ -287,12 +324,14 @@ public class Arena : Singleton<Arena>
         // how many pickup icons are around right now?
         var icons = FindObjectsOfType<PickupIcon>();
         var spawnablePickups = GameSettings.PickupPrefabs.Where(x => x.SpawnDuringGame).ToList();
-        var chanceToSpawn = Mathf.Lerp(1, 0, icons.Length / (float)spawnablePickups.Count);
+        var chanceToSpawn = Mathf.Lerp(1, 0, icons.Length / (float)idealNumberOfPickups);
 
         //Helper.DebugLogTime("CheckSpawnRandomPickup? There are " + icons.Length + " icons already in play");
         if (Random.value <= chanceToSpawn)
         {
-            var p = GameSettings.PickupPrefabs[Random.Range(0, spawnablePickups.Count)];
+            var p = ChooseRandomPickup();
+            Debug.Log("Spawning pickup: " + p.PickupName);
+
             var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
             icon.PickupPrefab = p;
 
@@ -300,15 +339,9 @@ public class Arena : Singleton<Arena>
             if (squares.Any())
             {
                 var sq = squares[Random.Range(0, squares.Count)];
-                p.transform.position = GridToWorldPosition(sq.x, sq.y, 0);
+                icon.transform.position = GridToWorldPosition(sq.x, sq.y, 0);
             }
-
-            //Helper.DebugLogTime("Spawned " + p.PickupName);
         }
-        //else
-        //{
-        //    Helper.DebugLogTime("Didnt spawn a pickup this time");
-        //}
     }
 
     void OnDrawGizmos()

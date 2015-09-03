@@ -147,4 +147,14 @@ public class Helper : Singleton<Helper>
                 return GamePad.GetState(XInputDotNetPure.PlayerIndex.Four);
         }
     }
+
+    public static void SetLayerRecursive(GameObject gameObject, int layer)
+    {
+        gameObject.layer = layer;
+        for (var i = 0; i < gameObject.transform.childCount; i++)
+        {
+            var child = gameObject.transform.GetChild(i);
+            SetLayerRecursive(child.gameObject, layer);
+        }
+    }
 }

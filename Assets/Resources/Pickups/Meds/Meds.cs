@@ -45,7 +45,7 @@ public class Meds: Pickup
             else
             {
                 var gamepadState = Helper.GetGamePadInput(Player.PlayerIndex);
-                if (gamepadState.Buttons.X == ButtonState.Pressed && !isActivated)
+                if (Ammo > 0 && gamepadState.Buttons.X == ButtonState.Pressed && !isActivated)
                 {
                     ActivateMeds();
                 }

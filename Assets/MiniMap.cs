@@ -51,7 +51,7 @@ public class MiniMap : MonoBehaviour
 
         var obj = info.Objects.OrderByDescending(x => x.MinimapPriority).FirstOrDefault();
         if(obj == null)
-            img.color = new Vector4(0,0,0,0.5f);
+            img.color = new Vector4(0,0,0,0.75f);
         else
             img.color = obj.MapColor;
 

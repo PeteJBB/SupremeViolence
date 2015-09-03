@@ -75,7 +75,9 @@ public class PlayerControl : MonoBehaviour {
         BroadcastMessage("SetOrientation", orientation);
         BroadcastMessage("SetAnimationSpeed", 0f);
 
-        
+        var uiLayer = LayerMask.NameToLayer("UIPlayer" + (PlayerIndex + 1));
+        Helper.SetLayerRecursive(transform.Find("UI/weaponCycler").gameObject, uiLayer);
+        Helper.SetLayerRecursive(transform.Find("UI/ammobar").gameObject, uiLayer);
 	}
 	
 	// Update is called once per frame
