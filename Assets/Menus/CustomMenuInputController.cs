@@ -78,7 +78,7 @@ public class CustomMenuInputController: MonoBehaviour
             if(CurrentSelectedObject == null)
                 SelectFirstVisibleItem();
 
-            var action = GetMenuInputAction();
+            var action = GetMenuInputAction(PlayerIndex == -1 ? 0 : PlayerIndex);
             if(action == MenuInputAction.MoveUp)
             {
                 var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnUp();
@@ -110,7 +110,7 @@ public class CustomMenuInputController: MonoBehaviour
             }
             else if(action == MenuInputAction.Cancel)
             {
-                
+                GoBack();
             }
             else if(action == MenuInputAction.PrevPage)
             {
@@ -172,13 +172,15 @@ public class CustomMenuInputController: MonoBehaviour
         return false;
     }
 
-    GamePadState lastGamepadState;
-    private MenuInputAction GetMenuInputAction()
+    GamePadState[] lastGamepadStates = new GamePadState[4];
+    private MenuInputAction GetMenuInputAction(int playerIndex)
     {
         var action = MenuInputAction.None;
 
         // gamepad input
-        var state = GetGamePadInput();
+        var lastGamepadState = lastGamepadStates[playerIndex];
+        var state = GetGamePadInput(playerIndex);
+
         if(state.ThumbSticks.Left.Y > 0 && lastGamepadState.ThumbSticks.Left.Y <= 0
                 || state.DPad.Up == ButtonState.Pressed && lastGamepadState.DPad.Up == ButtonState.Released)
         {
@@ -216,10 +218,13 @@ public class CustomMenuInputController: MonoBehaviour
             action = MenuInputAction.NextPage;
         }
 
-        lastGamepadState = state;
+        lastGamepadStates[playerIndex] = state;
 
-        if(action != MenuInputAction.None)
+        if (action != MenuInputAction.None)
+        {
+            Debug.Log("Menu input " + action + " from player " + playerIndex);
             return action;
+        }
 
         // keyboard input (for debug)
         if(Input.GetKeyDown(KeyCode.UpArrow))
@@ -235,12 +240,16 @@ public class CustomMenuInputController: MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.Escape))
             action = MenuInputAction.Cancel;
 
+        if (action == MenuInputAction.None && PlayerIndex == -1 && playerIndex < 3)
+        {
+            return GetMenuInputAction(playerIndex + 1);
+        }
         return action;
     }
 
-    private GamePadState GetGamePadInput()
+    private GamePadState GetGamePadInput(int index)
     {
-        switch(PlayerIndex)
+        switch(index)
         {
             case 0:
             default:

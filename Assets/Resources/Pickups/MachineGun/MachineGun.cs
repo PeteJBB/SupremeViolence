@@ -25,7 +25,7 @@ public class MachineGun : Pickup
 
     public override string GetDescription()
     {
-        return "This here is your standard high rate of fire meat grinder. Hold down the trigger and watch the other guy turn to mush.";
+        return "Affordable firepower ideal for home protection or taking on a fascist regime. Keep the change ya filthy animal.";
     }
 
     public override void OnFireDown(Vector3 origin)

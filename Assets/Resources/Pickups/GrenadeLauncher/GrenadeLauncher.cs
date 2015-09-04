@@ -10,7 +10,7 @@ public class GrenadeLauncher : Pickup
 
     public override string GetDescription()
     {
-        return "Launches explosive grenades with a 2 second fuse and which can bounce off walls. Available now in time for mothers' day.";
+        return "Say hello to my little friend! This sucker launches explosive grenades with a 2 second fuse which can bounce off walls. Available now in time for mothers' day.";
     }
 
     public override void OnFireDown(Vector3 origin)

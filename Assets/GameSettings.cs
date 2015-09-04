@@ -20,10 +20,11 @@ public class GameSettings
     public static Pickup StartWeapon = null;//PickupPrefabs.First(x => x.GetPickupName() == "Laser Rifle");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;
-    public static int StartingCash = 2000;
-    public static int CashForKill = 400;
+    public static int StartingCash = 500;
+    public static int CashForKill = 300;
     public static WinningsLevel WinningsLevel = WinningsLevel.Normal;
-    public static float SoundVolume = 0.5f;
+    public static int SoundVolume = 5;
+    public static int MusicVolume = 5;
 
     public static Dictionary<string, GameSetting> Settings = new Dictionary<string, GameSetting>()
     {
@@ -33,8 +34,10 @@ public class GameSettings
         { "StartWeapon", new GameSetting(PickupPrefabs.Where(x => x.PickupType == PickupType.Weapon).ToArray()) },
         { "AmmoLevel", new GameSetting(AmmoLevel) },
         { "SpawnPickups", new GameSetting(YesNo.Yes) },
-        { "StartingCash", new GameSetting(0, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000) },
+        { "StartingCash", new GameSetting(0, 200, 500, 1000, 2000, 5000, 10000, 20000) },
         { "WinningsLevel", new GameSetting(WinningsLevel.Normal) },
+        { "SoundVolume", new GameSetting(1,2,3,4,5,6,7,8,9,10) },
+        { "MusicVolume", new GameSetting(1,2,3,4,5,6,7,8,9,10) },
     };
 
     public static object GetValue(string settingName)

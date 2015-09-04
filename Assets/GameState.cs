@@ -37,7 +37,7 @@ public static class GameState
             Players.Add(pState);
         }
 
-        AudioListener.volume = GameSettings.SoundVolume;
+        AudioListener.volume = GameSettings.SoundVolume / 10f;
 
         IsGameStarted = true;
     }
