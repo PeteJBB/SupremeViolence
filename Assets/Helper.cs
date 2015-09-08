@@ -29,6 +29,11 @@ public class Helper : Singleton<Helper>
         }
     }
 
+    //public static void FixLastTrailVertex(TrailRenderer trail, Vector3 point)
+    //{
+    //    trail.
+    //}
+
     public void WaitAndThenCall(float waitSeconds, Action funcToRun)
     {
         StartCoroutine(CoWaitAndThenCall(waitSeconds, funcToRun));

@@ -31,6 +31,9 @@ public class GameBrain : Singleton<GameBrain>
 
 	void Awake () 
     {
+        // singleton should not persist
+        DestroyOnLoad = true;
+
         if(OnGameOver == null)
             OnGameOver = new UnityEvent();
 

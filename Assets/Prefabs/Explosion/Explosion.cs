@@ -30,7 +30,7 @@ public class Explosion : MonoBehaviour
             var hit = Physics2D.Raycast(transform.position, v, layerMask);
             if (hit.collider != other)
             {
-                //Debug.Log("Explosion expected to hit " + other.gameObject.name + " but was blocked by " + hit.collider.gameObject.name);
+                Debug.Log("Explosion expected to hit " + other.gameObject.name + " but was blocked by " + hit.collider.gameObject.name);
                 continue;
             }
 

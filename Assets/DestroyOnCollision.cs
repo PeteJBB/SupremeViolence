@@ -45,7 +45,6 @@ public class DestroyOnCollision : MonoBehaviour
             if (reflector != null && reflector.DoesReflectMe(gameObject))
             {
                 // reflect
-                var rb = GetComponent<Rigidbody2D>();
                 var vect = contact.normal;// Vector2.Reflect(rb.velocity, contact.normal);
                 rb.velocity = vect * lastKnownVelocity.magnitude;
 
@@ -58,8 +57,10 @@ public class DestroyOnCollision : MonoBehaviour
         }
 
         // destroy 
-        Explode(contact.point, rot);
+        transform.position = contact.point - (lastKnownVelocity.ToVector2() * Time.deltaTime);
+        Explode(transform.position, rot);
         DamageOther(contact.collider.gameObject);
+
         Helper.DetachParticles(gameObject);
         Destroy(gameObject);
 
@@ -75,7 +76,7 @@ public class DestroyOnCollision : MonoBehaviour
 
         if (CollisionSound != null)
         {
-            AudioSource.PlayClipAtPoint(CollisionSound, transform.position);
+            AudioSource.PlayClipAtPoint(CollisionSound, pos);
         }
     }
 

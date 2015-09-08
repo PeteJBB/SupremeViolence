@@ -53,23 +53,23 @@ public class PlayerControl : MonoBehaviour {
         if (!GameState.IsGameStarted)
                 GameState.StartNewGame();
 
-        // setup my pickups
-        Pickups = new List<Pickup>();
         muteSounds = true;
+        Pickups = new List<Pickup>();
 
-        foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
-        {
-            var pickup = ps.Instantiate();
-            pickup.PickupSound = null;
-            pickup.CollectPickup(this);
-        }
-        
         ammobar = transform.FindChild("UI/ammobar").GetComponent<FillBar>();        
         weaponCycler = GetComponentInChildren<WeaponCycler>();        
     }
 
     void Start () 
     {
+        // initialise pickups bought in shop / carried over from previous match
+        foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
+        {
+            var pickup = ps.Instantiate();
+            pickup.PickupSound = null;
+            pickup.CollectPickup(this);
+        }
+
         SelectNextWeapon();
         ammoBarSource = CurrentWeapon;
 
