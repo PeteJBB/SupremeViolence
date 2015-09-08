@@ -12,7 +12,9 @@ public class CustomMenuInputController: MonoBehaviour
     public int PlayerIndex = -1;
     public GameObject CurrentSelectedObject;
 
-    private Stack<Canvas> navStack = new Stack<Canvas>();
+    [HideInInspector]
+    public Stack<Canvas> navStack = new Stack<Canvas>();
+
     public Canvas ActiveCanvas;
     public bool ToggleScreenSpaceOnActivateCanvas = false;
 
@@ -181,22 +183,22 @@ public class CustomMenuInputController: MonoBehaviour
         var lastGamepadState = lastGamepadStates[playerIndex];
         var state = GetGamePadInput(playerIndex);
 
-        if(state.ThumbSticks.Left.Y > 0 && lastGamepadState.ThumbSticks.Left.Y <= 0
+        if(state.ThumbSticks.Left.Y > 0.5f && lastGamepadState.ThumbSticks.Left.Y <= 0.5f
                 || state.DPad.Up == ButtonState.Pressed && lastGamepadState.DPad.Up == ButtonState.Released)
         {
             action = MenuInputAction.MoveUp;
         }
-        else if(state.ThumbSticks.Left.Y < 0 && lastGamepadState.ThumbSticks.Left.Y >= 0
+        else if(state.ThumbSticks.Left.Y < -0.5f && lastGamepadState.ThumbSticks.Left.Y >= -0.5f
                 || state.DPad.Down == ButtonState.Pressed && lastGamepadState.DPad.Down == ButtonState.Released)
         {
             action = MenuInputAction.MoveDown;
         }
-        else if(state.ThumbSticks.Left.X < 0 && lastGamepadState.ThumbSticks.Left.X >= 0
+        else if(state.ThumbSticks.Left.X < -0.5f && lastGamepadState.ThumbSticks.Left.X >= -0.5f
                 || state.DPad.Left == ButtonState.Pressed && lastGamepadState.DPad.Left == ButtonState.Released)
         {
             action = MenuInputAction.MoveLeft;
         }
-        else if(state.ThumbSticks.Left.X > 0 && lastGamepadState.ThumbSticks.Left.X <= 0
+        else if(state.ThumbSticks.Left.X > 0.5f && lastGamepadState.ThumbSticks.Left.X <= 0.5f
                 || state.DPad.Right == ButtonState.Pressed && lastGamepadState.DPad.Right == ButtonState.Released)
         {
             action = MenuInputAction.MoveRight;
