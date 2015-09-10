@@ -322,7 +322,6 @@ public class Arena : Singleton<Arena>
 
         // how many pickup icons are around right now?
         var icons = FindObjectsOfType<PickupIcon>();
-        var spawnablePickups = GameSettings.PickupPrefabs.Where(x => x.SpawnDuringGame).ToList();
         var chanceToSpawn = Mathf.Lerp(1, 0, icons.Length / (float)idealNumberOfPickups);
 
         //Helper.DebugLogTime("CheckSpawnRandomPickup? There are " + icons.Length + " icons already in play");

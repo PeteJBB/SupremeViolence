@@ -97,8 +97,15 @@ public class ShopWindow: CustomMenuInputController
 
         // enable the items on this page
         var pageItems = shopItems.Skip(itemsPerPage * index).Take(itemsPerPage).ToList();
-        foreach(var item in pageItems)
+        for(var i=0; i<pageItems.Count; i++)
         {
+            var item = pageItems[i];
+            var rt = item.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 1);
+            rt.anchorMax = new Vector2(1, 1);
+            rt.offsetMin = new Vector2(0, i * -20);
+            rt.offsetMax = new Vector2(0, (i - 1) * -20);
+            
             item.gameObject.SetActive(true);
         }
 

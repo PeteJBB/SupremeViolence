@@ -11,7 +11,6 @@ public class MiniMap : MonoBehaviour
     public GameObject[,] GridMap;
 
     private float mapSize = 120;
-    private bool isInitialised = false;
 
 	// Use this for initialization
 	void Start () 

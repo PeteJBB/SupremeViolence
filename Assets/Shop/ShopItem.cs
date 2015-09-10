@@ -16,26 +16,17 @@ public class ShopItem: CustomSelectable, IDeselectHandler, ISelectHandler, ISubm
 
     private PlayerState player;
 
-    private bool isSelected = false;
-
     void Awake()
     {
-        nameElem = transform.Find("Name").GetComponent<Text>();
-        ammoElem = transform.Find("Ammo").GetComponent<Text>();
-        priceElem = transform.Find("Price").GetComponent<Text>();
+        //background = transform.Find("background").GetComponent<Image>();
+        nameElem = transform.Find("grid/Name").GetComponent<Text>();
+        ammoElem = transform.Find("grid/Ammo").GetComponent<Text>();
+        priceElem = transform.Find("grid/Price").GetComponent<Text>();
     }
 
     void Start()
     {
         player = GameState.Players[PlayerIndex];
-//        var p = player.Pickups.FirstOrDefault(x => x == PickupPrefab);
-//        if(p != null)
-//        {
-//            ammoElem.text = string.Format("{0} / {1}", p.GetAmmoCount(), p.MaxAmmo);
-//            if(p.Ammo == p.MaxAmmo)
-//                priceElem.text = "Full";
-//        }
-
         UpdateItemText();
     }
 
@@ -93,31 +84,54 @@ public class ShopItem: CustomSelectable, IDeselectHandler, ISelectHandler, ISubm
         }
     }
 
-    public void OnSelect(BaseEventData eventData)
+    public override void OnSelect(BaseEventData eventData)
     {
-        isSelected = true;
-        HighlightItem();
+        HighlightItem();        
+        base.OnSelect(eventData);
     }
 
-    public void OnDeselect(BaseEventData eventData)
+    public override void OnDeselect(BaseEventData eventData)
     {
-        isSelected = false;
         UnhighlightItem();
+        base.OnDeselect(eventData);
     }
+
 
     public void HighlightItem()
     {
-        nameElem.color = Color.yellow;
-        ammoElem.color = Color.yellow;
-        priceElem.color = Color.yellow;
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.1f, "onupdate", (System.Action<object>)((obj) =>
+        {
+            var val = (float)obj;
+            Color col;
+            col.r = Mathf.Lerp(colors.normalColor.r, colors.highlightedColor.r, val);
+            col.g = Mathf.Lerp(colors.normalColor.g, colors.highlightedColor.g, val);
+            col.b = Mathf.Lerp(colors.normalColor.b, colors.highlightedColor.b, val);
+            col.a = Mathf.Lerp(colors.normalColor.a, colors.highlightedColor.a, val);
+            
+            nameElem.color = col;
+            ammoElem.color = col;
+            priceElem.color = col;
+
+        })));
+
         shopWindow.SetItemDesc(PickupPrefab.GetDescription());
     }
 
     public void UnhighlightItem()
     {
-        nameElem.color = Color.white;
-        ammoElem.color = Color.white;
-        priceElem.color = Color.white;
-        shopWindow.SetItemDesc(string.Empty);
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", 0.1f, "onupdate", (System.Action<object>)((obj) =>
+        {
+            var val = (float)obj;
+            Color col;
+            col.r = Mathf.Lerp(colors.highlightedColor.r, colors.normalColor.r, val);
+            col.g = Mathf.Lerp(colors.highlightedColor.g, colors.normalColor.g, val);
+            col.b = Mathf.Lerp(colors.highlightedColor.b, colors.normalColor.b, val);
+            col.a = Mathf.Lerp(colors.highlightedColor.a, colors.normalColor.a, val);
+            
+            nameElem.color = col;
+            ammoElem.color = col;
+            priceElem.color = col;
+
+        })));
     }
 }

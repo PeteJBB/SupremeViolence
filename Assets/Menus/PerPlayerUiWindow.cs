@@ -18,7 +18,7 @@ public class PerPlayerUiWindow: CustomMenuInputController
         renderTexture = new RenderTexture((int)rect.rect.width, (int)rect.rect.height, 0, RenderTextureFormat.Default);
         renderTexture.Create();
 
-        var camera = GetComponentInChildren<Camera>();
+        var camera = transform.GetComponentInChildren<Camera>();
         camera.targetTexture = renderTexture;
 	}
 	

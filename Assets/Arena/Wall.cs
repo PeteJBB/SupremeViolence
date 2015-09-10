@@ -219,7 +219,6 @@ public static class WallSideFlagsExtentions
 {
     public static bool HasFlags(this WallSideFlags val, params WallSideFlags[] flags)
     {
-        var b = true;
         foreach (var f in flags)
         {
             if ((val & f) != f)

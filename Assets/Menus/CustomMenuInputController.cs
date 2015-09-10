@@ -224,7 +224,7 @@ public class CustomMenuInputController: MonoBehaviour
 
         if (action != MenuInputAction.None)
         {
-            Debug.Log("Menu input " + action + " from player " + playerIndex);
+           // Debug.Log("Menu input " + action + " from player " + playerIndex);
             return action;
         }
 

@@ -61,9 +61,6 @@ public class PixelPerfectSpriteEditor : Editor {
 	SerializedProperty useParentTransform;
 	SerializedProperty displayGrid;
 	
-    SerializedProperty sortOrderOffset;
-	SerializedProperty useParentPositionForSorting;
-	
 	override public void OnInspectorGUI() {
 		FindSerializedProperties();
 		DrawInspector();
@@ -77,9 +74,6 @@ public class PixelPerfectSpriteEditor : Editor {
 		runContinously		=serializedObject.FindProperty("runContinously");
 		useParentTransform	=serializedObject.FindProperty("useParentTransform");
 		displayGrid			=serializedObject.FindProperty("displayGrid");
-        sortOrderOffset		=serializedObject.FindProperty("sortOrderOffset");
-		//useParentPositionForSorting		=serializedObject.FindProperty("useParentPositionForSorting");
-		
 	}
 	
 	void DrawInspector() {
