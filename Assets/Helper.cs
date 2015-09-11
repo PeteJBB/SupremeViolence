@@ -78,6 +78,21 @@ public class Helper : Singleton<Helper>
         }
     }
 
+    public static List<T> GetComponentsRecursive<T>(Transform root)
+    {
+        var list = new List<T>();
+        var inst = root.GetComponent<T>();
+        if (inst != null)
+            list.Add(inst);
+
+        if(root.childCount > 0)
+        {
+            list.AddRange(GetComponentsInChildrenRecursive<T>(root));
+        }
+
+        return list;
+    }
+
     public static List<T> GetComponentsInChildrenRecursive<T>(Transform root)
     {
         var list = new List<T>();
@@ -92,6 +107,21 @@ public class Helper : Singleton<Helper>
         }
 
         return list;
+    }
+
+    
+    public static T GetComponentInParentsRecursive<T>(Transform trans)
+    {
+        if(trans.parent != null)
+        {
+            var inst = trans.parent.GetComponent<T>();
+            if (inst != null)
+                return inst;
+
+            return GetComponentInParentsRecursive<T>(trans.parent);
+        }
+
+        return default(T);
     }
 
     public static void DrawGridSquareGizmos(Vector3 pos, GridSquareType state, bool isSelected = false)

@@ -29,6 +29,9 @@ public class PerPlayerUiWindow: CustomMenuInputController
         {
             navStack.Push(ActiveCanvas);
 
+            var rt = ActiveCanvas.GetComponent<RectTransform>();
+            rt.offsetMin = new Vector2(0, -rt.rect.height);
+            rt.offsetMax = new Vector2(0, rt.rect.height);       
             ActiveCanvas.gameObject.SetActive(false);
         }
         
@@ -37,7 +40,38 @@ public class PerPlayerUiWindow: CustomMenuInputController
         if(ActiveCanvas != null)
         {
             ActiveCanvas.gameObject.SetActive(true);
+            var rt = ActiveCanvas.GetComponent<RectTransform>();
+            rt.offsetMin = new Vector2(0, 0);
+            rt.offsetMax = new Vector2(0, 0);
+            
+            //rt.rect.Set(0, 0, rt.rect.width, rt.rect.height); 
+
             SelectFirstVisibleItem();
+        }
+    }
+
+    public override void GoBack()
+    {
+        if(navStack.Count > 0)
+        {
+            if(ActiveCanvas != null)
+            {
+                var rt = ActiveCanvas.GetComponent<RectTransform>();
+                rt.offsetMin = new Vector2(0, -rt.rect.height);
+                rt.offsetMax = new Vector2(0, rt.rect.height);       
+                ActiveCanvas.gameObject.SetActive(false);
+            }
+            ActiveCanvas = navStack.Pop();
+
+            if(ActiveCanvas != null)
+            {
+                ActiveCanvas.gameObject.SetActive(true);
+                var rt = ActiveCanvas.GetComponent<RectTransform>();
+                rt.offsetMin = new Vector2(0, 0);
+                rt.offsetMax = new Vector2(0, 0);
+
+                SelectFirstVisibleItem();
+            }
         }
     }
 }

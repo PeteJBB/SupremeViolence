@@ -22,6 +22,11 @@ public class PerPlayerUiCanvas: MonoBehaviour
             Destroy(devWindow.gameObject);
         Destroy(GetComponentInChildren<RawImage>().gameObject);
 
+        foreach (var window in GameObject.FindObjectsOfType<PerPlayerUiWindow>())
+        {
+            Destroy(window.gameObject);
+        }
+
         for(var i=0; i<GameState.Players.Count; i++)
         {
             // create a ShopWindow which actually contains the UI for the shop

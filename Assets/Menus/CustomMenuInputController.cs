@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +18,12 @@ public class CustomMenuInputController: MonoBehaviour
 
     public Canvas ActiveCanvas;
     public bool ToggleScreenSpaceOnActivateCanvas = false;
+
+    public AudioClip menuMoveSound;
+    public AudioClip menuSelectSound;
+
+    //public UnityEvent OnButtonXPressed;
+    //public UnityEvent OnButtonYPressed;
 
 	// Use this for initialization
 	public void Start () 
@@ -85,28 +92,47 @@ public class CustomMenuInputController: MonoBehaviour
             {
                 var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnUp();
                 if(sel != null && IsObjectInMyScope(sel.gameObject))
+                {
                     SetSelectedGameObject(sel.gameObject);
+                    if(menuMoveSound != null)
+                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                }
             }
             else if(action == MenuInputAction.MoveDown)
             {
                 var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnDown();
                 if(sel != null && IsObjectInMyScope(sel.gameObject))
+                {
                     SetSelectedGameObject(sel.gameObject);
+                    if(menuMoveSound != null)
+                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                }
             }
             else if(action == MenuInputAction.MoveLeft)
             {
                 var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnLeft();
                 if(sel != null && IsObjectInMyScope(sel.gameObject))
+                {
                     SetSelectedGameObject(sel.gameObject);
+                    if(menuMoveSound != null)
+                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                }
             }
             else if(action == MenuInputAction.MoveRight)
             {
                 var sel = CurrentSelectedObject.GetComponent<Selectable>().FindSelectableOnRight();
-                if(sel != null && IsObjectInMyScope(sel.gameObject))
+                if (sel != null && IsObjectInMyScope(sel.gameObject))
+                {
                     SetSelectedGameObject(sel.gameObject);
+                    if(menuMoveSound != null)
+                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                }
             }
             else if(action == MenuInputAction.Submit)
             {
+                if(menuSelectSound != null)
+                    AudioSource.PlayClipAtPoint(menuSelectSound, Vector3.zero);
+
                 var ev = new BaseEventData(null);
                 CurrentSelectedObject.GetComponent<Selectable>().SendMessage("OnSubmit", ev, SendMessageOptions.DontRequireReceiver);
             }
@@ -114,6 +140,16 @@ public class CustomMenuInputController: MonoBehaviour
             {
                 GoBack();
             }
+            //else if(action == MenuInputAction.ButtonXPressed)
+            //{
+            //    if(OnButtonXPressed != null)
+            //        OnButtonXPressed.Invoke();
+            //}
+            //else if(action == MenuInputAction.ButtonYPressed)
+            //{
+            //    if(OnButtonYPressed != null)
+            //        OnButtonYPressed.Invoke();
+            //}
             else if(action == MenuInputAction.PrevPage)
             {
                 PrevPage();
@@ -139,9 +175,10 @@ public class CustomMenuInputController: MonoBehaviour
     {
         if(ActiveCanvas != null)
         {
-            var selectables = ActiveCanvas.GetComponentsInChildren<Selectable>();
+            var selectables = ActiveCanvas.GetComponentsInChildren<CustomSelectable>();
             var first = selectables.OrderByDescending(x => x.transform.position.y).FirstOrDefault();
-            SetSelectedGameObject(first.gameObject);
+            if(first != null)
+                SetSelectedGameObject(first.gameObject);
         }
     }
 
@@ -210,6 +247,14 @@ public class CustomMenuInputController: MonoBehaviour
         else if(state.Buttons.B == ButtonState.Pressed && lastGamepadState.Buttons.B == ButtonState.Released)
         {
             action = MenuInputAction.Cancel;
+        }
+        else if(state.Buttons.X == ButtonState.Pressed && lastGamepadState.Buttons.X == ButtonState.Released)
+        {
+            action = MenuInputAction.ButtonXPressed;
+        }
+        else if(state.Buttons.Y == ButtonState.Pressed && lastGamepadState.Buttons.Y == ButtonState.Released)
+        {
+            action = MenuInputAction.ButtonYPressed;
         }
         else if(state.Buttons.LeftShoulder == ButtonState.Pressed && lastGamepadState.Buttons.LeftShoulder == ButtonState.Released)
         {
@@ -292,6 +337,7 @@ public enum MenuInputAction
     Submit,
     Cancel,
     PrevPage,
-    NextPage
-
+    NextPage,
+    ButtonXPressed,
+    ButtonYPressed,    
 }

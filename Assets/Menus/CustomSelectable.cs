@@ -11,7 +11,10 @@ public class CustomSelectable : Selectable
     public Color BackgroundColor = new Color(0,0,0,0);
     public Color HighlightedBackgroundColor = Color.white;
     public bool UseBackgroundColor = true;
-    
+
+    [HideInInspector]
+    public bool IsSelected;
+
     [HideInInspector]
     public Image background;
     
@@ -114,10 +117,10 @@ public class CustomSelectable : Selectable
         Right
     }
 
-    private List<Selectable> GetSelectablesInScope()
+    private List<CustomSelectable> GetSelectablesInScope()
     {
         var canvas = GetCanvasForScope();
-        return canvas.gameObject.GetComponentsInChildren<Selectable>().Where(x => x.IsInteractable()).ToList();
+        return canvas.gameObject.GetComponentsInChildren<CustomSelectable>().Where(x => x.IsInteractable()).ToList();
     }
 
     private Canvas GetCanvasForScope()
@@ -160,6 +163,7 @@ public class CustomSelectable : Selectable
             text.color = colors.highlightedColor;
         }
 
+        IsSelected = true;
         base.OnSelect(eventData);
     }
 
@@ -188,6 +192,7 @@ public class CustomSelectable : Selectable
             }
         }
 
+        IsSelected = false;
         base.OnDeselect(eventData);
     }
 
@@ -209,5 +214,35 @@ public class CustomSelectable : Selectable
         background.sprite = Resources.Load<Sprite>("Textures/square");
         background.color = BackgroundColor;
         
+    }
+
+    float lastBgFlashTime = 0;
+    public void FlashBackground()
+    {
+        if (background == null)
+            CreateBackgroundElem();
+
+        var time = Time.time;
+        lastBgFlashTime = time;
+                
+        background.color = HighlightedBackgroundColor;
+
+        var texts = Helper.GetComponentsRecursive<Text>(transform);
+        foreach (var t in texts)
+        {
+            t.color = colors.highlightedColor;
+        }
+
+        Helper.Instance.WaitAndThenCall(0.1f, () =>
+        {
+            if (lastBgFlashTime == time)
+            {
+                background.color = BackgroundColor;
+                foreach (var t in texts)
+                {
+                    t.color = colors.normalColor;
+                }
+            }
+        });
     }
 }

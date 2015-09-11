@@ -25,6 +25,8 @@ public class ShopWindow: CustomMenuInputController
     private int numPages;
     private int currentPage = 0;
 
+    private Camera camera;
+
     [HideInInspector]
     public bool HasFinishedShopping = false;
 
@@ -36,10 +38,9 @@ public class ShopWindow: CustomMenuInputController
         renderTexture.Create();
         //renderTexture.filterMode = FilterMode.Bilinear;
 
-        var camera = GetComponentInChildren<Camera>();
+        camera = GetComponentInChildren<Camera>();
         camera.targetTexture = renderTexture;
 
-        
         shopGroup = transform.Find("Shop").GetComponent<CanvasGroup>();
         stockPanel = transform.Find("Shop/StockPanel");
         itemDesc = transform.Find("Shop/ItemDesc").GetComponent<Text>();
@@ -50,7 +51,8 @@ public class ShopWindow: CustomMenuInputController
 	// Use this for initialization
 	void Start () 
     {
-        transform.Find("Shop/Welcome").GetComponent<Text>().text = "Welcome, Player " + (PlayerIndex + 1);
+        if(PlayerIndex > -1)
+            transform.Find("Shop/Welcome").GetComponent<Text>().text = string.Format("Welcome, {0}", GameState.Players[PlayerIndex].Name);
 
         var orderedPickups = GameSettings.PickupPrefabs.Where(x => x.Price > 0).OrderBy(x => x.Price).ToList();
         for(var i=0; i<orderedPickups.Count; i++)
