@@ -8,30 +8,31 @@ using System.Linq;
 
 public class DecruncherEffect : MonoBehaviour
 {
+    public bool StartImmediately = true;
     public UnityEvent OnDecrunchComplete;
 
-    Sprite square;
-    List<Image> images = new List<Image>();
+    private List<Image> images = new List<Image>();
 
-    float minHeight = 0.01f;
-    float maxHeight = 0.05f;
-    float loadTime = 5;
+    private float minHeight = 0.01f;
+    private float maxHeight = 0.05f;
+    private float loadTime = 3;
 
-    bool hasEnded = false;
+    private bool hasStarted = false;
+    private bool hasEnded = false;
 
     void Start()
     {
-        square = Resources.Load<Sprite>("Textures/square");
+        if (StartImmediately)
+            StartDecrunching();
+    }
 
-        var y = 0f;
-        while (y < 1)
-        {
-            var img = CreateNewImage();
-            var h = RandomizeImage(img, y);
-            y += h;
-        }
+    public void StartDecrunching()
+    {
+        hasStarted = true;
+        minHeight = 0.01f;
+        maxHeight = 0.05f;
 
-        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", loadTime / 2f, "easetype", iTween.EaseType.easeInCubic, "onupdate", (System.Action<object>)((obj) =>
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", loadTime, "easetype", iTween.EaseType.easeInCubic, "onupdate", (System.Action<object>)((obj) =>
         {
             var val = (float)obj;
             //minHeight = Mathf.Lerp(0.01f, 0.5f, val);
@@ -41,17 +42,11 @@ public class DecruncherEffect : MonoBehaviour
         }), 
         "oncomplete", (System.Action)(() =>
         {
-            iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "time", loadTime / 2f, "easetype", iTween.EaseType.easeInCubic, "onupdate", (System.Action<object>)((obj) =>
-            {
-                var val = (float)obj;
-                minHeight = Mathf.Lerp(0.001f, 0.5f, val);
-                maxHeight = Mathf.Lerp(0.005f, 1f, val);
-            }), 
-            "oncomplete", (System.Action)(End)));
+            StopDecrunching();
         })));
     }
 
-    private void End()
+    private void StopDecrunching()
     {
         hasEnded = true;
         Helper.DestroyAllChildren(transform);
@@ -64,7 +59,7 @@ public class DecruncherEffect : MonoBehaviour
     {
         var img = new GameObject().AddComponent<Image>();
         img.transform.SetParent(transform);
-        img.sprite = square;
+        //img.sprite = square;
         img.color = new Color(Random.value, Random.value, Random.value, 1);
 
         images.Add(img);
@@ -74,7 +69,7 @@ public class DecruncherEffect : MonoBehaviour
 
     void Update()
     {
-        if (!hasEnded)
+        if (hasStarted && !hasEnded)
         {
             // randomize list
             images = images.OrderBy(x => System.Guid.NewGuid()).ToList();
