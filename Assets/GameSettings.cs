@@ -8,11 +8,10 @@ using System;
 public class GameSettings 
 {
     public static Pickup[] PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
-    public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
+    //public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
 
-    public static Wall WallPrefab = Resources.Load<Wall>("Arena/Wall");
-    public static GameObject FloorPrefab = Resources.Load<GameObject>("Arena/Floor");
-    public static Sprite[] WallSprites = Resources.LoadAll<Sprite>("Rooms/Basic/Wall");
+    //public static Wall WallPrefab = Resources.Load<Wall>("Wall/Wall");
+    public static Sprite[] WallSprites = Resources.LoadAll<Sprite>("Wall/Wall");
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
