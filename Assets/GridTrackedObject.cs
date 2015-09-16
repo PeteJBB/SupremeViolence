@@ -21,6 +21,7 @@ public class GridTrackedObject: MonoBehaviour
         if (OnGridPositionChanged == null)
 			OnGridPositionChanged = new TrackGridPositionChangedEvent();
 
+        //CurrentGridPos = Arena.WorldToGridPosition(transform.position);
         Arena.Instance.RegisterTrackableObject(this);
     }
 

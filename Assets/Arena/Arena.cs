@@ -6,18 +6,13 @@ using System.Linq;
 
 public class Arena : Singleton<Arena>
 {
+    public Vector2 ArenaSize;    
+
     public GameObject PlayerPrefab;
     public GameObject PickupIconPrefab;
 
-    private const int RoomSize = 5; //  rooms are 5x5 grid squares
-    public int RoomsAcross = 3;
-    public int RoomsDown = 3;
-    public bool GenerateOnStartup = false; //<-- this is here so singletons created in other scenes dont suddenly activate
-
     private GridSquareInfo[,] GridMap;
     public GridContentsChangedEvent OnGridContentsChanged;
-
-    public GameObject FixedRoomPrefab;
 
     private int idealNumberOfPickups = 4;
     private float pickupSpawnCheckInterval = 7; // seconds
@@ -30,24 +25,26 @@ public class Arena : Singleton<Arena>
         // singleton should not persist
         DestroyOnLoad = true;
 
+        GenerateGridMap();
+        
         if (OnGridContentsChanged == null)
             OnGridContentsChanged = new GridContentsChangedEvent();
     }
 
     // Use this for initialization
     void Start()
-    {
-        GenerateGridMap();
+    {        
+        SpawnPlayers();
+        SpawnInitialPickups();
+        //if (GenerateOnStartup)
+        //{
+        //    GenerateRooms();
 
-        if (GenerateOnStartup)
-        {
-            GenerateRooms();
+        //    SpawnPlayers();
+        //    SpawnInitialPickups();
 
-            SpawnPlayers();
-            SpawnInitialPickups();
-
-            lastPickupSpawnCheckTime = Time.time;
-        }
+        //    lastPickupSpawnCheckTime = Time.time;
+        //}
     }
 
     void Update()
@@ -59,101 +56,10 @@ public class Arena : Singleton<Arena>
         }
     }
 
-    private void GenerateRooms()
-    {
-        // create rooms
-        for (var col = 0; col < RoomsAcross; col++)
-        {
-            for (var row = 0; row < RoomsDown; row++)
-            {
-                CreateRoom(row, col);
-            }
-        }
-
-        Helper.DebugLogTime("All rooms created, generating remaining walls and floors");
-
-        // loop through remaining grid squares and create walls and floors
-        var wallContainer = new GameObject();
-        wallContainer.name = "walls";
-        wallContainer.transform.SetParent(transform);
-
-        var floorContainer = new GameObject();
-        floorContainer.name = "floors";
-        floorContainer.transform.SetParent(transform);
-
-        var arenaSize = GetArenaSize();
-        for (var x = 0; x < arenaSize.x; x++)
-        {
-            for (var y = 0; y < arenaSize.y; y++)
-            {
-                var sq = GridMap[x, y];
-                if (sq.Room == null)
-                {
-                    if (sq.GridSquareType == GridSquareType.Wall)
-                    {
-                        var wall = Instantiate(GameSettings.WallPrefab).GetComponent<Wall>();
-                        wall.transform.SetParent(wallContainer.transform);
-                        wall.transform.localPosition = new Vector3(x, y, 0);
-                        Helper.SetHideFlags(wall.gameObject, HideFlags.HideInHierarchy);
-
-                        // walls around the edge should use the skin of the room they are next to
-                        Room closestRoom = null;
-                        WallSideFlags sides = 0;
-
-                        if (x == 0)
-                        {
-                            closestRoom = GridMap[x + 1, y].Room;
-                            sides = WallSideFlags.Right | WallSideFlags.Top | WallSideFlags.Bottom;
-                        }
-                        else if (x == arenaSize.x - 1)
-                        {
-                            closestRoom = GridMap[x - 1, y].Room;
-                            sides = WallSideFlags.Left | WallSideFlags.Top | WallSideFlags.Bottom;
-                        }
-                        else if (y == 0)
-                        {
-                            closestRoom = GridMap[x, y + 1].Room;
-                            sides = WallSideFlags.Top | WallSideFlags.Left | WallSideFlags.Right;
-                        }
-                        else if (y == arenaSize.y - 1)
-                        {
-                            closestRoom = GridMap[x, y - 1].Room;
-                            sides = WallSideFlags.Bottom | WallSideFlags.Left | WallSideFlags.Right;
-                        }
-
-                        if (closestRoom != null && closestRoom.WallSkin != null)
-                        {
-                            wall.Skin = closestRoom.WallSkin;
-                            wall.SkinSides = sides;
-                        }
-                    }
-                    else if (sq.GridSquareType == GridSquareType.Empty)
-                    {
-                        var floor = Instantiate(GameSettings.FloorPrefab);
-                        floor.transform.SetParent(floorContainer.transform);
-                        floor.transform.localPosition = new Vector3(x, y, 0);
-                        Helper.SetHideFlags(floor.gameObject, HideFlags.HideInHierarchy);
-                    }
-                }
-            }
-        }
-
-        Helper.DebugLogTime("Arena generation complete");
-    }
-
-    private Vector2 GetRoomPos(int row, int col)
-    {
-        var x = (col * RoomSize) + col + 1;
-        var y = (row * RoomSize) + row + 1;
-
-        return new Vector2(x, y);
-    }
-
     public Vector2 GetArenaSize()
     {
-        var x = (RoomsAcross * RoomSize) + (RoomsAcross - 1) + 2;
-        var y = (RoomsDown * RoomSize) + (RoomsDown - 1) + 2;
-        return new Vector2(x, y);
+        var size = new Vector2((int)ArenaSize.x, (int)ArenaSize.y);
+        return size;
     }
 
     [ContextMenu("Re-GenerateGridMap")]
@@ -165,6 +71,9 @@ public class Arena : Singleton<Arena>
         var arenaSize = GetArenaSize();
         GridMap = new GridSquareInfo[(int)arenaSize.x, (int)arenaSize.y];
 
+        var oobArr = FindObjectsOfType<OutOfBoundsArea>();
+        var walls = FindObjectsOfType<Wall>();
+
         // set up squares
         for (var x = 0; x < arenaSize.x; x++)
         {
@@ -172,68 +81,26 @@ public class Arena : Singleton<Arena>
             {
                 var info = new GridSquareInfo(x, y);
 
-                if (x == 0 || y == 0 || x == arenaSize.x - 1 || y == arenaSize.y - 1)
+                //if (x == 0 || y == 0 || x == arenaSize.x - 1 || y == arenaSize.y - 1)
+                //    info.GridSquareType = GridSquareType.Wall;
+                //else
+
+                if (OutOfBoundsArea.IsOutOfBounds(x, y, oobArr))
+                    info.GridSquareType = GridSquareType.OutOfBounds;
+                else if (Wall.IsThereAWallAt(x, y, walls))
                     info.GridSquareType = GridSquareType.Wall;
                 else
                     info.GridSquareType = GridSquareType.Empty;
 
                 GridMap[x, y] = info;
+                //OnGridContentsChanged.Invoke(info);
             }
         }
 
         //Helper.DebugLogTime("Grid map done.");
     }
 
-    private void CreateRoom(int row, int col)
-    {
-        if(RoomPrefabs.Count == 0)
-        {
-            var arr = new Room[GameSettings.RoomPrefabs.Length];
-            GameSettings.RoomPrefabs.CopyTo(arr, 0);
-            RoomPrefabs = arr.ToList();
-        }
-
-        Room prefab;
-        if (FixedRoomPrefab != null)
-            prefab = FixedRoomPrefab.GetComponent<Room>();
-        else
-        {
-            prefab = RoomPrefabs[Random.Range(0, RoomPrefabs.Count)];
-            RoomPrefabs.Remove(prefab); // to stop multiples the same spawning
-        }
-
-        //Helper.DebugLogTime("Creating room " + prefab.name);
-
-        var room = Instantiate<Room>(prefab);
-
-        var posFlags = RoomPositionFlags.Center;
-        if (col == 0)
-            posFlags = posFlags | RoomPositionFlags.Left;
-        if (col == RoomsAcross - 1)
-            posFlags = posFlags | RoomPositionFlags.Right;
-        if (row == 0)
-            posFlags = posFlags | RoomPositionFlags.Bottom;
-        if (row == RoomsDown - 1)
-            posFlags = posFlags | RoomPositionFlags.Top;
-
-        room.BroadcastMessage("SetRoomPositionFlags", posFlags, SendMessageOptions.DontRequireReceiver);
-
-        var pos = GetRoomPos(row, col);
-        //var wpos = GridToWorldPosition(pos);
-        room.transform.position = pos;
-
-        // update gridsquare infos
-        foreach (var sq in room.GetGridSquares())
-        {
-            var gpos = WorldToGridPosition(sq.transform.position);
-            var info = GridMap[(int)gpos.x, (int)gpos.y];
-            info.GridSquareType = sq.SquareType;
-            info.Room = room;
-        }
-
-        //Helper.DebugLogTime("Room created." + prefab.name);
-    }
-
+    
     public List<GridSquareInfo> GetEmptyGridSquares()
     {
         return GridMap.Cast<GridSquareInfo>().Where(x => x.GridSquareType == GridSquareType.Empty && !x.Objects.Any()).ToList();
@@ -350,34 +217,51 @@ public class Arena : Singleton<Arena>
         Gizmos.color = new Color(1, 1, 1, 0.2f);
         Gizmos.DrawWireCube(transform.position + (asize / 2) + offset, asize);
 
-        for (var row = 0; row < RoomsAcross; row++)
-        {
-            for (var col = 0; col < RoomsDown; col++)
-            {
-                var pos = GetRoomPos(row, col).ToVector3(0);
-                var size = new Vector3(RoomSize, RoomSize, 0.1f);
-                Gizmos.DrawWireCube(transform.position + pos + (size / 2) + offset, size);
-            }
-        }
+        //for (var row = 0; row < RoomsAcross; row++)
+        //{
+        //    for (var col = 0; col < RoomsDown; col++)
+        //    {
+        //        var pos = GetRoomPos(row, col).ToVector3(0);
+        //        var size = new Vector3(RoomSize, RoomSize, 0.1f);
+        //        Gizmos.DrawWireCube(transform.position + pos + (size / 2) + offset, size);
+        //    }
+        //}
     }
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.white;
+        //var asize = GetArenaSize().ToVector3(0.1f);
+        //var offset = new Vector3(-0.5f, -0.5f, 0);
 
+        //Gizmos.color = new Color(1, 1, 1, 0.2f);
+        //Gizmos.DrawWireCube(transform.position + (asize / 2) + offset, asize);
+
+        Gizmos.color = Color.white;
         if (GridMap == null)
             GenerateGridMap();
 
-        for (var x = 0; x < GridMap.GetLength(0); x++)
+        if (Helper.IsEditMode())
         {
-            for (var y = 0; y < GridMap.GetLength(1); y++)
+            for (var x = 0; x < ArenaSize.x; x++)
             {
-                var info = GridMap[x, y];
-                var pos = GridToWorldPosition(x, y);
-                Helper.DrawGridSquareGizmos(pos, info.GridSquareType);
+                for (var y = 0; y < ArenaSize.y; y++)
+                {
+                    Helper.DrawGridSquareGizmos(new Vector3(x,y,0), GridSquareType.Empty);
+                }
             }
         }
-
+        else
+        {
+            for (var x = 0; x < GridMap.GetLength(0); x++)
+            {
+                for (var y = 0; y < GridMap.GetLength(1); y++)
+                {
+                    var info = GridMap[x, y];
+                    var pos = GridToWorldPosition(x, y);
+                    Helper.DrawGridSquareGizmos(pos, info.GridSquareType);
+                }
+            }
+        }
         OnDrawGizmos();
     }
 
@@ -401,6 +285,7 @@ public class Arena : Singleton<Arena>
     public void RegisterTrackableObject(GridTrackedObject obj)
     {
         obj.OnGridPositionChanged.AddListener((oldPos, newPos) => UpdateObjectGridPosition(obj, oldPos, newPos));
+        UpdateObjectGridPosition(obj, new Vector2(-1, -1), obj.CurrentGridPos);
     }
 
     private void UpdateObjectGridPosition(GridTrackedObject obj, Vector2 oldPos, Vector2 newPos)
@@ -428,23 +313,3 @@ public class Arena : Singleton<Arena>
         return GridMap[x, y];
     }
 }
-
-public class GridSquareInfo
-{
-    public readonly int x;
-    public readonly int y;
-
-    public GridSquareType GridSquareType;
-    public Room Room;
-    public List<GridTrackedObject> Objects;
-
-    public GridSquareInfo(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-        Objects = new List<GridTrackedObject>();
-    }
-}
-
-public class GridContentsChangedEvent : UnityEvent<GridSquareInfo>
-{ }

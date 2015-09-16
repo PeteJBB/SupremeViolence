@@ -5,7 +5,8 @@ public class DestroyOnCollision : MonoBehaviour
 {
 	public GameObject explosionPrefab;
     public float baseDamage = 0;
-    
+    public bool StepBackForExplosion = false;
+
     private Rigidbody2D rb;
     private Vector3 lastKnownVelocity;
 
@@ -57,8 +58,13 @@ public class DestroyOnCollision : MonoBehaviour
         }
 
         // destroy 
-        transform.position = contact.point - (lastKnownVelocity.ToVector2() * Time.deltaTime);
-        Explode(transform.position, rot);
+        Vector2 collisionPoint;// = transform.position.ToVector2();
+        if (StepBackForExplosion)
+           collisionPoint = contact.point - (lastKnownVelocity.ToVector2() * Time.deltaTime);
+        else
+            collisionPoint = contact.point;
+
+        Explode(collisionPoint, rot);
         DamageOther(contact.collider.gameObject);
 
         Helper.DetachParticles(gameObject);

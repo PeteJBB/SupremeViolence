@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using XInputDotNetPure;
+using System.Linq;
+using UnityEditor;
 
 public class Helper : Singleton<Helper>
 {
@@ -49,10 +51,11 @@ public class Helper : Singleton<Helper>
     {
         DrawGizmoSquare(new Vector3(minx, miny, z), new Vector3(maxx, maxy, z));
     }
-    public static void DrawGizmoSquare(Vector3 center, float size = 1)
+    public static void DrawGizmoSquare(Vector3 center, float size = 1, float? sizey = null)
     {
-        var halfSize = size / 2f;
-        DrawGizmoSquare(center.x - halfSize, center.y - halfSize, center.x + halfSize, center.y + halfSize, center.z);
+        var halfSizeX = size / 2f;
+        var halfSizeY = sizey == null ? halfSizeX : sizey.Value / 2f;
+        DrawGizmoSquare(center.x - halfSizeX, center.y - halfSizeY, center.x + halfSizeX, center.y + halfSizeY, center.z);
     }
     public static void DrawGizmoSquare(Vector3 min, Vector3 max)
     {
@@ -150,9 +153,11 @@ public class Helper : Singleton<Helper>
 
     }
 
-    public static void SetHideFlags(GameObject go, HideFlags flags)
+    public static void SetHideFlags(GameObject go, HideFlags flags, bool childrenOnly = false)
     {
-        go.hideFlags = flags;
+        if(!childrenOnly)
+            go.hideFlags = flags;
+
         foreach(Transform t in go.transform)
         {
             SetHideFlags(t.gameObject, flags);
@@ -192,6 +197,27 @@ public class Helper : Singleton<Helper>
         {
             var child = gameObject.transform.GetChild(i);
             SetLayerRecursive(child.gameObject, layer);
+        }
+    }
+
+    public static bool AnyAreNotNull(params object[] objects )
+    {
+        return objects.Any(x => x != null);
+    }
+
+    public static bool IsEditMode()
+    {
+        return !EditorApplication.isPlaying;
+    }
+
+
+    public static void SetDirtyRecursive(Transform transform)
+    {
+        EditorUtility.SetDirty(transform.gameObject);
+
+        foreach(Transform t in transform)
+        {
+            EditorUtility.SetDirty(t.gameObject);
         }
     }
 }

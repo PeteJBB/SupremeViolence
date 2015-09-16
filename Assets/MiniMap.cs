@@ -33,6 +33,9 @@ public class MiniMap : MonoBehaviour
                 sq.transform.localPosition = new Vector3(posx, posy, 0);
                 
                 GridMap[x,y] = sq;
+
+                var info = Arena.Instance.GetGridSquare(x, y);
+                GridContentsChanged(info);
             }
         }
         
@@ -49,10 +52,13 @@ public class MiniMap : MonoBehaviour
         var img = sq.GetComponent<Image>();
 
         var obj = info.Objects.OrderByDescending(x => x.MinimapPriority).FirstOrDefault();
-        if(obj == null)
-            img.color = new Vector4(0,0,0,0.75f);
-        else
+        if(obj != null)
             img.color = obj.MapColor;
+
+        else if (info.GridSquareType == GridSquareType.OutOfBounds)
+            img.color = new Color(0, 0, 0, 0);
+        else
+            img.color = new Vector4(0.1f, 0.1f, 0.1f, 1);
 
         //foreach(var o in info.Objects)
         //{

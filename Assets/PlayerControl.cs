@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using XInputDotNetPure;
 
-public class PlayerControl : MonoBehaviour {
+public class PlayerControl : MonoBehaviour 
+{
+    public GameObject CameraPrefab;
 
     private float baseLegStrength = 30f;
     private float baseMass = 1;
@@ -57,11 +59,13 @@ public class PlayerControl : MonoBehaviour {
         Pickups = new List<Pickup>();
 
         ammobar = transform.FindChild("UI/ammobar").GetComponent<FillBar>();        
-        weaponCycler = GetComponentInChildren<WeaponCycler>();        
+        weaponCycler = GetComponentInChildren<WeaponCycler>();
     }
 
     void Start () 
     {
+        CreateCamera();
+
         // initialise pickups bought in shop / carried over from previous match
         foreach(var ps in GameState.Players[PlayerIndex].PickupStates)
         {
@@ -81,6 +85,31 @@ public class PlayerControl : MonoBehaviour {
         Helper.SetLayerRecursive(transform.Find("UI/weaponCycler").gameObject, uiLayer);
         Helper.SetLayerRecursive(transform.Find("UI/ammobar").gameObject, uiLayer);
 	}
+
+    private void CreateCamera()
+    {
+        if (CameraPrefab != null)
+        {
+            var cam = Instantiate(CameraPrefab).GetComponent<Camera>();
+            cam.orthographicSize = 4;
+            cam.name = "PlayerCamera" + PlayerIndex;
+            var track = cam.GetComponent<PlayerCamera>();
+            track.PlayerIndex = PlayerIndex;
+
+            if (PlayerIndex > 0)
+                cam.GetComponent<AudioListener>().enabled = false;
+
+            // set camera rect
+            var w = 0.5f;
+            var h = GameSettings.NumberOfPlayers > 2 ? 0.5f : 1;
+            var x = (PlayerIndex % 2) * 0.5f;
+            var y = GameSettings.NumberOfPlayers < 3 || PlayerIndex > 1
+                ? 0f
+                    : 0.5f;
+
+            cam.rect = new Rect(x, y, w, h);
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () 

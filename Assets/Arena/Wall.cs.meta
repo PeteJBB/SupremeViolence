@@ -1,10 +1,32 @@
 fileFormatVersion: 2
 guid: e4abc247729918543851824a98bfc019
-timeCreated: 1439953838
+timeCreated: 1442314081
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - bg: {fileID: 21300000, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topL: {fileID: 21300004, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topR: {fileID: 21300052, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - leftT: {fileID: 21300016, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - leftB: {fileID: 21300054, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - rightT: {fileID: 21300008, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - rightB: {fileID: 21300056, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomL: {fileID: 21300012, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomR: {fileID: 21300050, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topLeft: {fileID: 21300002, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topRight: {fileID: 21300006, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomLeft: {fileID: 21300014, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomRight: {fileID: 21300010, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topLeftInner: {fileID: 21300020, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - topRightInner: {fileID: 21300018, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomLeftInner: {fileID: 21300024, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - bottomRightInner: {fileID: 21300022, guid: ef63909df1c06dc448508c1dc7c5171f, type: 3}
+  - SkinBg: {instanceID: 0}
+  - SkinTopLeft: {instanceID: 0}
+  - SkinTopRight: {instanceID: 0}
+  - SkinBottomLeft: {instanceID: 0}
+  - SkinBottomRight: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

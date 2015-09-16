@@ -5,6 +5,7 @@ using System.Collections;
 public class SpriteSorter: MonoBehaviour 
 {
     public int SortOrderOffset = 0;
+    public bool UseParentTransform = false;
 
     private SpriteRenderer spriteRenderer;
     private TrailRenderer trail;
@@ -26,7 +27,9 @@ public class SpriteSorter: MonoBehaviour
 
     private void SetSortOrder()
     {
-        int pos = GetOrderByYPosition(transform.position.y);
+        int pos = UseParentTransform
+            ? GetOrderByYPosition(transform.parent.position.y)
+            : GetOrderByYPosition(transform.position.y);
 
         if(spriteRenderer != null)
             spriteRenderer.sortingOrder = pos + SortOrderOffset;
@@ -48,9 +51,10 @@ public class SpriteSorter: MonoBehaviour
         // lights are offset at +100, top and side walls at +150
 
         var yoffset = y - 0.5f;
-        var rounded = Mathf.FloorToInt(yoffset);
-        var rem = yoffset % 1f;
-        var z = rounded * -200 + rem * -100;
+        //var rounded = Mathf.FloorToInt(yoffset);
+        //var rem = yoffset % 1f;
+        //var z = rounded * -200 + rem * -100;
+        var z = yoffset * -100;
         return Mathf.RoundToInt(z);
     }
 }

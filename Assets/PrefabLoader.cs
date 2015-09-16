@@ -21,7 +21,7 @@ public class PrefabLoader : MonoBehaviour
         Helper.SetHideFlags(gameObject, HideFlags.None);
 
         // delete the old one first
-        Helper.DestroyAllChildren(transform, GameBrain.IsEditMode());
+        Helper.DestroyAllChildren(transform, Helper.IsEditMode());
 
         instance = Instantiate(Prefab);
         instance.name = "instance";

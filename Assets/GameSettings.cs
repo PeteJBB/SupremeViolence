@@ -12,7 +12,7 @@ public class GameSettings
 
     public static Wall WallPrefab = Resources.Load<Wall>("Arena/Wall");
     public static GameObject FloorPrefab = Resources.Load<GameObject>("Arena/Floor");
-
+    public static Sprite[] WallSprites = Resources.LoadAll<Sprite>("Rooms/Basic/Wall");
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;

@@ -4,42 +4,101 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+[ExecuteInEditMode]
 public class Wall : MonoBehaviour
 {
-    public Sprite bg;
+    public Vector2 Size;
 
-    public Sprite topL;
-    public Sprite topR;
-    public Sprite leftT;
-    public Sprite leftB;
-    public Sprite rightT;
-    public Sprite rightB;
-    public Sprite bottomL;
-    public Sprite bottomR;
+    private Sprite bg;
 
-    public Sprite topLeft;
-    public Sprite topRight;
-    public Sprite bottomLeft;
-    public Sprite bottomRight;
+    private Sprite topL;
+    private Sprite topR;
+    private Sprite leftT;
+    private Sprite leftB;
+    private Sprite rightT;
+    private Sprite rightB;
+    private Sprite bottomL;
+    private Sprite bottomR;
 
-    public Sprite topLeftInner;
-    public Sprite topRightInner;
-    public Sprite bottomLeftInner;
-    public Sprite bottomRightInner;
+    private Sprite topLeft;
+    private Sprite topRight;
+    private Sprite bottomLeft;
+    private Sprite bottomRight;
 
-    public Texture2D Skin;
-    public WallSideFlags SkinSides;
+    private Sprite topLeftInner;
+    private Sprite topRightInner;
+    private Sprite bottomLeftInner;
+    private Sprite bottomRightInner;
 
-    void Start()
+    public Texture2D SkinBg;
+    public Texture2D SkinTopLeft;
+    public Texture2D SkinTopRight;
+    public Texture2D SkinBottomLeft;
+    public Texture2D SkinBottomRight;
+
+    private Texture2D z_SkinBg;
+    private Texture2D z_SkinTopLeft;
+    private Texture2D z_SkinTopRight;
+    private Texture2D z_SkinBottomLeft;
+    private Texture2D z_SkinBottomRight;
+    private Vector3 z_position;
+
+    void Update()
     {
-        UpdateEdges();
+        if (Helper.IsEditMode())
+        {
+            if (z_SkinBg != z_SkinBg
+                || z_SkinBg != SkinBg
+                || z_SkinTopLeft != SkinTopLeft
+                || z_SkinTopRight != SkinTopRight
+                || z_SkinBottomLeft != SkinBottomLeft
+                || z_SkinBottomRight != SkinBottomRight
+                || z_position != transform.position
+            )
+            {
+                z_SkinBg = z_SkinBg;
+                z_SkinTopLeft = SkinTopLeft;
+                z_SkinTopRight = SkinTopRight;
+                z_SkinBottomLeft = SkinBottomLeft;
+                z_SkinBottomRight = SkinBottomRight;
+                z_position = transform.position;
+
+                UpdateEdges();
+            }
+        }
+    }
+
+    void LoadSprites()
+    {
+        var atlas = GameSettings.WallSprites;
+        
+        bg = atlas.First(x => x.name == "wall_bg");
+        topL = atlas.First(x => x.name == "wall_top_l");
+        topR = atlas.First(x => x.name == "wall_top_r");
+        leftT = atlas.First(x => x.name == "wall_left_t");
+        leftB = atlas.First(x => x.name == "wall_left_b");
+        rightT = atlas.First(x => x.name == "wall_right_t");
+        rightB = atlas.First(x => x.name == "wall_right_b");
+        bottomL = atlas.First(x => x.name == "wall_bottom_l");
+        bottomR = atlas.First(x => x.name == "wall_bottom_r");
+
+        topLeft = atlas.First(x => x.name == "wall_topleft");
+        topRight = atlas.First(x => x.name == "wall_topright");
+        bottomLeft = atlas.First(x => x.name == "wall_bottomleft");
+        bottomRight = atlas.First(x => x.name == "wall_bottomright");
+
+        topLeftInner = atlas.First(x => x.name == "wall_topleft_inner");
+        topRightInner = atlas.First(x => x.name == "wall_topright_inner");
+        bottomLeftInner = atlas.First(x => x.name == "wall_bottomleft_inner");
+        bottomRightInner = atlas.First(x => x.name == "wall_bottomright_inner");
     }
 
     [ContextMenu("Update Edges")]
     public void UpdateEdges()
     {
-        if (Skin != null)
-            ApplySkin();
+        Helper.SetHideFlags(gameObject, HideFlags.None, true);
+
+        ApplySkin();
 
         var walls = GameObject.FindObjectsOfType<Wall>();
 
@@ -107,10 +166,17 @@ public class Wall : MonoBehaviour
             sr.sprite = rightB;
         else
             sr.enabled = false;
+
+        Helper.SetHideFlags(gameObject, HideFlags.HideInHierarchy, true);
     }
 
     [ContextMenu("Update All Wall Edges")]
-    public void UpdateAllWallEdges()
+    public void UpdateAllWallEdgesNow()
+    {
+        UpdateAllWallEdges();
+    }
+
+    public static void UpdateAllWallEdges()
     {
         var walls = GameObject.FindObjectsOfType<Wall>();
         foreach (var wall in walls)
@@ -130,78 +196,54 @@ public class Wall : MonoBehaviour
         return match != null;
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0, 0, 0, 0);
+        Gizmos.DrawCube(transform.position, new Vector3(1, 1, 0.1f));
+    }
+
     // skinning
     [ContextMenu("Apply Skin")]
     public void ApplySkin()
     {
-        if (SkinSides == WallSideFlags.All)
+        LoadSprites();
+
+        if (SkinBg != null)
         {
-            bg = SpriteCache.GetOrCreateSprite(Skin, bg);
+            bg = SpriteCache.GetOrCreateSprite(SkinBg, bg);
         }
 
-        if (SkinSides.HasFlags(WallSideFlags.Top))
+        if (SkinTopLeft != null)
         {
-            topL = SpriteCache.GetOrCreateSprite(Skin, topL);
-            topR = SpriteCache.GetOrCreateSprite(Skin, topR);
+            topL = SpriteCache.GetOrCreateSprite(SkinTopLeft, topL);
+            topLeft = SpriteCache.GetOrCreateSprite(SkinTopLeft, topLeft);
+            topLeftInner = SpriteCache.GetOrCreateSprite(SkinTopLeft, topLeftInner);
+            leftT = SpriteCache.GetOrCreateSprite(SkinTopLeft, leftT);
         }
 
-        if (SkinSides.HasFlags(WallSideFlags.Left))
+        if (SkinTopRight != null)
         {
-            leftT = SpriteCache.GetOrCreateSprite(Skin, leftT);
-            leftB = SpriteCache.GetOrCreateSprite(Skin, leftB);
+            topR = SpriteCache.GetOrCreateSprite(SkinTopRight, topR);
+            topRight = SpriteCache.GetOrCreateSprite(SkinTopRight, topRight);
+            topRightInner = SpriteCache.GetOrCreateSprite(SkinTopRight, topRightInner);
+            rightT = SpriteCache.GetOrCreateSprite(SkinTopRight, rightT);
         }
 
-        if (SkinSides.HasFlags(WallSideFlags.Right))
-        {
-            rightT = SpriteCache.GetOrCreateSprite(Skin, rightT);
-            rightB = SpriteCache.GetOrCreateSprite(Skin, rightB);
+        if (SkinBottomLeft != null)
+        {            
+            bottomL = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomL);
+            bottomLeft = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomLeft);
+            bottomLeftInner = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomLeftInner);
+            leftB = SpriteCache.GetOrCreateSprite(SkinTopLeft, leftB);
         }
 
-        if (SkinSides.HasFlags(WallSideFlags.Bottom))
+        if (SkinBottomRight != null)
         {
-            bottomL = SpriteCache.GetOrCreateSprite(Skin, bottomL);
-            bottomR = SpriteCache.GetOrCreateSprite(Skin, bottomR);
+            bottomR = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomR);
+            bottomRight = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomRight);
+            bottomRightInner = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomRightInner);
+            rightB = SpriteCache.GetOrCreateSprite(SkinTopRight, rightB);
         }
-
-        if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Left))
-        {
-            topLeft = SpriteCache.GetOrCreateSprite(Skin, topLeft);
-            topLeftInner = SpriteCache.GetOrCreateSprite(Skin, topLeftInner);
-        }
-
-        if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Right))
-        {
-            topRight = SpriteCache.GetOrCreateSprite(Skin, topRight);
-            topRightInner = SpriteCache.GetOrCreateSprite(Skin, topRightInner);
-        }
-
-        if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Left))
-        {
-            bottomLeft = SpriteCache.GetOrCreateSprite(Skin, bottomLeft);
-            bottomLeftInner = SpriteCache.GetOrCreateSprite(Skin, bottomLeftInner);
-        }
-
-        if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Right))
-        {
-            bottomRight = SpriteCache.GetOrCreateSprite(Skin, bottomRight);
-            bottomRightInner = SpriteCache.GetOrCreateSprite(Skin, bottomRightInner);
-        }
-
-
-        // if(SkinSides == WallSideFlags.All)
-        //    transform.FindChild("Bg").GetComponent<SkinableSprite>().SetSkin(Skin);
-
-        //if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Left))
-        //    transform.FindChild("TopLeft").GetComponent<SkinableSprite>().SetSkin(Skin);
-
-        //if (SkinSides.HasFlags(WallSideFlags.Top) && SkinSides.HasFlags(WallSideFlags.Right))
-        //    transform.FindChild("TopRight").GetComponent<SkinableSprite>().SetSkin(Skin);
-
-        //if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Right))
-        //    transform.FindChild("BottomRight").GetComponent<SkinableSprite>().SetSkin(Skin);
-
-        //if (SkinSides.HasFlags(WallSideFlags.Bottom) && SkinSides.HasFlags(WallSideFlags.Left))
-        //    transform.FindChild("BottomLeft").GetComponent<SkinableSprite>().SetSkin(Skin);
     }
 }
 

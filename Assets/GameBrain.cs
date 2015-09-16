@@ -22,7 +22,6 @@ public class GameBrain : Singleton<GameBrain>
 
     public GameObject PlayerCameraPrefab;
 
-    private List<Camera> cameras = new List<Camera>();
     private PlayerControl[] players;
 
     public UnityEvent OnGameOver;
@@ -43,9 +42,31 @@ public class GameBrain : Singleton<GameBrain>
 
     void Start()
     {
+        if (State == PlayState.GameOn)
+            Initialise();           
+
+        // else expect Initialise to be called by another element (eg LevelLoader once everything has loaded)
+    }
+
+    public IEnumerator LoadLevelAdditiveCoroutine(string levelToLoad, Action callback = null)
+    {
+        //if (OnLevelWillBeLoaded != null)
+        //    OnLevelWillBeLoaded();
+
+        Debug.Log("Loading map " + levelToLoad);
+        yield return Application.LoadLevelAdditiveAsync(levelToLoad);
+
+        if(callback != null)
+            callback.Invoke();
+    }
+
+    public void Initialise()
+    {
+        Debug.Log("Level was loaded ");
+
         GameState.StartNewRound();
 
-        CreatePlayerCameras();
+        //CreatePlayerCameras();
 
         var resultsCanvasObj = GameObject.Find("ResultsCanvas");
         if (resultsCanvasObj != null)
@@ -64,40 +85,37 @@ public class GameBrain : Singleton<GameBrain>
         }
     }
 
-    void OnLevelWasLoaded(int level)
-    {
-        Debug.Log("Level was loaded " + level);
-    }
+    
 
     // create player cameras
-    void CreatePlayerCameras()
-    {
-        if (PlayerCameraPrefab == null)
-            return;
+    //void CreatePlayerCameras()
+    //{
+    //    if (PlayerCameraPrefab == null)
+    //        return;
 
-        for(var i=0; i<GameSettings.NumberOfPlayers; i++)
-        {
-            var cam = Instantiate(PlayerCameraPrefab).GetComponent<Camera>();
-            cameras.Add(cam);
-            cam.orthographicSize = 4;
-            cam.name = "PlayerCamera" + i;
-            var track = cam.GetComponent<PlayerCamera>();
-            track.PlayerIndex = i;
+    //    for(var i=0; i<GameSettings.NumberOfPlayers; i++)
+    //    {
+    //        var cam = Instantiate(PlayerCameraPrefab).GetComponent<Camera>();
+    //        cameras.Add(cam);
+    //        cam.orthographicSize = 4;
+    //        cam.name = "PlayerCamera" + i;
+    //        var track = cam.GetComponent<PlayerCamera>();
+    //        track.PlayerIndex = i;
             
-            if(i > 0)
-                cam.GetComponent<AudioListener>().enabled = false;
+    //        if(i > 0)
+    //            cam.GetComponent<AudioListener>().enabled = false;
             
-            // set camera rect
-            var w = 0.5f;
-            var h = GameSettings.NumberOfPlayers > 2 ? 0.5f : 1;
-            var x = (i % 2) * 0.5f;
-            var y = GameSettings.NumberOfPlayers < 3 || i > 1
-                ? 0f
-                    : 0.5f;
+    //        // set camera rect
+    //        var w = 0.5f;
+    //        var h = GameSettings.NumberOfPlayers > 2 ? 0.5f : 1;
+    //        var x = (i % 2) * 0.5f;
+    //        var y = GameSettings.NumberOfPlayers < 3 || i > 1
+    //            ? 0f
+    //                : 0.5f;
             
-            cam.rect = new Rect(x,y,w,h);
-        }
-    }
+    //        cam.rect = new Rect(x,y,w,h);
+    //    }
+    //}
 
     void RunStartupSequence()
     {
@@ -108,7 +126,14 @@ public class GameBrain : Singleton<GameBrain>
             AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
 
         // hide UI
-        var uiCanvas = GameObject.FindObjectOfType<PlayerHudCanvas>().GetComponent<CanvasGroup>();
+        var playerHud = GameObject.FindObjectOfType<PlayerHudCanvas>();
+        if (playerHud == null)
+        {
+            GameOn();
+            return;
+        }
+
+        var uiCanvas = playerHud.GetComponent<CanvasGroup>();        
         uiCanvas.alpha = 0;
         var resultsCanvas = GameObject.Find("ResultsCanvas").GetComponent<CanvasGroup>();
         resultsCanvas.alpha = 0;
@@ -270,11 +295,6 @@ public class GameBrain : Singleton<GameBrain>
     public void GameOverContinue()
     {
         Application.LoadLevelAsync("Shop");
-    }
-
-    public static bool IsEditMode()
-    {
-        return !EditorApplication.isPlaying;
     }
 
     void OnGUI()

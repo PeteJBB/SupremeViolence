@@ -6,10 +6,9 @@ using System;
 using System.Linq;
 
 [ExecuteInEditMode]
-public class Room: MonoBehaviour
+public class VariableRoom: MonoBehaviour
 {
-    public Sprite FloorSprite;
-    public Texture2D WallSkin;
+    public Texture2D DefaultWallSkin;
     public bool SkinRightToEdge = false;
 
     private Transform gridContainer;
@@ -22,7 +21,10 @@ public class Room: MonoBehaviour
 
     private GridSquare[,] squares;
 
-    private const int roomSize = 5;
+    public Vector2 RoomSize = new Vector2(5,5);
+
+    [HideInInspector]
+    public bool GenerateOnNextUpdate = false;
 
 	// Use this for initialization
 	void Start () 
@@ -30,7 +32,14 @@ public class Room: MonoBehaviour
         GenerateRoom();
 	}
 
-    
+    void Update()
+    {
+        if (GenerateOnNextUpdate)
+        {
+            GenerateOnNextUpdate = false;
+            GenerateRoom();
+        }
+    }
 
     [ContextMenu("Show walls and floors in heirarchy")]
     public void ShowWallsInHeirarchy()
@@ -55,10 +64,10 @@ public class Room: MonoBehaviour
 
         // create squares
         gridSquarePrefab = Resources.Load<GameObject>("Arena/grid_square");
-        squares = new GridSquare[roomSize,roomSize];
-        for(var x=0; x<roomSize; x++)
+        squares = new GridSquare[(int)RoomSize.x,(int)RoomSize.y];
+        for(var x=0; x<RoomSize.x; x++)
         {
-            for(var y=0; y<roomSize; y++)
+            for(var y=0; y<RoomSize.y; y++)
             {
                 var sq = Instantiate(gridSquarePrefab).GetComponent<GridSquare>();
                 sq.transform.SetParent(gridContainer);
@@ -140,13 +149,8 @@ public class Room: MonoBehaviour
         // interior walls and floors
         foreach(var sq in GetGridSquares())
         {
-            var x = Mathf.RoundToInt(sq.transform.localPosition.x);
-            var y = Mathf.RoundToInt(sq.transform.localPosition.y);
-
             if(sq.SquareType == GridSquareType.Wall)
-                walls.Add(CreateWall(x,y));
-            else 
-                CreateFloor(x,y);
+                walls.Add(CreateWall(sq));
         }
 
         // update wall edges
@@ -169,49 +173,22 @@ public class Room: MonoBehaviour
         GenerateRoom();
     }
 
-    private Wall CreateWall(int x, int y)
+    private Wall CreateWall(GridSquare sq)
     {
+        var x = Mathf.RoundToInt(sq.transform.localPosition.x);
+        var y = Mathf.RoundToInt(sq.transform.localPosition.y);
+
         var wall = Instantiate(GameSettings.WallPrefab);
         wall.transform.SetParent(wallsContainer);
         wall.transform.localPosition = new Vector3(x,y,0);
 
-        //if (WallSkin != null)
-        //{            
-        //    WallSideFlags sides = 0;
-        //    if (SkinRightToEdge)
-        //        sides = WallSideFlags.All;
-        //    else
-        //    {
-        //        if (x == 0)
-        //            sides = sides | WallSideFlags.Right;
-        //        else if (x == roomSize - 1)
-        //            sides = sides | WallSideFlags.Left;
-        //        else
-        //            sides = sides | WallSideFlags.Left | WallSideFlags.Right;
-
-        //        if (y == 0)
-        //            sides = sides | WallSideFlags.Top;
-        //        else if (y == roomSize - 1)
-        //            sides = sides | WallSideFlags.Bottom;
-        //        else
-        //            sides = sides | WallSideFlags.Top | WallSideFlags.Bottom;
-        //    }
-        //    //wall.Skin = WallSkin;
-        //    //wall.SkinSides = sides;
-        //}
+        wall.SkinBg = sq.WallSkinBg != null ? sq.WallSkinBg : DefaultWallSkin;
+        wall.SkinTopLeft = sq.WallSkinTopLeft != null ? sq.WallSkinTopLeft : DefaultWallSkin;
+        wall.SkinTopRight = sq.WallSkinTopRight != null ? sq.WallSkinTopRight : DefaultWallSkin;
+        wall.SkinBottomLeft = sq.WallSkinBottomLeft != null ? sq.WallSkinBottomLeft : DefaultWallSkin;
+        wall.SkinBottomRight = sq.WallSkinBottomRight != null ? sq.WallSkinBottomRight : DefaultWallSkin;
+        
         return wall;
-    }
-
-    private GameObject CreateFloor(int x, int y)
-    {
-        var floor = Instantiate(GameSettings.FloorPrefab);
-        floor.transform.SetParent(floorsContainer);
-        floor.transform.localPosition = new Vector3(x,y,0);
-
-        if(FloorSprite != null)
-            floor.GetComponent<SpriteRenderer>().sprite = FloorSprite;
-
-        return floor;
     }
 
     [ContextMenu("Reload all prefabs")]
@@ -234,24 +211,14 @@ public class Room: MonoBehaviour
     {
         Gizmos.color = new Color(1,1,1, 0.1f);
         var offset = new Vector3(-0.5f, -0.5f, 0);
-        Helper.DrawGizmoSquare(transform.position + offset + new Vector3(roomSize/2f, roomSize/2f, 0), roomSize);
+        Helper.DrawGizmoSquare(transform.position + offset + new Vector3(RoomSize.x/2f, RoomSize.y/2f, 0), RoomSize.x, RoomSize.y);
     }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1, 0, 1, 0.5f);
         var offset = new Vector3(-0.5f, -0.5f, 0);
-        Helper.DrawGizmoSquare(transform.position + offset + new Vector3(roomSize/2f, roomSize/2f, 0), roomSize);
+        Helper.DrawGizmoSquare(transform.position + offset + new Vector3(RoomSize.x/2f, RoomSize.y/2f, 0), RoomSize.x, RoomSize.y);
     }
 
-}
-
-[Flags]
-public enum RoomPositionFlags
-{
-    Center = 0,
-    Top = 1,
-    Bottom = 2,
-    Left = 4,
-    Right = 8
 }
