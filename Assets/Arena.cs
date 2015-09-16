@@ -121,7 +121,7 @@ public class Arena : Singleton<Arena>
                 //SetGridObject(spot, player.gameObject);
 
                 // set color
-                var torso = player.transform.Find("Torso").GetComponent<SpriteRenderer>();
+                var torso = player.transform.Find("Body/Torso").GetComponent<SpriteRenderer>();
                 torso.color = GameState.Players[i].Color;
 
                 var gridTracker = player.GetComponent<GridTrackedObject>();

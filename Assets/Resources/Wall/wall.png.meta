@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ef63909df1c06dc448508c1dc7c5171f
-timeCreated: 1440645823
+timeCreated: 1442407109
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -33,6 +33,7 @@ TextureImporter:
     21300052: wall_top_r
     21300054: wall_left_b
     21300056: wall_right_b
+    21300058: door_floor_h
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -255,9 +256,9 @@ TextureImporter:
         x: 576
         y: 400
         width: 128
-        height: 72
-      alignment: 9
-      pivot: {x: .5, y: .899999976}
+        height: 80
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: door_h_door_left
       rect:
@@ -265,9 +266,9 @@ TextureImporter:
         x: 577
         y: 320
         width: 63
-        height: 72
-      alignment: 9
-      pivot: {x: .75, y: .899999976}
+        height: 48
+      alignment: 8
+      pivot: {x: 1, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: door_h_door_right
       rect:
@@ -275,9 +276,9 @@ TextureImporter:
         x: 640
         y: 320
         width: 64
-        height: 72
-      alignment: 9
-      pivot: {x: .25, y: .899999976}
+        height: 48
+      alignment: 6
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: door_v_frame_top
       rect:
@@ -368,6 +369,16 @@ TextureImporter:
         height: 64
       alignment: 1
       pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: door_floor_h
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 372
+        width: 128
+        height: 24
+      alignment: 7
+      pivot: {x: .5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

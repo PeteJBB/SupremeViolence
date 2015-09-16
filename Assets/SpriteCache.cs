@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class SpriteCache
 {
     public static Dictionary<SpriteCacheKey, Sprite> spriteDic = new Dictionary<SpriteCacheKey, Sprite>();
-    public static Sprite GetOrCreateSprite(Texture2D tex, Rect rect, Vector2 pivot)
+    public static Sprite GetOrCreateSprite(Texture2D tex, Rect rect, Vector2 pivot, float pixelsPerUnit = 128)
     {
         var key = new SpriteCacheKey(tex,rect,pivot);
         if(!Helper.IsEditMode() && spriteDic.ContainsKey(key))
@@ -15,7 +15,7 @@ public class SpriteCache
 
         // create a new sprite
         //Debug.Log("New sprite added to cache: " + tex.name + ", " + rect + ", " + pivot);
-        var sprite = Sprite.Create(tex, rect, pivot);
+        var sprite = Sprite.Create(tex, rect, pivot, pixelsPerUnit);
 
         if (!Helper.IsEditMode())
         {
@@ -29,7 +29,7 @@ public class SpriteCache
         if (tex == null)
             return original;
 
-        return GetOrCreateSprite(tex, original.rect, new Vector2(original.pivot.x / original.rect.width, original.pivot.y / original.rect.height));
+        return GetOrCreateSprite(tex, original.rect, new Vector2(original.pivot.x / original.rect.width, original.pivot.y / original.rect.height), original.pixelsPerUnit);
     }
 	
     public class SpriteCacheKey

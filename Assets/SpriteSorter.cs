@@ -5,6 +5,7 @@ using System.Collections;
 public class SpriteSorter: MonoBehaviour 
 {
     public int SortOrderOffset = 0;
+    public Transform SourceTransform;
     public bool UseParentTransform = false;
 
     private SpriteRenderer spriteRenderer;
@@ -27,9 +28,13 @@ public class SpriteSorter: MonoBehaviour
 
     private void SetSortOrder()
     {
-        int pos = UseParentTransform
-            ? GetOrderByYPosition(transform.parent.position.y)
-            : GetOrderByYPosition(transform.position.y);
+        int pos;
+        if (SourceTransform != null)
+            pos = GetOrderByYPosition(SourceTransform.position.y);
+        else if(UseParentTransform)
+            pos = GetOrderByYPosition(transform.parent.position.y);
+        else
+            pos = GetOrderByYPosition(transform.position.y);
 
         if(spriteRenderer != null)
             spriteRenderer.sortingOrder = pos + SortOrderOffset;

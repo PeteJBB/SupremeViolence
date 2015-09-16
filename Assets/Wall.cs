@@ -96,7 +96,7 @@ public class Wall : MonoBehaviour
     [ContextMenu("Update Edges")]
     public void UpdateEdges()
     {
-        Helper.SetHideFlags(gameObject, HideFlags.None, true);
+        RevealSprites();
 
         ApplySkin();
 
@@ -167,6 +167,18 @@ public class Wall : MonoBehaviour
         else
             sr.enabled = false;
 
+        HideSprites();
+    }
+
+    [ContextMenu("Reveal Sprites")]
+    private void RevealSprites()
+    {
+        Helper.SetHideFlags(gameObject, HideFlags.None, true);
+    }
+
+    [ContextMenu("Hide Sprites")]
+    private void HideSprites()
+    {
         Helper.SetHideFlags(gameObject, HideFlags.HideInHierarchy, true);
     }
 
