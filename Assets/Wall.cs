@@ -63,7 +63,12 @@ public class Wall : MonoBehaviour
                 z_SkinBottomRight = SkinBottomRight;
                 z_position = transform.position;
 
-                UpdateEdges();
+                var allWalls = GameObject.FindObjectsOfType<Wall>();
+                var walls = allWalls.Where(w => Mathf.Abs(w.transform.position.x - transform.position.x) <= 1 || Mathf.Abs(w.transform.position.y - transform.position.y) <= 1).ToList();
+                foreach (var w in walls)
+                    w.UpdateEdges(allWalls);
+
+                //UpdateEdges();
             }
         }
     }
@@ -71,7 +76,7 @@ public class Wall : MonoBehaviour
     void LoadSprites()
     {
         var atlas = GameSettings.WallSprites;
-        
+
         bg = atlas.First(x => x.name == "wall_bg");
         topL = atlas.First(x => x.name == "wall_top_l");
         topR = atlas.First(x => x.name == "wall_top_r");
@@ -94,13 +99,15 @@ public class Wall : MonoBehaviour
     }
 
     [ContextMenu("Update Edges")]
-    public void UpdateEdges()
+    public void UpdateEdges(Wall[] walls = null)
     {
         RevealSprites();
-
         ApplySkin();
 
-        var walls = GameObject.FindObjectsOfType<Wall>();
+        if (walls == null)
+        {
+            walls = GameObject.FindObjectsOfType<Wall>();
+        }
 
         var x = Mathf.RoundToInt(transform.position.x);
         var y = Mathf.RoundToInt(transform.position.y);
@@ -242,11 +249,11 @@ public class Wall : MonoBehaviour
         }
 
         if (SkinBottomLeft != null)
-        {            
+        {
             bottomL = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomL);
             bottomLeft = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomLeft);
             bottomLeftInner = SpriteCache.GetOrCreateSprite(SkinBottomLeft, bottomLeftInner);
-            leftB = SpriteCache.GetOrCreateSprite(SkinTopLeft, leftB);
+            leftB = SpriteCache.GetOrCreateSprite(SkinBottomLeft, leftB);
         }
 
         if (SkinBottomRight != null)
@@ -254,7 +261,7 @@ public class Wall : MonoBehaviour
             bottomR = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomR);
             bottomRight = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomRight);
             bottomRightInner = SpriteCache.GetOrCreateSprite(SkinBottomRight, bottomRightInner);
-            rightB = SpriteCache.GetOrCreateSprite(SkinTopRight, rightB);
+            rightB = SpriteCache.GetOrCreateSprite(SkinBottomRight, rightB);
         }
     }
 }

@@ -12,10 +12,17 @@ public class LevelLoader : MonoBehaviour
     public LevelLoadedEvent OnLevelLoaded;
     public UnityEvent OnAllLevelsLoaded;
 
+    private AsyncOperation loadOperation;
+    private Text progressText;
+
     public string[] LevelsToLoad;
 
     private int currentLoadingIndex = 0;
 
+    void Awake()
+    {
+        progressText = transform.Find("Canvas/Progress").GetComponent<Text>();
+    }
 	void Start () 
 	{
 	    if(LoadImmediately)
@@ -23,6 +30,12 @@ public class LevelLoader : MonoBehaviour
             LoadNext();
         }
 	}
+
+    void Update()
+    {
+        if(loadOperation != null)
+            progressText.text = string.Format("{0}%", Mathf.RoundToInt(loadOperation.progress * 100));
+    }
     
     public void LoadNext()
     {
@@ -44,17 +57,44 @@ public class LevelLoader : MonoBehaviour
         //    OnLevelWillBeLoaded();
 
         Debug.Log("Loading map " + levelToLoad);
-        yield return Application.LoadLevelAdditiveAsync(levelToLoad);
+        loadOperation = Application.LoadLevelAdditiveAsync(levelToLoad);        
+        yield return loadOperation;
 
         if(OnLevelLoaded != null)
             OnLevelLoaded.Invoke(levelToLoad);
 
         currentLoadingIndex++;
-        if(currentLoadingIndex < LevelsToLoad.Length)
+        if (currentLoadingIndex < LevelsToLoad.Length)
             LoadNext();
-        else if(OnAllLevelsLoaded != null)
-            OnAllLevelsLoaded.Invoke();
+        else
+        {
+            var group = transform.Find("Canvas").GetComponent<CanvasGroup>();
+            iTween.ValueTo(gameObject, iTween.Hash("from", 1, "to", 0, "time", 0.5f, "onupdate", (System.Action<object>)((obj) =>
+            {
+                var val = (float)obj;
+                group.alpha = val;
+            }), 
+            "oncomplete", (System.Action)(() =>
+            {
+                Helper.Instance.WaitAndThenCall(2, () =>
+                {
+                    if (OnAllLevelsLoaded != null)
+                        OnAllLevelsLoaded.Invoke();
 
+                    gameObject.SetActive(false);
+                });
+            })));
+            //iTween.CameraFadeAdd();
+            //iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 0, "time", 5f, "oncomplete", (System.Action)(() =>
+            //{
+            //    iTween.CameraFadeDestroy();
+            //    transform.Find("Canvas").gameObject.SetActive(false);
+            //    if (OnAllLevelsLoaded != null)
+            //        OnAllLevelsLoaded.Invoke();    
+            //})));
+
+            
+        }
     }
 }
 

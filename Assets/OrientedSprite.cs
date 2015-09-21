@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
+//using UnityEditor;
 using System.Linq;
 
 [ExecuteInEditMode]
@@ -13,11 +13,6 @@ public class OrientedSprite : MonoBehaviour
     public Sprite SpriteDown;
     public Sprite SpriteLeft;
     public Sprite SpriteRight;
-
-    public SortingLayerSubstitute SortingLayerUp;
-    public SortingLayerSubstitute SortingLayerDown;
-    public SortingLayerSubstitute SortingLayerLeft;
-    public SortingLayerSubstitute SortingLayerRight;
 
     private Orientation lastOrientation = Orientation.Unknown;
     private Animator anim;
@@ -51,19 +46,15 @@ public class OrientedSprite : MonoBehaviour
             {
                 case Orientation.Up:
                     spriteRenderer.sprite = SpriteUp == null ? defaultSprite : SpriteUp;
-                    spriteRenderer.sortingLayerName = (SortingLayerUp == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerUp.ToString();
                     break;
                 case Orientation.Down:
                     spriteRenderer.sprite = SpriteDown == null ? defaultSprite : SpriteDown;
-                    spriteRenderer.sortingLayerName = (SortingLayerDown == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerDown.ToString();
                     break;
                 case Orientation.Left:
                     spriteRenderer.sprite = SpriteLeft == null ? defaultSprite : SpriteLeft;
-                    spriteRenderer.sortingLayerName = (SortingLayerLeft == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerLeft.ToString();
                     break;
                 case Orientation.Right:
                     spriteRenderer.sprite = SpriteRight == null ? defaultSprite : SpriteRight;
-                    spriteRenderer.sortingLayerName = (SortingLayerRight == SortingLayerSubstitute.NotSet) ? defaultSortingLayer : SortingLayerRight.ToString();
                     break;
             }
 
@@ -79,21 +70,6 @@ public class OrientedSprite : MonoBehaviour
     {
         orientation = o;
     }
-}
-
-public enum SortingLayerSubstitute
-{
-    NotSet,
-    Default,
-    Bg_Back,
-    Bg_Mid,
-    Bg_Front,
-    Mid_Back,
-    Mid_Mid,
-    Mid_Front,
-    Fore_Back,
-    Fore_Mid,
-    Fore_Front
 }
 
 public enum Orientation

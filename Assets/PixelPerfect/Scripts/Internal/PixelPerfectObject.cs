@@ -17,6 +17,9 @@ public class PixelPerfectObject : MonoBehaviour {
     public int sortOrderOffset=0;
     //public bool useParentPositionForSorting;
 
+    //public Vector2 pixelScaleVector=Vector2.one;
+    //public bool useVectorPixelScale=false;
+
     Vector3 lastPosition;
 
 	Vector2 spriteOrigin;

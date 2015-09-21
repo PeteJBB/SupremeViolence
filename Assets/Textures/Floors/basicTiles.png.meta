@@ -1,12 +1,14 @@
 fileFormatVersion: 2
 guid: fa7758d759582284397ee30415db3103
-timeCreated: 1442405219
+timeCreated: 1442815333
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: basicTiles_full
-    21300002: basicTiles_half_v
-    21300004: basicTiles_half_h
+    21300002: basicTiles_half_v_left
+    21300004: basicTiles_half_h_bottom
+    21300006: basicTiles_half_v_right
+    21300008: basicTiles_half_h_top
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -63,7 +65,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: basicTiles_half_v
+    - name: basicTiles_half_v_left
       rect:
         serializedVersion: 2
         x: 0
@@ -73,11 +75,31 @@ TextureImporter:
       alignment: 5
       pivot: {x: 1, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: basicTiles_half_h
+    - name: basicTiles_half_h_bottom
       rect:
         serializedVersion: 2
         x: 0
         y: 0
+        width: 128
+        height: 64
+      alignment: 2
+      pivot: {x: .5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: basicTiles_half_v_right
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 128
+      alignment: 5
+      pivot: {x: 1, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: basicTiles_half_h_top
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
         width: 128
         height: 64
       alignment: 2

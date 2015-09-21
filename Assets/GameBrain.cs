@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.UI;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,18 +148,18 @@ public class GameBrain : Singleton<GameBrain>
         cam.depth = 1;
 
         // 0 - wob
-        // 2 - fade in ui
-        // 3 - Get Ready / fade to game
-        // 5 - go!
+        // 4 - fade in ui
+        // 5 - Get Ready / fade to game
+        // 7 - go!
 
         // fade in UI
-        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "delay", 2, "time", 0.5f, "onupdate", (Action<object>) (newVal =>  
+        iTween.ValueTo(gameObject, iTween.Hash("from", 0, "to", 1, "delay", 4, "time", 0.5f, "onupdate", (Action<object>) (newVal =>  
         { 
             uiCanvas.alpha = (float)newVal;
         })));
 
         // Get ready!
-        Helper.Instance.WaitAndThenCall(3, () =>
+        Helper.Instance.WaitAndThenCall(5, () =>
         {
             PlayerHudCanvas.Instance.ShowMessage("Get Ready!", 2);
             if(GetReadySound != null)
@@ -168,15 +168,15 @@ public class GameBrain : Singleton<GameBrain>
 
         // fade cam to black (requires GUILayer)
         iTween.CameraFadeAdd();
-        iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 3, "time", 0.5f));
+        iTween.CameraFadeTo(iTween.Hash("amount", 1, "delay", 5, "time", 0.5f));
 
         // remove startup cam
-        Destroy(cam.gameObject, 3.5f);
+        Destroy(cam.gameObject, 5.5f);
 
         // fade to game view
-        iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3.5, "time", 0.5f));
+        iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 5.5, "time", 0.5f));
 
-        Helper.Instance.WaitAndThenCall(5, () =>
+        Helper.Instance.WaitAndThenCall(7, () =>
         {
             GameOn();
         });

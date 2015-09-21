@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using XInputDotNetPure;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class Helper : Singleton<Helper>
 {
@@ -13,10 +15,10 @@ public class Helper : Singleton<Helper>
 
     }
 
-	public static void DetachParticles(GameObject obj)
+    public static void DetachParticles(GameObject obj)
     {
         var particles = obj.transform.GetComponentsInChildren<ParticleSystem>();
-        foreach(var p in particles)
+        foreach (var p in particles)
         {
             p.transform.parent = null;
             p.Stop();
@@ -24,7 +26,7 @@ public class Helper : Singleton<Helper>
         }
 
         var trails = obj.transform.GetComponentsInChildren<TrailRenderer>();
-        foreach(var t in trails)
+        foreach (var t in trails)
         {
             t.transform.parent = null;
             Destroy(t.gameObject, t.time);
@@ -40,7 +42,7 @@ public class Helper : Singleton<Helper>
     {
         StartCoroutine(CoWaitAndThenCall(waitSeconds, funcToRun));
     }
-    
+
     public IEnumerator CoWaitAndThenCall(float waitSeconds, Action funcToRun)
     {
         yield return new WaitForSeconds(waitSeconds);
@@ -68,13 +70,13 @@ public class Helper : Singleton<Helper>
     public static void DestroyAllChildren(Transform t, bool immediate = false)
     {
         var children = new List<GameObject>();
-        for(var i=0; i<t.childCount; i++)
+        for (var i = 0; i < t.childCount; i++)
             children.Add(t.GetChild(i).gameObject);
 
-        foreach(var g in children)
+        foreach (var g in children)
         {
             g.hideFlags = HideFlags.None;
-            if(immediate)
+            if (immediate)
                 DestroyImmediate(g);
             else
                 Destroy(g);
@@ -88,7 +90,7 @@ public class Helper : Singleton<Helper>
         if (inst != null)
             list.Add(inst);
 
-        if(root.childCount > 0)
+        if (root.childCount > 0)
         {
             list.AddRange(GetComponentsInChildrenRecursive<T>(root));
         }
@@ -99,11 +101,11 @@ public class Helper : Singleton<Helper>
     public static List<T> GetComponentsInChildrenRecursive<T>(Transform root)
     {
         var list = new List<T>();
-        if(root.childCount > 0)
+        if (root.childCount > 0)
         {
             list.AddRange(root.GetComponentsInChildren<T>());
 
-            for(var i=0; i<root.childCount; i++)
+            for (var i = 0; i < root.childCount; i++)
             {
                 list.AddRange(GetComponentsInChildrenRecursive<T>(root.GetChild(i)));
             }
@@ -112,10 +114,10 @@ public class Helper : Singleton<Helper>
         return list;
     }
 
-    
+
     public static T GetComponentInParentsRecursive<T>(Transform trans)
     {
-        if(trans.parent != null)
+        if (trans.parent != null)
         {
             var inst = trans.parent.GetComponent<T>();
             if (inst != null)
@@ -137,8 +139,9 @@ public class Helper : Singleton<Helper>
                 c = isSelected ? Color.green : Color.red;
                 break;
             case GridSquareType.Void:
-                c = isSelected ? Color.green : new Color(1,0,1);
-                break;case GridSquareType.Empty:
+                c = isSelected ? Color.green : new Color(1, 0, 1);
+                break;
+            case GridSquareType.Empty:
             default:
                 c = isSelected ? Color.green : Color.white;
                 break;
@@ -149,16 +152,16 @@ public class Helper : Singleton<Helper>
 
         Gizmos.color = new Color(c.r, c.g, c.b, 0.01f);
         Gizmos.DrawCube(center, new Vector3(1, 1, 0.005f));
-        
+
 
     }
 
     public static void SetHideFlags(GameObject go, HideFlags flags, bool childrenOnly = false)
     {
-        if(!childrenOnly)
+        if (!childrenOnly)
             go.hideFlags = flags;
 
-        foreach(Transform t in go.transform)
+        foreach (Transform t in go.transform)
         {
             SetHideFlags(t.gameObject, flags);
         }
@@ -168,7 +171,7 @@ public class Helper : Singleton<Helper>
     {
         Debug.Log(Time.realtimeSinceStartup + ": " + msg);
     }
-    public static void DebugLogTime(string format, params object[] args )
+    public static void DebugLogTime(string format, params object[] args)
     {
         Debug.LogFormat(Time.realtimeSinceStartup + ": " + format, args);
     }
@@ -176,7 +179,7 @@ public class Helper : Singleton<Helper>
 
     public static GamePadState GetGamePadInput(int playerIndex)
     {
-        switch(playerIndex)
+        switch (playerIndex)
         {
             case 0:
             default:
@@ -200,24 +203,29 @@ public class Helper : Singleton<Helper>
         }
     }
 
-    public static bool AnyAreNotNull(params object[] objects )
+    public static bool AnyAreNotNull(params object[] objects)
     {
         return objects.Any(x => x != null);
     }
 
     public static bool IsEditMode()
     {
+#if UNITY_EDITOR
         return !EditorApplication.isPlaying;
+#endif
+        return false;
     }
 
 
     public static void SetDirtyRecursive(Transform transform)
     {
+#if UNITY_EDITOR
         EditorUtility.SetDirty(transform.gameObject);
 
-        foreach(Transform t in transform)
+        foreach (Transform t in transform)
         {
             EditorUtility.SetDirty(t.gameObject);
         }
+#endif
     }
 }

@@ -8,7 +8,7 @@ public class SpriteCache
     public static Sprite GetOrCreateSprite(Texture2D tex, Rect rect, Vector2 pivot, float pixelsPerUnit = 128)
     {
         var key = new SpriteCacheKey(tex,rect,pivot);
-        if(!Helper.IsEditMode() && spriteDic.ContainsKey(key))
+        if(spriteDic.ContainsKey(key))//!Helper.IsEditMode() && spriteDic.ContainsKey(key))
         {
             return spriteDic[key];
         }
@@ -30,6 +30,12 @@ public class SpriteCache
             return original;
 
         return GetOrCreateSprite(tex, original.rect, new Vector2(original.pivot.x / original.rect.width, original.pivot.y / original.rect.height), original.pixelsPerUnit);
+    }
+
+    [ContextMenu("Clear Sprite Cache")]
+    public void ClearCache()
+    {
+        spriteDic = new Dictionary<SpriteCacheKey, Sprite>();
     }
 	
     public class SpriteCacheKey
