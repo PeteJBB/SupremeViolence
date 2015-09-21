@@ -43,6 +43,16 @@ public class Wall : MonoBehaviour
     private Texture2D z_SkinBottomRight;
     private Vector3 z_position;
 
+    void Start()
+    {
+        z_SkinBg = z_SkinBg;
+        z_SkinTopLeft = SkinTopLeft;
+        z_SkinTopRight = SkinTopRight;
+        z_SkinBottomLeft = SkinBottomLeft;
+        z_SkinBottomRight = SkinBottomRight;
+        z_position = transform.position;
+    }
+
     void Update()
     {
         if (Helper.IsEditMode())

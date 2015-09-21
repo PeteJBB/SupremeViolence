@@ -17,10 +17,10 @@ public class SpriteCache
         //Debug.Log("New sprite added to cache: " + tex.name + ", " + rect + ", " + pivot);
         var sprite = Sprite.Create(tex, rect, pivot, pixelsPerUnit);
 
-        if (!Helper.IsEditMode())
-        {
+        //if (!Helper.IsEditMode())
+        //{
             spriteDic.Add(key, sprite);
-        }
+        //}
         return sprite;
     }
 
