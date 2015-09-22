@@ -44,7 +44,6 @@ public class PlayerControl : MonoBehaviour
 
     private Pickup ammoBarSource;
 
-    
 	// Use this for initialization
 	void Awake () 
     {
@@ -60,6 +59,7 @@ public class PlayerControl : MonoBehaviour
 
         ammobar = transform.FindChild("UI/ammobar").GetComponent<FillBar>();        
         weaponCycler = GetComponentInChildren<WeaponCycler>();
+        
     }
 
     void Start () 
@@ -134,27 +134,27 @@ public class PlayerControl : MonoBehaviour
             // aim
             var aimInput = new Vector2(gamepadState.ThumbSticks.Right.X, gamepadState.ThumbSticks.Right.Y);
             viewOffset = aimInput;// *2;
-            if(aimInput.magnitude == 0)
+            if (aimInput.magnitude == 0)
                 aimInput = moveInput;
 
-            
-            if(aimInput.magnitude > 0)
+
+            if (aimInput.magnitude > 0)
             {
-        		// rotate to face input dir
+                // rotate to face input dir
                 float angle = Mathf.Rad2Deg * Mathf.Atan2(-aimInput.x, aimInput.y);
-                if(angle >= -45 && angle < 45)
+                if (angle >= -45 && angle < 45)
                 {
-                    orientation = Orientation.Up;
+                    orientation = Orientation.Up;                    
                 }
-                else if(angle >= 45 && angle < 135)
+                else if (angle >= 45 && angle < 135)
                 {
                     orientation = Orientation.Left;
                 }
-                else if(angle >= -135 && angle < -45)
+                else if (angle >= -135 && angle < -45)
                 {
                     orientation = Orientation.Right;
                 }
-                else if(angle >= 135 || angle < -135)
+                else if (angle >= 135 || angle < -135)
                 {
                     orientation = Orientation.Down;
                 }
@@ -348,7 +348,7 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            CurrentWeapon.OnDeselectWeapon();
+            CurrentWeapon.DeselectWeapon();
 
             // find the current weapon index and move to the next one
             var index = weapons.IndexOf(CurrentWeapon);
@@ -362,7 +362,7 @@ public class PlayerControl : MonoBehaviour
         }
 
         if(CurrentWeapon != null)
-            CurrentWeapon.OnSelectWeapon();
+            CurrentWeapon.SelectWeapon();
 
         SetAmmoBarSource(CurrentWeapon);
         weaponCycler.Cycle(dir);

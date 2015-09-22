@@ -15,7 +15,7 @@ public class GameSettings
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
-    public static int ScoreLimit = 1;//0;
+    public static int ScoreLimit = 10;
     public static Pickup StartWeapon = null;//PickupPrefabs.First(x => x.GetPickupName() == "Laser Rifle");
     public static AmmoLevel AmmoLevel = AmmoLevel.Normal;
     public static YesNo SpawnPickups = YesNo.Yes;

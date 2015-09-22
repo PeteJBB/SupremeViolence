@@ -23,7 +23,7 @@ public class SpeedyBoots : Pickup
         particles = transform.FindChild("particles").GetComponent<ParticleSystem>();
         particles.enableEmission = false;
 
-        base.OnPlayerPickup.AddListener(OnPlayerPickup);
+        base.OnPlayerPickup.AddListener(OnPlayerPickup_Handler);
 
         //ammoBar = transform.FindChild("ammobar").GetComponent<FillBar>();
         
@@ -66,7 +66,7 @@ public class SpeedyBoots : Pickup
         }
 	}
 
-    private void OnPlayerPickup()
+    private void OnPlayerPickup_Handler()
     {
         ownerPlayerBody = Player.GetComponent<Rigidbody2D>();
     }

@@ -109,7 +109,13 @@ public class Arena : Singleton<Arena>
         var playerSpawns = GameObject.FindObjectsOfType<PlayerSpawn>().ToList();
         var emptySquares = GetEmptyGridSquares();
 
-        for (var i = 0; i < GameSettings.NumberOfPlayers; i++)
+        var existingPlayers = GameObject.FindObjectsOfType<PlayerControl>();
+        for(var i=0; i<existingPlayers.Length; i++)
+        {
+            existingPlayers[i].PlayerIndex = i;
+        }
+
+        for (var i = existingPlayers.Length; i < GameSettings.NumberOfPlayers; i++)
         {
             if (playerSpawns.Any())
             {

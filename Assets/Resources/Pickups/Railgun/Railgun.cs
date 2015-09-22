@@ -22,6 +22,8 @@ public class Railgun : Pickup
     private ParticleSystem particles;
     private GameObject muzzleFlash;
 
+    private SpriteRenderer laserSight;
+    
 	// Use this for initialization
     void Awake()
     {
@@ -41,7 +43,28 @@ public class Railgun : Pickup
 
         muzzleFlash = transform.FindChild("MuzzleFlash").gameObject;
         HideMuzzleFlash();
+
+        laserSight = transform.Find("lasersight").GetComponent<SpriteRenderer>();
+        laserSight.enabled = false;
+
+        base.OnDeselectWeapon.AddListener(OnDeselectWeapon_Handler);
 	}
+
+    void Update()
+    {
+        if (Player != null && Player.CurrentWeapon == this)
+        {
+            var angle = Player.AimingAngle;
+            laserSight.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            var offset = laserSight.transform.rotation * (Vector3.up * (laserSight.sprite.rect.height / laserSight.sprite.pixelsPerUnit) * (laserSight.sprite.pivot.y / laserSight.sprite.rect.height));
+            laserSight.transform.position = Player.GetAimingOrigin().ToVector3() + offset;
+        }
+    }
+
+    public void OnDeselectWeapon_Handler()
+    {
+        laserSight.enabled = false;
+    }
 	
     public override string GetDescription()
     {
@@ -64,6 +87,8 @@ public class Railgun : Pickup
             humming.Play();
             chargingSound.Play();
 
+            laserSight.enabled = false;
+
             iTween.StopByName(gameObject, "charge");
             iTween.ValueTo(gameObject, iTween.Hash("name", "charge", "from", 0f, "to", 1f, "time", chargingTime, "onupdate", (Action<object>)((o) =>
             {
@@ -73,9 +98,12 @@ public class Railgun : Pickup
             "oncomplete", (Action)(() =>
             {
                 particles.enableEmission = true;
+                laserSight.color = new Color(0, 1, 0, 0);
+                laserSight.enabled = true;
+                Helper.TweenSpriteAlpha(laserSight, 0, 1, 1f);
             })));
 
-            Player.SetAmmoBarSource(this, new FillBarColorPoint[] { new FillBarColorPoint(new Color(0, 0.5f, 0), 0), new FillBarColorPoint(new Color(0, 1, 0), 1) });
+            Player.SetAmmoBarSource(this, new FillBarColorPoint[] { new FillBarColorPoint(new Color(0, 0.75f, 0), 0), new FillBarColorPoint(new Color(0, 1, 0), 1) });
         }
         else
         {
@@ -87,7 +115,7 @@ public class Railgun : Pickup
     {
         //chargeBar.Hide();
         Player.RestoreAmmoBarSource();
-
+        laserSight.enabled = false;
         if(Ammo > 0)
         {
             humming.Stop();

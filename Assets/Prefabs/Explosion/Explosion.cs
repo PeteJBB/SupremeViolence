@@ -24,22 +24,32 @@ public class Explosion : MonoBehaviour
 
         foreach(var other in colliders)
         {
-            var v = other.transform.position - transform.position;
+            float damageRatio;
+            Vector3 damageVector = other.bounds.center - transform.position;
 
-            // check for line of sight
-            var hit = Physics2D.Raycast(transform.position, v, layerMask);
-            if (hit.collider != other)
+            if (other.OverlapPoint(transform.position.ToVector2()))
             {
-                Debug.Log("Explosion expected to hit " + other.gameObject.name + " but was blocked by " + hit.collider.gameObject.name);
-                continue;
+                damageRatio = 1;
+                Debug.Log("Explosion direct hit on " + other.gameObject.name);
+            }
+            else
+            {
+                // check for line of sight
+                var hit = Physics2D.Raycast(transform.position, damageVector, layerMask);
+                if (hit.collider != other)
+                {
+                    Debug.Log("Explosion expected to hit " + other.gameObject.name + " but was blocked by " + hit.collider.gameObject.name);
+                    continue;
+                }
+
+                damageRatio = damageVector.magnitude / DamageRadius;
             }
 
             var dam = other.GetComponent<IDamageable>();
             if(dam != null)
             {
-                var ratio = v.magnitude / DamageRadius;
-                var amt = Mathf.Lerp(MaxDamage, 0, ratio * ratio);
-                var actualDamage = amt * (1 - dam.GetResistances().Explosive);
+                var damageAmount = Mathf.Lerp(MaxDamage, 0, damageRatio * damageRatio);
+                var actualDamage = damageAmount * (1 - dam.GetResistances().Explosive);
                 dam.Damage(actualDamage, gameObject);
             }
 
@@ -50,9 +60,8 @@ public class Explosion : MonoBehaviour
                 rb.drag = 0f;
 
                 var maxForce = MaxDamage / 5;
-                var amt = v.magnitude / DamageRadius;
-                var actForce = Mathf.Lerp(maxForce, 0, amt * amt);
-                rb.AddForce(v * actForce, ForceMode2D.Impulse);
+                var actForce = Mathf.Lerp(maxForce, 0, damageRatio * damageRatio);
+                rb.AddForce(damageVector * actForce, ForceMode2D.Impulse);
 
                 //var timeInAir = Mathf.Lerp(1, 0, v.magnitude / myCollider.radius);
                 Helper.Instance.WaitAndThenCall(0.03f, () => 

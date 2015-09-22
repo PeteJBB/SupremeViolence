@@ -12,10 +12,13 @@ public class Pickup : MonoBehaviour
 
     [HideInInspector]
     public UnityEvent OnPlayerPickup = new UnityEvent();
+    [HideInInspector]
+    public UnityEvent OnSelectWeapon = new UnityEvent();
+    [HideInInspector]
+    public UnityEvent OnDeselectWeapon = new UnityEvent();
 
     [Tooltip("Shop price - items with price 0 will not show up in the shop")]
     public int Price = 0;
-
 
     [Tooltip("How much ammo this pickup starts with, -1 means unlimited ammo")]
     public int Ammo;
@@ -45,14 +48,15 @@ public class Pickup : MonoBehaviour
         }
         else
         {
+            // Show pickup message
+            if (GameBrain.Instance.State == PlayState.GameOn && PlayerHudCanvas.Instance != null)
+                    PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
+
             // check if player already has one of these
             var duplicate = player.Pickups.Find(x => x.GetPickupName() == this.GetPickupName() && x != this);
             if (duplicate != null)
             {
                 // already got one, take ammo etc and destroy
-                if (GameBrain.Instance.State == PlayState.GameOn && PlayerHudCanvas.Instance != null)
-                    PlayerHudCanvas.Instance.ShowPickupText("+Ammo", player.gameObject, player.PlayerIndex);
-
                 var ammo = GetAmmoCount();
                 if (ammo > 0)
                 {
@@ -65,9 +69,6 @@ public class Pickup : MonoBehaviour
                 // pick it up
                 this.Player = player;
                 player.AddPickup(this);
-
-                if (GameBrain.Instance.State == PlayState.GameOn && PlayerHudCanvas.Instance != null)
-                    PlayerHudCanvas.Instance.ShowPickupText(this.GetPickupName(), player.gameObject, player.PlayerIndex);
 
                 gameObject.SetOwner(player.gameObject);
                 transform.SetParent(player.transform);
@@ -118,13 +119,15 @@ public class Pickup : MonoBehaviour
         }
     }
 
-    public virtual void OnSelectWeapon()
+    public virtual void SelectWeapon()
     {
-
+        OnSelectWeapon.Invoke();
     }
 
-    public virtual void OnDeselectWeapon()
+    public virtual void DeselectWeapon()
     {
+        OnDeselectWeapon.Invoke();
+
         if (MaxAmmo > 0 && Ammo <= 0 && Player != null)
             Player.RemovePickup(this);
     }

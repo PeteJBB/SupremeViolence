@@ -228,4 +228,20 @@ public class Helper : Singleton<Helper>
         }
 #endif
     }
+
+    public static void TweenSpriteAlpha(SpriteRenderer sprite, float from, float to, float time, Action onComplete = null)
+    {
+        var hash = iTween.Hash("from", from, "to", to, "time", time, "onupdate", (Action<object>)((o) =>
+        {
+            var val = (float)o;
+            var color = sprite.color;
+            color.a = val;
+            sprite.color = color;
+        }));
+
+        if(onComplete != null)
+            hash.Add("oncomplete", onComplete);
+
+        iTween.ValueTo(sprite.gameObject, hash);
+    }
 }

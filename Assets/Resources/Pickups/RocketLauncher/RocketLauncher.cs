@@ -12,9 +12,20 @@ public class RocketLauncher : Pickup
     private float reloadTime = 2;
     private bool isReloading = false;    
 
+    private SpriteRenderer laserSight;
+
     public override string GetDescription()
     {
         return "Rockets sure are fun aren't they? This is your high-explosive, point and shoot, no frills model favoured by terrorists and action movie stars alike.";
+    }
+
+    void Awake()
+    {
+        laserSight = transform.Find("lasersight").GetComponent<SpriteRenderer>();
+        laserSight.enabled = false;
+
+        base.OnSelectWeapon.AddListener(OnSelectWeapon_Handler);
+        base.OnDeselectWeapon.AddListener(OnDeselectWeapon_Handler);
     }
 
     void Update()
@@ -25,8 +36,26 @@ public class RocketLauncher : Pickup
             {
                 isReloading = false;
                 Player.RestoreAmmoBarSource();
+                laserSight.enabled = true;
             }
+
+            // laser sight angle
+            var angle = Player.AimingAngle;
+            laserSight.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            var offset = laserSight.transform.rotation * (Vector3.up * (laserSight.sprite.rect.height / laserSight.sprite.pixelsPerUnit) * (laserSight.sprite.pivot.y / laserSight.sprite.rect.height));
+            laserSight.transform.position = Player.GetAimingOrigin().ToVector3() + offset;
         }
+    }
+
+    public void OnSelectWeapon_Handler()
+    {
+        if (!isReloading && Ammo > 0)
+            laserSight.enabled = true;
+    }
+
+    public void OnDeselectWeapon_Handler()
+    {
+        laserSight.enabled = false;
     }
 
     public override void OnFireDown(Vector3 origin)
@@ -50,6 +79,7 @@ public class RocketLauncher : Pickup
 
             lastFireTime = Time.time;
             Ammo--;
+            laserSight.enabled = false;
 
             if (Ammo > 0)
             {

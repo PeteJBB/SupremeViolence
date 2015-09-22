@@ -60,7 +60,7 @@ public class DestroyOnCollision : MonoBehaviour
         // destroy 
         Vector2 collisionPoint;// = transform.position.ToVector2();
         if (StepBackForExplosion)
-           collisionPoint = contact.point - (lastKnownVelocity.ToVector2() * Time.deltaTime);
+           collisionPoint = transform.position.ToVector2() - (lastKnownVelocity.ToVector2() * Time.deltaTime);
         else
             collisionPoint = contact.point;
 
