@@ -3,6 +3,8 @@ using System.Collections;
 
 public class DestroyWhenAnimationEnds : MonoBehaviour 
 {
+    public GameObject ExplosionPrefab;
+
     private Animator anim;
 
 	// Use this for initialization
@@ -17,6 +19,9 @@ public class DestroyWhenAnimationEnds : MonoBehaviour
         var state = anim.GetCurrentAnimatorStateInfo(0);
         if(state.normalizedTime >= 1)
         {
+            if (ExplosionPrefab != null)
+                Instantiate(ExplosionPrefab, transform.position, transform.rotation);
+
             Destroy(gameObject);
         }
 	}
