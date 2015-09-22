@@ -212,6 +212,8 @@ public class GameBrain : Singleton<GameBrain>
 
     private void GameOver()
     {
+        State = PlayState.GameOver;
+        
         PlayerHudCanvas.Instance.ShowMessage("Game Over!", 2);
 
         // slow mo!
@@ -259,7 +261,6 @@ public class GameBrain : Singleton<GameBrain>
         Helper.Instance.WaitAndThenCall(3, () => { cam.enabled = true; });
         iTween.CameraFadeTo(iTween.Hash("amount", 0, "delay", 3, "time", 0.5f));
 
-        State = PlayState.GameOver;
         OnGameOver.Invoke();
     }
 

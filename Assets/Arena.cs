@@ -106,19 +106,26 @@ public class Arena : Singleton<Arena>
 
     private void SpawnPlayers()
     {
+        var playerSpawns = GameObject.FindObjectsOfType<PlayerSpawn>().ToList();
+        var emptySquares = GetEmptyGridSquares();
+
         for (var i = 0; i < GameSettings.NumberOfPlayers; i++)
         {
-            var emptySquares = GetEmptyGridSquares();
-
-            if (emptySquares.Any())
+            if (playerSpawns.Any())
             {
-                // choose a random spot
-                var spot = emptySquares[Random.Range(0, emptySquares.Count)];
+                // choose a random spawn point
+                var spawnPoint = GetValidPlayerSpawn(playerSpawns, emptySquares);
+
+                if (spawnPoint == null)
+                {
+                    // nowhere to spawn!
+                    Debug.LogError("Couldnt find a valid place to spawn player " + i + "!");
+                    return;
+                }
+
                 var player = Instantiate(PlayerPrefab).GetComponent<PlayerControl>();
-                player.transform.position = GridToWorldPosition(spot.x, spot.y);
-                //player.CurrentGridPos = spot;
+                player.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
                 player.PlayerIndex = i;
-                //SetGridObject(spot, player.gameObject);
 
                 // set color
                 var torso = player.transform.Find("Body/Torso").GetComponent<SpriteRenderer>();
@@ -128,6 +135,32 @@ public class Arena : Singleton<Arena>
                 gridTracker.MapColor = GameState.Players[i].Color;
             }
         }
+    }
+
+    public PlayerSpawn GetValidPlayerSpawn(List<PlayerSpawn> spawns = null, List<GridSquareInfo> emptySquares = null)
+    {
+        if(spawns == null)
+            spawns = GameObject.FindObjectsOfType<PlayerSpawn>().ToList();
+     
+        if(emptySquares == null)
+            emptySquares = GetEmptyGridSquares();
+
+        PlayerSpawn spawnPoint = null;
+        while (spawnPoint == null && spawns.Any())
+        {
+            spawnPoint = spawns[Random.Range(0, spawns.Count)];
+            var sq = emptySquares.FirstOrDefault(s => WorldToGridPosition(spawnPoint.transform.position) == new Vector2(s.x, s.y));
+            if (sq == null)
+            {
+                // square isnt empty, look again
+                spawns.Remove(spawnPoint);
+                spawnPoint = null;
+            }
+            else
+                emptySquares.Remove(sq);
+        }
+
+        return spawnPoint;
     }
 
     private Pickup ChooseRandomPickup()
@@ -159,21 +192,20 @@ public class Arena : Singleton<Arena>
     {
         // spawn one of each item at random free location
         var emptySpots = GetEmptyGridSquares();
+        var spawns = GameObject.FindObjectsOfType<PickupSpawn>().ToList();
+
         for (var i = 0; i < idealNumberOfPickups; i++)
         {
-            if (emptySpots.Count == 0)
+            var spawnPoint = GetValidPickupSpawn(spawns, emptySpots);
+            if (spawnPoint == null)
             {
                 Debug.Log("Ran out of empty places to spawn items");
                 break;
             }
 
-            var sq = emptySpots[Random.Range(0, emptySpots.Count)];
-
             var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
-            icon.transform.position = GridToWorldPosition(sq.x, sq.y);
+            icon.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
             icon.PickupPrefab = ChooseRandomPickup();
-
-            emptySpots.Remove(sq);
         }
     }
 
@@ -198,13 +230,38 @@ public class Arena : Singleton<Arena>
             var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
             icon.PickupPrefab = p;
 
-            var squares = GetEmptyGridSquares();
-            if (squares.Any())
+            var spawnPoint = GetValidPickupSpawn();
+            if (spawnPoint != null)
             {
-                var sq = squares[Random.Range(0, squares.Count)];
-                icon.transform.position = GridToWorldPosition(sq.x, sq.y, 0);
+                icon.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
             }
         }
+    }
+
+    public PickupSpawn GetValidPickupSpawn(List<PickupSpawn> spawns = null, List<GridSquareInfo> emptySquares = null)
+    {
+        if(spawns == null)
+            spawns = GameObject.FindObjectsOfType<PickupSpawn>().ToList();
+     
+        if(emptySquares == null)
+            emptySquares = GetEmptyGridSquares();
+
+        PickupSpawn spawnPoint = null;
+        while (spawnPoint == null && spawns.Any())
+        {
+            spawnPoint = spawns[Random.Range(0, spawns.Count)];
+            var sq = emptySquares.FirstOrDefault(s => WorldToGridPosition(spawnPoint.transform.position) == new Vector2(s.x, s.y));
+            if (sq == null)
+            {
+                // square isnt empty, look again
+                spawns.Remove(spawnPoint);
+                spawnPoint = null;
+            }
+            else
+                emptySquares.Remove(sq);
+        }
+
+        return spawnPoint;
     }
 
     void OnDrawGizmos()

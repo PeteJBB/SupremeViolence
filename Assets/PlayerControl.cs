@@ -8,7 +8,7 @@ public class PlayerControl : MonoBehaviour
 {
     public GameObject CameraPrefab;
 
-    private float baseLegStrength = 30f;
+    private float baseLegStrength = 36f;
     private float baseMass = 1;
 
     public int PlayerIndex;
