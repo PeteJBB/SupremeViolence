@@ -21,8 +21,7 @@ public class DestroyOnCollision : MonoBehaviour
 
     void LateUpdate()
     {
-        if(StepBackForExplosion)
-            lastKnownVelocity = rb.velocity;
+        lastKnownVelocity = rb.velocity;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -50,6 +49,15 @@ public class DestroyOnCollision : MonoBehaviour
                 var vect = contact.normal;// Vector2.Reflect(rb.velocity, contact.normal);
                 rb.velocity = vect * lastKnownVelocity.magnitude;
 
+                var owner = gameObject.GetOwner();
+                if(owner != null)
+                {
+                    var ownerCollider = owner.GetComponent<Collider2D>();
+                    var myCollider = GetComponent<Collider2D>();
+                    Physics2D.IgnoreCollision(myCollider, ownerCollider, false);
+                    gameObject.SetOwner(contact.collider.gameObject.GetOwner());
+                }
+                
                 var angle = Mathf.Rad2Deg * Mathf.Atan2(-vect.x, vect.y);
                 rb.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 DamageOther(contact.collider.gameObject);
