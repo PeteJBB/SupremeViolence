@@ -31,12 +31,12 @@ public class GrenadeLauncher : Pickup
             grenade.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 5f), ForceMode2D.Impulse);
             grenade.GetComponent<Rigidbody2D>().AddTorque(1);
             grenade.SetOwner(Player.gameObject);
-            AudioSource.PlayClipAtPoint(FireSound, transform.position);
+            Helper.PlaySoundEffect(FireSound);
             Ammo--;
         }
         else
         {
-            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+            Helper.PlaySoundEffect(FireEmptySound);
         }
     }
 }

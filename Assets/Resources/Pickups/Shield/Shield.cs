@@ -97,7 +97,7 @@ public class Shield: Pickup, IDamageable, IReflector
             transform.localScale = Vector3.zero;
 
             if (ActivateSound != null)
-                AudioSource.PlayClipAtPoint(ActivateSound, transform.position);
+                Helper.PlaySoundEffect(ActivateSound);
 
             shieldAudio.Play();
 
@@ -119,7 +119,7 @@ public class Shield: Pickup, IDamageable, IReflector
         Player.RestoreAmmoBarSource();
         
        if(DeactivateSound != null)
-            AudioSource.PlayClipAtPoint(DeactivateSound, transform.position);
+            Helper.PlaySoundEffect(DeactivateSound);
 
         iTween.ValueTo(gameObject, iTween.Hash("from", 1, "to", 0, "time", 0.15f, "easetype", iTween.EaseType.easeInCirc, "onupdate", (Action<object>)((val) =>
         {
@@ -169,7 +169,7 @@ public class Shield: Pickup, IDamageable, IReflector
         if (HitSound != null && Time.time - lastHitSoundPlayTime > 0.3f)
         {
             lastHitSoundPlayTime = Time.time;
-            AudioSource.PlayClipAtPoint(HitSound, transform.position);
+            Helper.PlaySoundEffect(HitSound);
         }
     }
 

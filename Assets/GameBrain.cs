@@ -123,7 +123,7 @@ public class GameBrain : Singleton<GameBrain>
         
 
         if(StartupSound != null)
-            AudioSource.PlayClipAtPoint(StartupSound, Vector3.zero);
+            Helper.PlaySoundEffect(StartupSound);
 
         // hide UI
         var playerHud = GameObject.FindObjectOfType<PlayerHudCanvas>();
@@ -163,7 +163,7 @@ public class GameBrain : Singleton<GameBrain>
         {
             PlayerHudCanvas.Instance.ShowMessage("Get Ready!", 2);
             if(GetReadySound != null)
-                AudioSource.PlayClipAtPoint(GetReadySound, Vector3.zero);
+                Helper.PlaySoundEffect(GetReadySound);
         });
 
         // fade cam to black (requires GUILayer)
@@ -205,7 +205,7 @@ public class GameBrain : Singleton<GameBrain>
     private void GameOn()
     {
         if(EnableStartupSequence && GameOnSound != null)
-            AudioSource.PlayClipAtPoint(GameOnSound, Vector3.zero);
+            Helper.PlaySoundEffect(GameOnSound);
 
         State = PlayState.GameOn;
     }

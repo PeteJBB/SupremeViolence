@@ -22,14 +22,14 @@ public class LaserRifle : Pickup
         if(Ammo <= 0)
         {
             if(FireEmptySound != null)
-                AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+                Helper.PlaySoundEffect(FireEmptySound);
         }
         else
         {
             var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
             var beamDirection = rotation * Vector2.up;
 
-            AudioSource.PlayClipAtPoint(FireSound, origin);
+            Helper.PlaySoundEffect(FireSound);
 
             // disable player's colliders while raycasting
             Player.GetComponent<Collider2D>().enabled = false;

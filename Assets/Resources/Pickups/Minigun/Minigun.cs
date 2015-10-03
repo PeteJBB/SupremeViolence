@@ -106,7 +106,7 @@ public class Minigun : Pickup
         }
         else
         {
-            AudioSource.PlayClipAtPoint(FireEmptyClip, transform.position);
+            Helper.PlaySoundEffect(FireEmptyClip);
         }
         //iTween.AudioTo(gameObject, iTween.Hash("name", "spin", "audiosource", spinSound, "pitch", 1, "volume", 1, "time", spinUpTime)); 
     }

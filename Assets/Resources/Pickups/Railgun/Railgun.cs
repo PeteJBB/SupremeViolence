@@ -107,7 +107,7 @@ public class Railgun : Pickup
         }
         else
         {
-            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+            Helper.PlaySoundEffect(FireEmptySound);
         }
     }
 
@@ -127,7 +127,7 @@ public class Railgun : Pickup
                 var rotation = Quaternion.AngleAxis(Player.AimingAngle, Vector3.forward);
                 var beamDirection = rotation * Vector2.up;
                 
-                AudioSource.PlayClipAtPoint(FireSound, origin);
+                Helper.PlaySoundEffect(FireSound);
                 Player.GetComponent<Collider2D>().enabled = false;
                 
                 // set up collision layers - 1 is default

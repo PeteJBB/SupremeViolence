@@ -127,7 +127,7 @@ public class Damageable : MonoBehaviour, IDamageable
 
             // play sound
             if (DeathSound != null)
-                AudioSource.PlayClipAtPoint(DeathSound, transform.position);
+                Helper.PlaySoundEffect(DeathSound);
 
             if (RespawnOnDeath)
             {

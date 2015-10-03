@@ -55,7 +55,7 @@ public class TeleporterPad: MonoBehaviour
             player.FreezeControl = true;
 
         var effect = Instantiate(TeleportEffectPrefab, transform.position, Quaternion.identity);
-        AudioSource.PlayClipAtPoint(ActivateSoundClip, transform.position);
+        Helper.PlaySoundEffect(ActivateSoundClip);
 
         // get object into center
         iTween.MoveTo(obj, iTween.Hash("position", transform.position, "time", 1f));

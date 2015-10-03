@@ -61,7 +61,7 @@ public class Flamer : Pickup
         }
         else
         {
-            AudioSource.PlayClipAtPoint(FireEmptySoundClip, transform.position);
+            Helper.PlaySoundEffect(FireEmptySoundClip);
         }
     }
 

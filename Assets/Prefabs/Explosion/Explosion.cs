@@ -14,7 +14,7 @@ public class Explosion : MonoBehaviour
     {
         anim = GetComponent<Animator>();
 
-        AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+        Helper.PlaySoundEffect(explosionSound);
 
         // set up collision layers - 1 is default
         var layerMask = 1 | LayerMask.GetMask("Shields");

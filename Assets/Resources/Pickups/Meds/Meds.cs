@@ -39,7 +39,7 @@ public class Meds: Pickup
                 var dam = Player.GetComponent<Damageable>();
                 dam.SetHealth(dam.StartingHealth);
                 medsHaveBeenApplied = true;
-                AudioSource.PlayClipAtPoint(CompleteSound, transform.position);
+                Helper.PlaySoundEffect(CompleteSound);
                 Ammo--;
             }
             else

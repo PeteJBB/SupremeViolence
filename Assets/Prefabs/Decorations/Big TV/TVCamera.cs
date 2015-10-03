@@ -41,6 +41,7 @@ public class TVCamera: MonoBehaviour
         if (trackTarget != null)
         {
             var pos = trackTarget.transform.position;
+            pos.y += 0.1f;
             pos.z = -10;
             camera.transform.position = pos;
         }

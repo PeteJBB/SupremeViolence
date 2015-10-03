@@ -45,13 +45,23 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
  
 					if (_instance == null)
 					{
-						GameObject singleton = new GameObject();
-						_instance = singleton.AddComponent<T>();
-						singleton.name = "(singleton) "+ typeof(T).ToString();
+                        var tType = typeof(T);
+                        var prefab = Resources.Load<T>(tType.ToString());
+                        if (prefab != null)
+                        {
+                            _instance = Instantiate(prefab);
+                            Debug.Log("[Singleton]  " + typeof(T) + " loaded from resources prefab");
+                        }
+                        else
+                        {
+                            GameObject singleton = new GameObject();
+                            _instance = singleton.AddComponent<T>();
+                            singleton.name = "(singleton) " + typeof(T).ToString();
+                        }
 
                         if (!(_instance as Singleton<T>).DestroyOnLoad)
                         {
-                            DontDestroyOnLoad(singleton);
+                            DontDestroyOnLoad(_instance.gameObject);
 
                             Debug.Log("[Singleton] new instance of " + typeof(T) + " (DontDestroyOnLoad)");
                         }
@@ -88,9 +98,4 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         else
             applicationIsQuitting = true;
     }
-}
-
-public class SingletonPersistAttribute : Attribute
-{
-
 }

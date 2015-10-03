@@ -33,7 +33,7 @@ public class MachineGun : Pickup
         if (Ammo > 0)
             isTriggerDown = true;
         else
-            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+            Helper.PlaySoundEffect(FireEmptySound);
     }
 
     public void FireBullet()
@@ -55,7 +55,7 @@ public class MachineGun : Pickup
 
             bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 0.1f), ForceMode2D.Impulse);
             bullet.SetOwner(Player.gameObject);
-            AudioSource.PlayClipAtPoint(FireSound, transform.position);
+            Helper.PlaySoundEffect(FireSound);
             Ammo--;
 
             // muzzle flash

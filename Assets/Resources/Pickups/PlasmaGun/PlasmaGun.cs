@@ -33,7 +33,7 @@ public class PlasmaGun : Pickup
         if (Ammo > 0)
             isTriggerDown = true;
         else
-            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+            Helper.PlaySoundEffect(FireEmptySound);
     }
 
     public void FireBullet()
@@ -60,7 +60,7 @@ public class PlasmaGun : Pickup
             bullet.SetOwner(Player.gameObject);
 
             if(FireSound != null)
-                AudioSource.PlayClipAtPoint(FireSound, transform.position);
+                Helper.PlaySoundEffect(FireSound);
 
             Ammo--;
 

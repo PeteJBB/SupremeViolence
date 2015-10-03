@@ -244,4 +244,34 @@ public class Helper : Singleton<Helper>
 
         iTween.ValueTo(sprite.gameObject, hash);
     }
+
+    private static UnityEngine.Audio.AudioMixerGroup _sfxMixerGroup;
+    public static UnityEngine.Audio.AudioMixerGroup SfxMixerGroup
+    {
+        get
+        {
+            if(_sfxMixerGroup == null)
+            {
+                var master = Resources.Load("MasterMixer") as UnityEngine.Audio.AudioMixer;
+                _sfxMixerGroup = master.FindMatchingGroups("SFX").FirstOrDefault();  
+            }
+            return _sfxMixerGroup;
+        }
+    }
+
+    public static AudioSource PlaySoundEffect(AudioClip clip)
+    {
+        var go = new GameObject();
+        go.transform.position = Vector3.zero;
+
+        var audio = go.AddComponent<AudioSource>();
+        audio.clip = clip;
+        audio.loop = false;
+        audio.outputAudioMixerGroup = SfxMixerGroup;
+        audio.Play();
+
+        Destroy(go, clip.length);
+
+        return audio;
+    }
 }

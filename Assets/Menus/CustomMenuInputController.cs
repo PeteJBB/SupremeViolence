@@ -95,7 +95,7 @@ public class CustomMenuInputController: MonoBehaviour
                 {
                     SetSelectedGameObject(sel.gameObject);
                     if(menuMoveSound != null)
-                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                        Helper.PlaySoundEffect(menuMoveSound);
                 }
             }
             else if(action == MenuInputAction.MoveDown)
@@ -105,7 +105,7 @@ public class CustomMenuInputController: MonoBehaviour
                 {
                     SetSelectedGameObject(sel.gameObject);
                     if(menuMoveSound != null)
-                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                        Helper.PlaySoundEffect(menuMoveSound);
                 }
             }
             else if(action == MenuInputAction.MoveLeft)
@@ -115,7 +115,7 @@ public class CustomMenuInputController: MonoBehaviour
                 {
                     SetSelectedGameObject(sel.gameObject);
                     if(menuMoveSound != null)
-                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                        Helper.PlaySoundEffect(menuMoveSound);
                 }
             }
             else if(action == MenuInputAction.MoveRight)
@@ -125,13 +125,13 @@ public class CustomMenuInputController: MonoBehaviour
                 {
                     SetSelectedGameObject(sel.gameObject);
                     if(menuMoveSound != null)
-                        AudioSource.PlayClipAtPoint(menuMoveSound, Vector3.zero);
+                        Helper.PlaySoundEffect(menuMoveSound);
                 }
             }
             else if(action == MenuInputAction.Submit)
             {
                 if(menuSelectSound != null)
-                    AudioSource.PlayClipAtPoint(menuSelectSound, Vector3.zero);
+                    Helper.PlaySoundEffect(menuSelectSound);
 
                 var ev = new BaseEventData(null);
                 CurrentSelectedObject.GetComponent<Selectable>().SendMessage("OnSubmit", ev, SendMessageOptions.DontRequireReceiver);

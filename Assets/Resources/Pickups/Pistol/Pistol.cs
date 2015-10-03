@@ -23,7 +23,7 @@ public class Pistol : Pickup
        
         bullet.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 0.1f), ForceMode2D.Impulse);
         bullet.SetOwner(Player.gameObject);
-        AudioSource.PlayClipAtPoint(FireSound, transform.position);
+        Helper.PlaySoundEffect(FireSound);
 
         // muzzle flash
         var flash = Instantiate(MuzzleFlashPrefab);

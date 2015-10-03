@@ -15,7 +15,7 @@ public class GridTrackedObject: MonoBehaviour
     public int MinimapPriority = 0;
 
     public TrackGridPositionChangedEvent OnGridPositionChanged; // OldPosition, NewPosition
-
+  
     void Start()
     {
         if (OnGridPositionChanged == null)
@@ -32,13 +32,17 @@ public class GridTrackedObject: MonoBehaviour
         var gridpos = Arena.WorldToGridPosition(transform.position);
         if (gridpos != CurrentGridPos)
         {
-            //Debug.Log("TrackGridPosition changed: " + gridpos.x + ", " + gridpos.y);
-        
-            var oldPos = CurrentGridPos;
-            CurrentGridPos = gridpos;
-            OnGridPositionChanged.Invoke(oldPos, CurrentGridPos);
+            UpdateGrid();
         }
 	}
+
+    public void UpdateGrid()
+    {
+        var gridpos = Arena.WorldToGridPosition(transform.position);
+        var oldPos = CurrentGridPos;
+        CurrentGridPos = gridpos;
+        OnGridPositionChanged.Invoke(oldPos, CurrentGridPos);
+    }
 }
 
 public class TrackGridPositionChangedEvent : UnityEvent<Vector2, Vector2>

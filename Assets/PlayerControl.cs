@@ -96,9 +96,6 @@ public class PlayerControl : MonoBehaviour
             var track = cam.GetComponent<PlayerCamera>();
             track.PlayerIndex = PlayerIndex;
 
-            if (PlayerIndex > 0)
-                cam.GetComponent<AudioListener>().enabled = false;
-
             // set camera rect
             var w = 0.5f;
             var h = GameSettings.NumberOfPlayers > 2 ? 0.5f : 1;
@@ -322,7 +319,7 @@ public class PlayerControl : MonoBehaviour
         if (!muteSounds && CollectPickupSounds.Length > 0)
         {
             var sound = CollectPickupSounds [Random.Range(0, CollectPickupSounds.Length)];
-            AudioSource.PlayClipAtPoint(sound, transform.position);
+            Helper.PlaySoundEffect(sound);
         }
     }
 

@@ -14,10 +14,6 @@ public class Arena : Singleton<Arena>
     private GridSquareInfo[,] GridMap;
     public GridContentsChangedEvent OnGridContentsChanged;
 
-    private int idealNumberOfPickups = 4;
-    private float pickupSpawnCheckInterval = 7; // seconds
-    private float lastPickupSpawnCheckTime;
-
     void Awake()
     {
         // singleton should not persist
@@ -34,24 +30,10 @@ public class Arena : Singleton<Arena>
     {        
         SpawnPlayers();
         SpawnInitialPickups();
-        //if (GenerateOnStartup)
-        //{
-        //    GenerateRooms();
 
-        //    SpawnPlayers();
-        //    SpawnInitialPickups();
-
-        //    lastPickupSpawnCheckTime = Time.time;
-        //}
-    }
-
-    void Update()
-    {
-        if (Time.time - lastPickupSpawnCheckTime >= pickupSpawnCheckInterval)
-        {
-            CheckSpawnRandomPickup();
-            lastPickupSpawnCheckTime = Time.time;
-        }
+        var audioListener = GameObject.FindObjectOfType<AudioListener>();
+        if (audioListener == null)
+            gameObject.AddComponent<AudioListener>();
     }
 
     public Vector2 GetArenaSize()
@@ -199,75 +181,46 @@ public class Arena : Singleton<Arena>
         // spawn one of each item at random free location
         var emptySpots = GetEmptyGridSquares();
         var spawns = GameObject.FindObjectsOfType<PickupSpawn>().ToList();
+        var pickups = GameSettings.PickupPrefabs
+            .Where(x => x.SpawnDuringGame)
+            .ToList();
 
-        for (var i = 0; i < idealNumberOfPickups; i++)
+        int numberToSpawn;
+        switch (GameSettings.NumberOfPlayers)
         {
-            var spawnPoint = GetValidPickupSpawn(spawns, emptySpots);
-            if (spawnPoint == null)
+            case 2:
+            default:
+                numberToSpawn = 4;
+                break;
+            case 3:
+                numberToSpawn = 5;
+                break;
+            case 4:
+                numberToSpawn = 6;
+                break;
+        }
+
+        for (var i = 0; i < numberToSpawn; i++)
+        {
+            if (spawns.Any())
+            {
+                var spawnPoint = spawns[Random.Range(0, spawns.Count)];
+                var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
+                icon.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
+                
+                // choose a random pickup
+                var prefab = pickups[Random.Range(0, pickups.Count)];
+                icon.PickupPrefab = prefab;
+                pickups.Remove(prefab);
+
+                spawns.Remove(spawnPoint);
+            }
+            else
             {
                 Debug.Log("Ran out of empty places to spawn items");
                 break;
             }
-
-            var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
-            icon.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
-            icon.PickupPrefab = ChooseRandomPickup();
         }
-    }
-
-    /// <summary>
-    /// Called periodically to check if a pickup should be spawned - if so then it spawns one
-    /// </summary>
-    void CheckSpawnRandomPickup()
-    {
-        if (PickupIconPrefab == null)
-            return;
-
-        // how many pickup icons are around right now?
-        var icons = FindObjectsOfType<PickupIcon>();
-        var chanceToSpawn = Mathf.Lerp(1, 0, icons.Length / (float)idealNumberOfPickups);
-
-        //Helper.DebugLogTime("CheckSpawnRandomPickup? There are " + icons.Length + " icons already in play");
-        if (Random.value <= chanceToSpawn)
-        {
-            var p = ChooseRandomPickup();
-            Debug.Log("Spawning pickup: " + p.PickupName);
-
-            var icon = Instantiate(PickupIconPrefab).GetComponent<PickupIcon>();
-            icon.PickupPrefab = p;
-
-            var spawnPoint = GetValidPickupSpawn();
-            if (spawnPoint != null)
-            {
-                icon.transform.position = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, 0);
-            }
-        }
-    }
-
-    public PickupSpawn GetValidPickupSpawn(List<PickupSpawn> spawns = null, List<GridSquareInfo> emptySquares = null)
-    {
-        if(spawns == null)
-            spawns = GameObject.FindObjectsOfType<PickupSpawn>().ToList();
-     
-        if(emptySquares == null)
-            emptySquares = GetEmptyGridSquares();
-
-        PickupSpawn spawnPoint = null;
-        while (spawnPoint == null && spawns.Any())
-        {
-            spawnPoint = spawns[Random.Range(0, spawns.Count)];
-            var sq = emptySquares.FirstOrDefault(s => WorldToGridPosition(spawnPoint.transform.position) == new Vector2(s.x, s.y));
-            if (sq == null)
-            {
-                // square isnt empty, look again
-                spawns.Remove(spawnPoint);
-                spawnPoint = null;
-            }
-            else
-                emptySquares.Remove(sq);
-        }
-
-        return spawnPoint;
     }
 
     void OnDrawGizmos()
@@ -277,26 +230,10 @@ public class Arena : Singleton<Arena>
 
         Gizmos.color = new Color(1, 1, 1, 0.2f);
         Gizmos.DrawWireCube(transform.position + (asize / 2) + offset, asize);
-
-        //for (var row = 0; row < RoomsAcross; row++)
-        //{
-        //    for (var col = 0; col < RoomsDown; col++)
-        //    {
-        //        var pos = GetRoomPos(row, col).ToVector3(0);
-        //        var size = new Vector3(RoomSize, RoomSize, 0.1f);
-        //        Gizmos.DrawWireCube(transform.position + pos + (size / 2) + offset, size);
-        //    }
-        //}
     }
 
     void OnDrawGizmosSelected()
     {
-        //var asize = GetArenaSize().ToVector3(0.1f);
-        //var offset = new Vector3(-0.5f, -0.5f, 0);
-
-        //Gizmos.color = new Color(1, 1, 1, 0.2f);
-        //Gizmos.DrawWireCube(transform.position + (asize / 2) + offset, asize);
-
         Gizmos.color = Color.white;
         if (GridMap == null)
             GenerateGridMap();

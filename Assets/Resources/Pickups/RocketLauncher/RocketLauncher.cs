@@ -75,7 +75,7 @@ public class RocketLauncher : Pickup
 
             rocket.GetComponent<Rigidbody2D>().AddRelativeForce(new Vector2(0, 5f), ForceMode2D.Impulse);
             rocket.SetOwner(Player.gameObject);
-            AudioSource.PlayClipAtPoint(FireSound, transform.position);
+            Helper.PlaySoundEffect(FireSound);
 
             lastFireTime = Time.time;
             Ammo--;
@@ -90,7 +90,7 @@ public class RocketLauncher : Pickup
         }
         else
         {
-            AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+            Helper.PlaySoundEffect(FireEmptySound);
         }
     }
 

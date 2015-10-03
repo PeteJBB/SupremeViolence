@@ -20,6 +20,8 @@ public class OrientedSprite : MonoBehaviour
     private string defaultSortingLayer;
     private Sprite defaultSprite;
 
+    public bool UseParentRotation = false;
+
     // Use this for initialization
     void Awake()
     {
@@ -40,6 +42,29 @@ public class OrientedSprite : MonoBehaviour
 
     void Update()
     {
+        if (UseParentRotation)
+        {
+            var angle = (transform.parent.rotation.eulerAngles.z + 360) % 360;
+            transform.rotation = Quaternion.identity;
+
+            if (angle >= 315 || angle < 45)
+            {
+                orientation = Orientation.Up;                    
+            }
+            else if (angle >= 45 && angle < 135)
+            {
+                orientation = Orientation.Left;
+            }
+            else if (angle >= 225 && angle < 315)
+            {
+                orientation = Orientation.Right;
+            }
+            else if (angle >= 135 || angle < 225)
+            {
+                orientation = Orientation.Down;
+            }
+        }
+
         if (orientation != lastOrientation)
         {
             switch (orientation)

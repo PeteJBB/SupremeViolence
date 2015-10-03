@@ -59,7 +59,7 @@ public class Door: MonoBehaviour
         iTween.MoveTo(leftDoor.gameObject, iTween.Hash("name", "leftdoor", "x", transform.position.x - 0.4f, "time", 1f));
         iTween.MoveTo(rightDoor.gameObject, iTween.Hash("name", "rightdoor", "x", transform.position.x + 0.4f, "time", 1f));
 
-        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
+        Helper.PlaySoundEffect(OpenSound);
 
         isDoorOpen = true;
     }
@@ -71,7 +71,7 @@ public class Door: MonoBehaviour
         iTween.MoveTo(leftDoor.gameObject, iTween.Hash("name", "leftdoor", "x", leftDoorClosedPos, "time", 1f));
         iTween.MoveTo(rightDoor.gameObject, iTween.Hash("name", "rightdoor", "x", rightDoorClosedPos, "time", 1f));
 
-        AudioSource.PlayClipAtPoint(OpenSound, transform.position);
+        Helper.PlaySoundEffect(OpenSound);
 
         isDoorOpen = false;
     }

@@ -37,13 +37,13 @@ public class Dynamite : Pickup
             //stick.GetComponent<Rigidbody2D>().AddTorque(1);
             stick.SetOwner(Player.gameObject);
             if(FireSound != null)
-                AudioSource.PlayClipAtPoint(FireSound, transform.position);
+                Helper.PlaySoundEffect(FireSound);
             Ammo--;
         }
         else
         {
             if(FireEmptySound != null)
-                AudioSource.PlayClipAtPoint(FireEmptySound, transform.position);
+                Helper.PlaySoundEffect(FireEmptySound);
         }
     }
 }

@@ -79,7 +79,7 @@ public class Pickup : MonoBehaviour
 
             // play pickup sound
             if (PickupSound != null)
-                AudioSource.PlayClipAtPoint(PickupSound, transform.position);
+                Helper.PlaySoundEffect(PickupSound);
         }
     }
 

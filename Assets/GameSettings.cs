@@ -8,10 +8,8 @@ using System;
 public class GameSettings 
 {
     public static Pickup[] PickupPrefabs = Resources.LoadAll<Pickup>("Pickups");
-    //public static Room[] RoomPrefabs = Resources.LoadAll<Room>("Rooms");
-
-    //public static Wall WallPrefab = Resources.Load<Wall>("Wall/Wall");
     public static Sprite[] WallSprites = Resources.LoadAll<Sprite>("Wall/Wall");
+    public static Jukebox JukeboxPrefab = Resources.Load<Jukebox>("Jukebox");
 
     public static int NumberOfPlayers = 2;
     public static int NumberOfRounds = 10;
@@ -22,8 +20,8 @@ public class GameSettings
     public static int StartingCash = 500;
     public static int CashForKill = 300;
     public static WinningsLevel WinningsLevel = WinningsLevel.Normal;
-    public static int SoundVolume = 5;
-    public static int MusicVolume = 5;
+    public static int SoundVolume = 10;
+    public static int MusicVolume = 10;
 
     public static Dictionary<string, GameSetting> Settings = new Dictionary<string, GameSetting>()
     {

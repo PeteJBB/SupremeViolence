@@ -21,7 +21,8 @@ public class DestroyOnCollision : MonoBehaviour
 
     void LateUpdate()
     {
-        lastKnownVelocity = rb.velocity;
+        if(StepBackForExplosion)
+            lastKnownVelocity = rb.velocity;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -82,7 +83,7 @@ public class DestroyOnCollision : MonoBehaviour
 
         if (CollisionSound != null)
         {
-            AudioSource.PlayClipAtPoint(CollisionSound, pos);
+            Helper.PlaySoundEffect(CollisionSound);
         }
     }
 
